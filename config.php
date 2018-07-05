@@ -9,6 +9,7 @@ date_default_timezone_set('Europe/Rome');
 // carica classi da composer
 require_once(__DIR__."/vendor/autoload.php");
 require_once(__DIR__."/server/ricezione_fatture_handler.php");
+require_once(__DIR__."/server/trasmissione_fatture_handler.php");
 
 // da decommentare in branch develop
 //define("ENDPOINT","https://teamdigitale1.simevo.com/testenv/");
