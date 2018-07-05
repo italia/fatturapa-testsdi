@@ -8,23 +8,17 @@ date_default_timezone_set('Europe/Rome');
 
 // carica classi da composer
 require_once(__DIR__."/vendor/autoload.php");
-//require_once(__DIR__."/soap/soap_handler.php");
+require_once(__DIR__."/server/ricezione_fatture_handler.php");
 
 // da decommentare in branch develop
 //define("ENDPOINT","https://teamdigitale1.simevo.com/testenv/");
 define("ENDPOINT","http://localhost/sdi-testenv/");
 
 //server trasmittente
-$st     =  ENDPOINT. "/server/";
-
-//wsdl trasmissione fatture
-$tfwsdl = "TrasmissioneFatture_v1.1.wsdl";
-
-//wsdl ricezione fatture
-$rfwsdl = "RicezioneFatture_v1.0.wsdl";
+define("SOAP_SERVER_LOCATION", ENDPOINT."/server/");
 
 //end point trasmissione fatture trasmittente
-$eptft  = $st . "trasmissione-fatture.php?wsdl";
+define("SOAP_EP_TRASMISSIONE", SOAP_SERVER_LOCATION."/trasmissione-fatture.php?wsdl");
 
 //end point ricezione fatture
-$eptrf  = $st . "ricezione-fatture.php?wsdl";
+define("SOAP_EP_RICEZIONE", SOAP_SERVER_LOCATION."/ricezione-fatture.php?wsdl");
