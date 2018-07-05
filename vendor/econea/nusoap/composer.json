@@ -1,0 +1,34 @@
+{
+  "name": "econea/nusoap",
+  "type": "library",
+  "description": "NuSOAP fixed for PHP 5.4 - 7.1",
+  "keywords": ["soap","nusoap"],
+  "license": "LGPL-2.0-only",
+  "homepage": "https://github.com/econea/nusoap",
+  "authors": [
+    {
+      "name": "Milan Felix Šulc",
+      "homepage": "https://f3l1x.io"
+    }
+  ],
+  "require": {
+    "php": ">=5.4"
+  },
+  "require-dev": {
+    "jakub-onderka/php-parallel-lint": "~1.0.0"
+  },
+  "autoload": {
+    "classmap": ["src/"]
+  },
+  "scripts": {
+    "linter": [
+      "parallel-lint src"
+    ]
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-0.9.x": "0.9.7.x-dev",
+      "dev-develop": "1.0.x-dev"
+    }
+  }
+}

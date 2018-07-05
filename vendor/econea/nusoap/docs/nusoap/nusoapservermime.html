@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class nusoapservermime</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name"><img src="../media/images/Class_logo.png"
+														alt=" Class"
+														title=" Class"
+														style="vertical-align: middle"> nusoapservermime</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-vars">Vars</a>
+						|											<a href="#sec-methods">Methods</a>
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">nusoap_server_mime server supporting MIME attachments defined at  http://www.w3.org/TR/SOAP-attachments.  It depends on the PEAR Mail_MIME library.</p>
+	<ul class="tags">
+				<li><span class="field">version:</span> $Id: nusoapmime.php,v 1.13 2010/04/26 20:15:08 snichol Exp $</li>
+				<li><span class="field">author:</span> Scott Nichol &lt;<a href="mailto:snichol@users.sourceforge.net">snichol@users.sourceforge.net</a>&gt;</li>
+				<li><span class="field">author:</span> Thanks to Guillaume and Henning Reich for posting great attachment code to the mail list</li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_nusoapmime_php.html">/nusoapmime.php</a> (line <span class="field"><a href="..//__filesource/fsource_nusoap__nusoapmime.php.html#a498">498</a></span>)
+		</p>
+		
+				
+		<pre><a href="../nusoap/nusoap_base.html">nusoap_base</a>
+   |
+   --<a href="../nusoap/nusoap_server.html">nusoap_server</a>
+      |
+      --<a href="../nusoap/nusoap_server_mime.html">nusoap_server_mime</a>
+         |
+         --nusoapservermime</pre>
+	
+			</div>
+</div>
+
+
+
+
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<span class="disabled">Vars</span>
+						
+			
+										| 
+									<a href="#sec-methods">Methods</a>
+							
+					</div>
+		<div class="info-box-body">
+										<h4>Inherited Variables</h4>
+				<A NAME='inherited_vars'><!-- --></A>
+									<p>Inherited from <span class="classname"><a href="../nusoap/nusoap_server_mime.html">nusoap_server_mime</a></span></p>
+					<blockquote>
+													<img src="../media/images/PrivateVariable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_server_mime.html#var$mimeContentType">nusoap_server_mime::$mimeContentType</a></span><br>
+							</span>
+													<img src="../media/images/PrivateVariable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_server_mime.html#var$requestAttachments">nusoap_server_mime::$requestAttachments</a></span><br>
+							</span>
+													<img src="../media/images/PrivateVariable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_server_mime.html#var$responseAttachments">nusoap_server_mime::$responseAttachments</a></span><br>
+							</span>
+											</blockquote> 
+									<p>Inherited from <span class="classname"><a href="../nusoap/nusoap_server.html">nusoap_server</a></span></p>
+					<blockquote>
+													<img src="../media/images/Variable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_server.html#var$debug_flag">nusoap_server::$debug_flag</a></span><br>
+							</span>
+													<img src="../media/images/Variable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_server.html#var$decode_utf8">nusoap_server::$decode_utf8</a></span><br>
+							</span>
+													<img src="../media/images/Variable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_server.html#var$document">nusoap_server::$document</a></span><br>
+							</span>
+													<img src="../media/images/PrivateVariable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_server.html#var$externalWSDLURL">nusoap_server::$externalWSDLURL</a></span><br>
+							</span>
+													<img src="../media/images/PrivateVariable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_server.html#var$fault">nusoap_server::$fault</a></span><br>
+							</span>
+													<img src="../media/images/PrivateVariable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_server.html#var$headers">nusoap_server::$headers</a></span><br>
+							</span>
+													<img src="../media/images/PrivateVariable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_server.html#var$methodname">nusoap_server::$methodname</a></span><br>
+							</span>
+													<img src="../media/images/PrivateVariable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_server.html#var$methodparams">nusoap_server::$methodparams</a></span><br>
+							</span>
+													<img src="../media/images/PrivateVariable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_server.html#var$methodreturn">nusoap_server::$methodreturn</a></span><br>
+							</span>
+													<img src="../media/images/Variable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_server.html#var$methodreturnisliteralxml">nusoap_server::$methodreturnisliteralxml</a></span><br>
+							</span>
+													<img src="../media/images/PrivateVariable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_server.html#var$methodURI">nusoap_server::$methodURI</a></span><br>
+							</span>
+													<img src="../media/images/PrivateVariable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_server.html#var$operations">nusoap_server::$operations</a></span><br>
+							</span>
+													<img src="../media/images/Variable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_server.html#var$outgoing_headers">nusoap_server::$outgoing_headers</a></span><br>
+							</span>
+													<img src="../media/images/PrivateVariable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_server.html#var$request">nusoap_server::$request</a></span><br>
+							</span>
+													<img src="../media/images/Variable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_server.html#var$requestHeader">nusoap_server::$requestHeader</a></span><br>
+							</span>
+													<img src="../media/images/Variable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_server.html#var$requestHeaders">nusoap_server::$requestHeaders</a></span><br>
+							</span>
+													<img src="../media/images/Variable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_server.html#var$requestSOAP">nusoap_server::$requestSOAP</a></span><br>
+							</span>
+													<img src="../media/images/PrivateVariable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_server.html#var$response">nusoap_server::$response</a></span><br>
+							</span>
+													<img src="../media/images/Variable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_server.html#var$responseHeaders">nusoap_server::$responseHeaders</a></span><br>
+							</span>
+													<img src="../media/images/PrivateVariable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_server.html#var$responseSOAP">nusoap_server::$responseSOAP</a></span><br>
+							</span>
+													<img src="../media/images/PrivateVariable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_server.html#var$result">nusoap_server::$result</a></span><br>
+							</span>
+													<img src="../media/images/PrivateVariable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_server.html#var$SOAPAction">nusoap_server::$SOAPAction</a></span><br>
+							</span>
+													<img src="../media/images/PrivateVariable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_server.html#var$wsdl">nusoap_server::$wsdl</a></span><br>
+							</span>
+													<img src="../media/images/Variable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_server.html#var$xml_encoding">nusoap_server::$xml_encoding</a></span><br>
+							</span>
+											</blockquote> 
+									<p>Inherited from <span class="classname"><a href="../nusoap/nusoap_base.html">nusoap_base</a></span></p>
+					<blockquote>
+													<img src="../media/images/PrivateVariable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_base.html#var$charencoding">nusoap_base::$charencoding</a></span><br>
+							</span>
+													<img src="../media/images/PrivateVariable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_base.html#var$debugLevel">nusoap_base::$debugLevel</a></span><br>
+							</span>
+													<img src="../media/images/PrivateVariable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_base.html#var$debug_str">nusoap_base::$debug_str</a></span><br>
+							</span>
+													<img src="../media/images/PrivateVariable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_base.html#var$error_str">nusoap_base::$error_str</a></span><br>
+							</span>
+													<img src="../media/images/Variable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_base.html#var$namespaces">nusoap_base::$namespaces</a></span><br>
+							</span>
+													<img src="../media/images/PrivateVariable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_base.html#var$revision">nusoap_base::$revision</a></span><br>
+							</span>
+													<img src="../media/images/Variable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_base.html#var$soap_defencoding">nusoap_base::$soap_defencoding</a></span><br>
+							</span>
+													<img src="../media/images/PrivateVariable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_base.html#var$title">nusoap_base::$title</a></span><br>
+							</span>
+													<img src="../media/images/Variable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_base.html#var$typemap">nusoap_base::$typemap</a></span><br>
+							</span>
+													<img src="../media/images/PrivateVariable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_base.html#var$usedNamespaces">nusoap_base::$usedNamespaces</a></span><br>
+							</span>
+													<img src="../media/images/PrivateVariable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_base.html#var$version">nusoap_base::$version</a></span><br>
+							</span>
+													<img src="../media/images/Variable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_base.html#var$xmlEntities">nusoap_base::$xmlEntities</a></span><br>
+							</span>
+													<img src="../media/images/Variable.png" />
+							<span class="var-title">
+								<span class="var-name"><a href="../nusoap/nusoap_base.html#var$XMLSchemaVersion">nusoap_base::$XMLSchemaVersion</a></span><br>
+							</span>
+											</blockquote> 
+										
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-vars">Vars</a>
+														<span class="disabled">Methods</span>
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+							<h4>Inherited Methods</h4>
+				<a name='inherited_methods'><!-- --></a>	
+									<!-- =========== Summary =========== -->
+					<p>Inherited From <span class="classname"><a href="../nusoap/nusoap_server_mime.html">nusoap_server_mime</a></span></p>
+					<blockquote>
+													<img src="../media/images/Method.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_server_mime.html#methodaddAttachment">nusoap_server_mime::addAttachment()</a></span><br>
+													<img src="../media/images/Method.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_server_mime.html#methodclearAttachments">nusoap_server_mime::clearAttachments()</a></span><br>
+													<img src="../media/images/Method.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_server_mime.html#methodgetAttachments">nusoap_server_mime::getAttachments()</a></span><br>
+													<img src="../media/images/PrivateMethod.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_server_mime.html#methodgetHTTPBody">nusoap_server_mime::getHTTPBody()</a></span><br>
+													<img src="../media/images/PrivateMethod.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_server_mime.html#methodgetHTTPContentType">nusoap_server_mime::getHTTPContentType()</a></span><br>
+													<img src="../media/images/PrivateMethod.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_server_mime.html#methodgetHTTPContentTypeCharset">nusoap_server_mime::getHTTPContentTypeCharset()</a></span><br>
+													<img src="../media/images/PrivateMethod.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_server_mime.html#methodparseRequest">nusoap_server_mime::parseRequest()</a></span><br>
+											</blockquote>
+									<!-- =========== Summary =========== -->
+					<p>Inherited From <span class="classname"><a href="../nusoap/nusoap_server.html">nusoap_server</a></span></p>
+					<blockquote>
+													<img src="../media/images/Constructor.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_server.html#methodnusoap_server">nusoap_server::nusoap_server()</a></span><br>
+													<img src="../media/images/Method.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_server.html#methodadd_to_map">nusoap_server::add_to_map()</a></span><br>
+													<img src="../media/images/Method.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_server.html#methodconfigureWSDL">nusoap_server::configureWSDL()</a></span><br>
+													<img src="../media/images/Method.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_server.html#methodfault">nusoap_server::fault()</a></span><br>
+													<img src="../media/images/PrivateMethod.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_server.html#methodgetHTTPBody">nusoap_server::getHTTPBody()</a></span><br>
+													<img src="../media/images/PrivateMethod.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_server.html#methodgetHTTPContentType">nusoap_server::getHTTPContentType()</a></span><br>
+													<img src="../media/images/PrivateMethod.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_server.html#methodgetHTTPContentTypeCharset">nusoap_server::getHTTPContentTypeCharset()</a></span><br>
+													<img src="../media/images/PrivateMethod.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_server.html#methodinvoke_method">nusoap_server::invoke_method()</a></span><br>
+													<img src="../media/images/PrivateMethod.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_server.html#methodparseRequest">nusoap_server::parseRequest()</a></span><br>
+													<img src="../media/images/PrivateMethod.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_server.html#methodparse_http_headers">nusoap_server::parse_http_headers()</a></span><br>
+													<img src="../media/images/PrivateMethod.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_server.html#methodparse_request">nusoap_server::parse_request()</a></span><br>
+													<img src="../media/images/Method.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_server.html#methodregister">nusoap_server::register()</a></span><br>
+													<img src="../media/images/PrivateMethod.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_server.html#methodsend_response">nusoap_server::send_response()</a></span><br>
+													<img src="../media/images/PrivateMethod.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_server.html#methodserialize_return">nusoap_server::serialize_return()</a></span><br>
+													<img src="../media/images/Method.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_server.html#methodservice">nusoap_server::service()</a></span><br>
+													<img src="../media/images/PrivateMethod.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_server.html#methodverify_method">nusoap_server::verify_method()</a></span><br>
+											</blockquote>
+									<!-- =========== Summary =========== -->
+					<p>Inherited From <span class="classname"><a href="../nusoap/nusoap_base.html">nusoap_base</a></span></p>
+					<blockquote>
+													<img src="../media/images/Constructor.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_base.html#methodnusoap_base">nusoap_base::nusoap_base()</a></span><br>
+													<img src="../media/images/Method.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_base.html#methodappendDebug">nusoap_base::appendDebug()</a></span><br>
+													<img src="../media/images/Method.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_base.html#methodclearDebug">nusoap_base::clearDebug()</a></span><br>
+													<img src="../media/images/PrivateMethod.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_base.html#methodcontractQname">nusoap_base::contractQname()</a></span><br>
+													<img src="../media/images/PrivateMethod.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_base.html#methoddebug">nusoap_base::debug()</a></span><br>
+													<img src="../media/images/PrivateMethod.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_base.html#methodexpandEntities">nusoap_base::expandEntities()</a></span><br>
+													<img src="../media/images/PrivateMethod.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_base.html#methodexpandQname">nusoap_base::expandQname()</a></span><br>
+													<img src="../media/images/Method.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_base.html#methodformatDump">nusoap_base::formatDump()</a></span><br>
+													<img src="../media/images/Method.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_base.html#methodgetDebug">nusoap_base::getDebug()</a></span><br>
+													<img src="../media/images/Method.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_base.html#methodgetDebugAsXMLComment">nusoap_base::getDebugAsXMLComment()</a></span><br>
+													<img src="../media/images/Method.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_base.html#methodgetDebugLevel">nusoap_base::getDebugLevel()</a></span><br>
+													<img src="../media/images/Method.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_base.html#methodgetError">nusoap_base::getError()</a></span><br>
+													<img src="../media/images/Method.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_base.html#methodgetGlobalDebugLevel">nusoap_base::getGlobalDebugLevel()</a></span><br>
+													<img src="../media/images/Method.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_base.html#methodgetLocalPart">nusoap_base::getLocalPart()</a></span><br>
+													<img src="../media/images/Method.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_base.html#methodgetmicrotime">nusoap_base::getmicrotime()</a></span><br>
+													<img src="../media/images/Method.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_base.html#methodgetNamespaceFromPrefix">nusoap_base::getNamespaceFromPrefix()</a></span><br>
+													<img src="../media/images/Method.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_base.html#methodgetPrefix">nusoap_base::getPrefix()</a></span><br>
+													<img src="../media/images/Method.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_base.html#methodgetPrefixFromNamespace">nusoap_base::getPrefixFromNamespace()</a></span><br>
+													<img src="../media/images/PrivateMethod.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_base.html#methodisArraySimpleOrStruct">nusoap_base::isArraySimpleOrStruct()</a></span><br>
+													<img src="../media/images/Method.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_base.html#methodserializeEnvelope">nusoap_base::serializeEnvelope()</a></span><br>
+													<img src="../media/images/Method.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_base.html#methodserialize_val">nusoap_base::serialize_val()</a></span><br>
+													<img src="../media/images/Method.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_base.html#methodsetDebugLevel">nusoap_base::setDebugLevel()</a></span><br>
+													<img src="../media/images/PrivateMethod.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_base.html#methodsetError">nusoap_base::setError()</a></span><br>
+													<img src="../media/images/Method.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_base.html#methodsetGlobalDebugLevel">nusoap_base::setGlobalDebugLevel()</a></span><br>
+													<img src="../media/images/Method.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_base.html#methodvarDump">nusoap_base::varDump()</a></span><br>
+													<img src="../media/images/Method.png" alt=" "/>
+							<span class="method-name"><a href="../nusoap/nusoap_base.html#method__toString">nusoap_base::__toString()</a></span><br>
+											</blockquote>
+										
+		</div>
+	</div>
+
+	
+	<p class="notes" id="credit">
+		Documentation generated on Mon, 26 Apr 2010 16:17:09 -0400 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.3.0RC3</a>
+	</p>
+	</div></body>
+</html>
