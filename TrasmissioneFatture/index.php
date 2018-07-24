@@ -1,8 +1,8 @@
 <?php
 
 require_once("../config.php");
-require_once("RicezioneFattureHandler.php");
+require_once("TrasmissioneFattureHandler.php");
 
-$srv = new SoapServer('RicezioneFatture_v1.0.wsdl');
-$srv->setClass("RicezioneFattureHandler");
+$srv = new SoapServer('TrasmissioneFatture_v1.1.wsdl');
+$srv->setClass("TrasmissioneFattureHandler");
 $srv->handle();
