@@ -7,16 +7,7 @@ require_once(__DIR__."/vendor/autoload.php");
 $generator = new \Wsdl2PhpGenerator\Generator();
 $generator->generate(
     new \Wsdl2PhpGenerator\Config(array(
-        'inputFile' => './SdIRiceviFile/SdIRiceviFile_v1.0.wsdl',
-        'outputDir' => './SdIRiceviFile'
+        'inputFile' => './TrasmissioneFatture/TrasmissioneFatture_v1.1.wsdl',
+        'outputDir' => './TrasmissioneFatture'
     ))
 );
-
-/*
-$generator->generate(
-    new \Wsdl2PhpGenerator\Config(array(
-        'inputFile' => './SdIRiceviNotifica/ SdIRiceviNotifica_v1.0.wsdl',
-        'outputDir' => './SdIRiceviNotifica'
-    ))
-);
-*/

@@ -6,5 +6,7 @@
             "email": "marco.peca88@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+        "wsdl2phpgenerator/wsdl2phpgenerator": "^3.4"
+    }
 }
