@@ -7,9 +7,11 @@ require 'SdIRiceviNotifica/autoload.php';
 require 'RicezioneFatture/autoload.php';
 require 'TrasmissioneFatture/autoload.php';
 
+
 $json = json_decode(file_get_contents(ROOT . DB_FILE),TRUE);
-$json ["test"] = array("cod" => "1234");
-file_put_contents(ROOT . DB_FILE, json_encode($json));
+//$json ["test"] = array("cod" => "1234");
+//file_put_contents(ROOT . DB_FILE, json_encode($json));
+
 
 $service = new \SdIRiceviFile_service(array('trace' => 1));
 $service->__setLocation(HOSTNAME.'SdIRiceviFile/');
@@ -25,6 +27,7 @@ $response = $service->RiceviFile($fileSdIBase);
 echo 'identificativo SDI = ' . $response->getIdentificativoSdI();
 echo 'data ora ricezione = ' . $response->getDataOraRicezione()->format("Y-m-d H:i:s");
 echo 'errore = ' . $response->getErrore();
+
 
 $ric_fatture_service = new \RicezioneFatture_service(array('trace' => 1));
 $ric_fatture_service->__setLocation(HOSTNAME.'RicezioneFatture/');
