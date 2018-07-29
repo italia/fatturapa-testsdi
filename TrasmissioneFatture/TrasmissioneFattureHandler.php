@@ -4,17 +4,17 @@ require_once("autoload.php");
 
 class TrasmissioneFattureHandler{
     
-    public function RicevutaConsegna(fileSdI_Type $parametersIn){
+    public function RicevutaConsegna($parametersIn){
         $json = json_decode(file_get_contents(ROOT . DB_FILE),TRUE);
-        $IdentificativoSdI = $parametersIn.IdentificativoSdI;
+        $IdentificativoSdI = $parametersIn->IdentificativoSdI;
         $stato = FATTURA_ACCETTATA;
         $json[$IdentificativoSdI]["stato"] = $stato;
         file_put_contents(ROOT . DB_FILE, json_encode($json));
     }
 
-    public function NotificaMancataConsegna(ileSdI_Type $parametersIn){
+    public function NotificaMancataConsegna($parametersIn){
         $json = json_decode(file_get_contents(ROOT . DB_FILE),TRUE);
-        $IdentificativoSdI = $parametersIn.IdentificativoSdI;
+        $IdentificativoSdI = $parametersIn->IdentificativoSdI;
         $stato = FATTURA_MANCATA_CONSEGNA;
         $json[$IdentificativoSdI]["stato"] = $stato;
         file_put_contents(ROOT . DB_FILE, json_encode($json));

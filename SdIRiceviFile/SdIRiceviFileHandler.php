@@ -5,7 +5,7 @@ require_once("autoload.php");
 class SdIRiceviFileHandler
 {
 
-    public function RiceviFile(\fileSdIBase_Type $parametersIn)
+    public function RiceviFile($parametersIn)
     {
         // Get current timestamp
         $DataOraRicezione = new \DateTime();        
@@ -14,7 +14,7 @@ class SdIRiceviFileHandler
         $json = json_decode(file_get_contents(ROOT . DB_FILE),TRUE);
         $IdentificativoSdI = count($json) + 1;
         $new_elem = array("identificativo_sdi" => $IdentificativoSdI,
-                          "nome_file" => $parametersIn.NomeFile,
+                          "nome_file" => $parametersIn->NomeFile,
                           "data_ricezione" => $DataOraRicezione,
                           "stato" => 1);
         array_push($json, $new_elem);
