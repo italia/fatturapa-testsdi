@@ -8,7 +8,7 @@ require 'RicezioneFatture/autoload.php';
 require 'TrasmissioneFatture/autoload.php';
 
 
-$json = json_decode(file_get_contents(ROOT . DB_FILE),TRUE);
+$json = json_decode(file_get_contents(ROOT . DB_FILE), true);
 //$json ["test"] = array("cod" => "1234");
 //file_put_contents(ROOT . DB_FILE, json_encode($json));
 
@@ -32,10 +32,16 @@ echo ', errore = ' . $response->getErrore() . PHP_EOL;
 $ric_fatture_service = new \RicezioneFatture_service(array('trace' => 1));
 $ric_fatture_service->__setLocation(HOSTNAME.'RicezioneFatture/');
 
-$fileSdIConMetadati_Type = new fileSdIConMetadati_Type($response->getIdentificativoSdI(),$NomeFile, $File,$metadati, $base64_meta);
+$fileSdIConMetadati_Type = new fileSdIConMetadati_Type(
+    $response->getIdentificativoSdI(),
+    $NomeFile,
+    $File,
+    $metadati,
+    $base64_meta
+);
 $response2 = $ric_fatture_service->RiceviFatture($fileSdIConMetadati_Type);
 
 
-$fileSdI_Type = new \fileSdI_Type($response->getIdentificativoSdI(),$NomeFile, $File);
+$fileSdI_Type = new \fileSdI_Type($response->getIdentificativoSdI(), $NomeFile, $File);
 
 $ric_fatture_service->NotificaDecorrenzaTermini($fileSdI_Type);
