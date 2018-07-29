@@ -4,9 +4,16 @@
         {
             "name": "Marco Peca",
             "email": "marco.peca88@gmail.com"
+        },
+        {
+            "name": "Paolo Greppi",
+            "email": "paolo.greppi@simevo.com"
         }
     ],
     "require": {
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.3",
         "wsdl2phpgenerator/wsdl2phpgenerator": "^3.4"
     }
 }

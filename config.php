@@ -1,7 +1,7 @@
 <?php
 
 define("HOSTNAME","https://teamdigitale1.simevo.com/sdi/");
-define("ROOT", $_SERVER['DOCUMENT_ROOT'] . "/sdi/");
+define("ROOT", dirname(__FILE__) . '/');
 define("DB_FILE","test.json");
 
 // STATI FATTURE SDI
