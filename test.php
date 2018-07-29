@@ -25,8 +25,8 @@ $base64_meta = base64_encode($metadati);
 
 $response = $service->RiceviFile($fileSdIBase);
 echo 'identificativo SDI = ' . $response->getIdentificativoSdI();
-echo 'data ora ricezione = ' . $response->getDataOraRicezione()->format("Y-m-d H:i:s");
-echo 'errore = ' . $response->getErrore();
+echo ', data ora ricezione = ' . $response->getDataOraRicezione()->format("Y-m-d H:i:s");
+echo ', errore = ' . $response->getErrore() . PHP_EOL;
 
 
 $ric_fatture_service = new \RicezioneFatture_service(array('trace' => 1));
