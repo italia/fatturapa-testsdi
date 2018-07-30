@@ -10,15 +10,16 @@
     <a href="https://github.com/simevo/fatturapa-testui">https://github.com/simevo/fatturapa-testui</a>
     <hr/>
 
-    <div id="table">
-      <table>
-        <tr><th>Id</th><th>Da</th><th>A</th></tr>
-        <tr v-for="i in invoices">
-          <td>{{ i.id }}</td>
-          <td>{{ i.source }}</td>
-          <td>{{ i.destination }}</td>
-        </tr> 
-    </table>
+    <div id="tables">
+      <invoice-table endpoint="/sdi/rpc/invoices/?status=E_RECEIVED" title="Ricevute"></invoice-table>
+      <invoice-table endpoint="/sdi/rpc/invoices/?status=E_VALID" title="Valide"></invoice-table>
+      <invoice-table endpoint="/sdi/rpc/invoices/?status=E_FAILED_DELIVERY" title="Mancata consegna"></invoice-table>
+      <invoice-table endpoint="/sdi/rpc/invoices/?status=E_DELIVERED" title="Consegnate"></invoice-table>
+      <invoice-table endpoint="/sdi/rpc/invoices/?status=E_INVALID" title="Invalide"></invoice-table>
+      <invoice-table endpoint="/sdi/rpc/invoices/?status=E_IMPOSSIBLE_DELIVERY" title="Consegna impossibile"></invoice-table>
+      <invoice-table endpoint="/sdi/rpc/invoices/?status=E_ACCEPTED" title="Accettate"></invoice-table>
+      <invoice-table endpoint="/sdi/rpc/invoices/?status=E_REFUSED" title="Rifiutate"></invoice-table>
+      <invoice-table endpoint="/sdi/rpc/invoices/?status=E_EXPIRED" title="Termini scaduti"></invoice-table>
     </div>
 
     <script type="text/javascript">
@@ -28,12 +29,17 @@
     
     "use strict";
     
-    var app = new Vue({
-      el: '#table',
+    Vue.component('invoice-table', {
+      props: ['endpoint', 'title'],
+      data: function () {
+        return {
+          invoices: []
+        }
+      },
       mounted: function () {
         var self = this;
         var request = new XMLHttpRequest();
-        request.open("GET", "/sdi/rpc/invoices/?status=E_ACCEPTED");
+        request.open("GET", self.endpoint);
         request.onload = function() {
             if (request.status == 200) {
                 if (request.responseText) {
@@ -44,9 +50,22 @@
         };
         request.send();
       },
-      data: {
-        "invoices": []
-      }
+      template: '\
+        <div>\
+          <h3>{{ title }}</h3>\
+          <table>\
+            <tr><th>Id</th><th>Da</th><th>A</th></tr>\
+            <tr v-for="i in invoices">\
+                <td>{{ i.id }}</td>\
+                <td>{{ i.source }}</td>\
+                <td>{{ i.destination }}</td>\
+            </tr>\
+          </table>\
+        </div>'
+    });
+
+    var app = new Vue({
+      el: '#tables'
     });
     
     document.addEventListener('DOMContentLoaded', function() {
