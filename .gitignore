@@ -1,0 +1,5 @@
+node_modules
+.directory
+.vscode
+.DS_Store
+vendor

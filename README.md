@@ -34,15 +34,31 @@ Each tab or sub-tab will show all queues for the role, and present buttons to tr
 
 ### Prerequisites
 
-TODO
+```
+sudo apt install yarnpkg make curl
+```
 
 ### Configuring and Installing
 
-TODO
+```
+yarnpkg install
+make
+```
 
 ### Demo
 
-TODO
+Start [json-server](https://github.com/typicode/json-server):
+```
+./node_modules/json-server/bin/index.js data.json --routes routes.json --static www --port 8000
+```
+
+Check that routes are simulated:
+```
+curl -X POST http://localhost:8000/td0000001/rpc/dispatch
+curl -X GET http://localhost:8000/sdi/rpc/invoices/?status=E_ACCEPTED
+```
+
+Now open the index.html in browser: [http://localhost:8000](http://localhost:8000).
 
 ## Testing
 

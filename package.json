@@ -1,0 +1,13 @@
+{
+  "name": "fatturapa-testui",
+  "version": "0.0.1",
+  "description": "Testing UI for fatturapa-testsdi",
+  "main": "index.html",
+  "repository": "https://github.com/simevo/fatturapa-testui",
+  "author": "Paolo Greppi <paolo.greppi@libpf.com>",
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "json-server": "^0.14.0",
+    "vue": "^2.5.16"
+  }
+}
