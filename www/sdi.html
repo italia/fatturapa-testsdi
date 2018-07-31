@@ -147,7 +147,17 @@
     <hr/>
 
     <div id="tables">
-      <invoice-table endpoint="/sdi/rpc/invoices/?status=E_RECEIVED" title="Ricevute"></invoice-table>
+          <!-- DataTables Example -->
+          <div class="card mb-3">
+            <div class="card-header">
+              <i class="fas fa-table"></i>Fatture ricevute</div>
+            <div class="card-body">
+              <div class="table-responsive">      
+                <invoice-table endpoint="/sdi/rpc/invoices/?status=E_RECEIVED"></invoice-table>
+              </div>
+            </div>
+            <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+          </div>     
       <invoice-table endpoint="/sdi/rpc/invoices/?status=E_VALID" title="Valide"></invoice-table>
       <invoice-table endpoint="/sdi/rpc/invoices/?status=E_FAILED_DELIVERY" title="Mancata consegna"></invoice-table>
       <invoice-table endpoint="/sdi/rpc/invoices/?status=E_DELIVERED" title="Consegnate"></invoice-table>
@@ -188,14 +198,13 @@
       },
       template: '\
         <div>\
-          <h3>{{ title }}</h3>\
-          <table>\
-            <tr><th>Id</th><th>Da</th><th>A</th></tr>\
-            <tr v-for="i in invoices">\
+          <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">\
+            <thead><tr><th>Id</th><th>Da</th><th>A</th></tr></thead>\
+            <tfoot><tr v-for="i in invoices">\
                 <td>{{ i.id }}</td>\
                 <td>{{ i.source }}</td>\
                 <td>{{ i.destination }}</td>\
-            </tr>\
+            </tr></tfoot>\
           </table>\
         </div>'
     });
