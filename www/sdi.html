@@ -148,15 +148,24 @@
 
     <div id="tables">     
                 <invoice-table endpoint="/sdi/rpc/invoices/?status=E_RECEIVED" title="Ricevute"></invoice-table>
+                <div class="actions"><button type="button" class="btn btn-info">Validazione</button></div>
+
                 <invoice-table endpoint="/sdi/rpc/invoices/?status=E_VALID" title="Valide"></invoice-table>
+                <div class="actions"><button type="button" class="btn btn-info">Trasmetti</button></div>
+  
+
                 <invoice-table endpoint="/sdi/rpc/invoices/?status=E_FAILED_DELIVERY" title="Mancata consegna"></invoice-table>
+
                 <invoice-table endpoint="/sdi/rpc/invoices/?status=E_DELIVERED" title="Consegnate"></invoice-table>
+                <div class="actions"><button type="button" class="btn btn-info">Verifica Termini</button></div>
+
                 <invoice-table endpoint="/sdi/rpc/invoices/?status=E_INVALID" title="Invalide"></invoice-table>
                 <invoice-table endpoint="/sdi/rpc/invoices/?status=E_IMPOSSIBLE_DELIVERY" title="Consegna impossibile"></invoice-table>
                 <invoice-table endpoint="/sdi/rpc/invoices/?status=E_ACCEPTED" title="Accettate"></invoice-table>
                 <invoice-table endpoint="/sdi/rpc/invoices/?status=E_REFUSED" title="Rifiutate"></invoice-table>
                 <invoice-table endpoint="/sdi/rpc/invoices/?status=E_EXPIRED" title="Termini scaduti"></invoice-table>
     </div>
+    <div class="actions"><button type="button" class="btn btn-info">Invia notifiche</button></div>
 
     <script type="text/javascript">
     // configuration for jshint
