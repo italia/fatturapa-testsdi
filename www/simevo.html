@@ -148,7 +148,7 @@
     <h2>Simevo</h2>
     <hr/>
     <!-- tabs -->
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <ul class="nav nav-tabs" role="tablist" style="margin-bottom: 20px;">
       <li class="nav-item">
         <a class="nav-link active" id="emissione-tab" data-toggle="tab" href="#emissione" role="tab" aria-controls="emissione" aria-selected="true">emissione</a>
       </li>
@@ -156,7 +156,7 @@
         <a class="nav-link" id="ricezione-tab" data-toggle="tab" href="#ricezione" role="tab" aria-controls="ricezione" aria-selected="false">Ricezione</a>
       </li>
     </ul>
-    <div class="tab-content" id="myTabContent">
+    <div class="tab-content">
       <div class="tab-pane fade show active" id="emissione" role="tabpanel" aria-labelledby="emissione-tab">
         <!-- tab content emissione -->
         <div class="container-fluid">
@@ -187,13 +187,55 @@
                 <invoice-table endpoint="/sdi/rpc/invoices/?status=E_EXPIRED" title="Termini scaduti"></invoice-table>
     </div>
 
-
-
-
         </div> <!-- end container-fluid -->
         <!-- end content tab emissione -->
       </div>
-      <div class="tab-pane fade" id="ricezione" role="tabpanel" aria-labelledby="ricezione-tab">test1</div>
+      <div class="tab-pane fade" id="ricezione" role="tabpanel" aria-labelledby="ricezione-tab">
+        <!-- start content tab ricezione -->
+        <div class="container-fluid">
+
+          <!-- DataTables Example -->
+          <div class="card mb-3">
+            <div class="card-header">
+              <i class="fas fa-table"></i>
+              Data Table Example</div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Trasmittente</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tfoot>
+                    <tr>
+                      <th>ID</th>
+                      <th>Trasmittente</th>
+                      <th>Actions</th>
+                    </tr>
+                  </tfoot>
+                  <tbody>
+                    <tr>
+                      <td>12</td>
+                      <td>2</td>
+                      <td><button type="button" class="btn btn-info">Accetta</button> <button type="button" class="btn btn-info">Rifiuta</button></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+          </div>
+
+        <div id="tables-ricezione"> 
+          <invoice-table endpoint="/sdi/rpc/invoices/?status=E_ACCEPTED" title="Accettate"></invoice-table>
+          <invoice-table endpoint="/sdi/rpc/invoices/?status=E_REFUSED" title="Rifiutate"></invoice-table>
+          <invoice-table endpoint="/sdi/rpc/invoices/?status=E_EXPIRED" title="Termini scaduti"></invoice-table>
+        </div> 
+        <!-- end content tab ricezione -->
+      </div>
     </div>
     <!-- end tabs -->
 
@@ -252,7 +294,10 @@
     var app = new Vue({
       el: '#tables'
     });
-    
+    var app2 = new Vue({
+      el: '#tables-ricezione'
+    });
+
     document.addEventListener('DOMContentLoaded', function() {
       console.log("DOM fully loaded and parsed");
     });
@@ -320,7 +365,21 @@
     <script src="js/demo/datatables-demo.js"></script>
     <script src="js/demo/chart-area-demo.js"></script>
     -->
+<script type="text/javascript"> 
+  function readUrl(input) {
 
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var xmlData = e.target.result;
+      var xmlName = input.files[0].name;
+      input.setAttribute("data-title", xmlName);
+      console.log(e.target.result);
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+</script>
   </body>
 
 </html>
