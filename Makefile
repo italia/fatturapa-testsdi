@@ -11,3 +11,6 @@ all:
 	cp node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2 www/webfonts/.
 	cp node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff www/webfonts/.
 	cp node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.ttf www/webfonts/.
+
+	cp node_modules/bootstrap-italia/dist/css/bootstrap-italia.min.css www/css/.
+	cp node_modules/bootstrap-italia/dist/css/italia-icon-font.css www/css/.
