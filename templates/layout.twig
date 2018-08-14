@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="it">
+    <head>
+        <meta charset="UTF-8">
+        <title>{{ title }}</title>
+{% block head %}{% endblock %}
+    </head>
+    <body>
+        <header>
+{% block header %}{% endblock %}
+        </header>
+        <main>
+{% block content %}{% endblock %}
+        </main>
+        <footer>
+{% block footer %}
+            &copy; Copyright 2018 by <a href="http://simevo.com/">simevo.com</a>.
+{% endblock %}
+        </footer>
+    </body>
+</html>

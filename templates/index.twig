@@ -1,18 +1,15 @@
-<!DOCTYPE html>
-<html lang="it">
-    <head>
-        <meta charset="UTF-8">
-        <title>FatturaPA testUI</title>
-    
+{% extends "layout.twig" %}
+
+{% block head %}
+    {{ parent() }}
     <script type="text/javascript" src="js/vue.min.js"></script>
-    </head>
-    <body>
-        <header>
+{% endblock %}
+{% block header %}
     <h2>FatturaPA testUI</h2>
     <a href="https://github.com/simevo/fatturapa-testui">https://github.com/simevo/fatturapa-testui</a>
     <hr/>
-        </header>
-        <main>
+{% endblock %}
+{% block content %}
     <div id="tables">
       <invoice-table endpoint="/sdi/rpc/invoices/?status=E_RECEIVED" title="Ricevute"></invoice-table>
       <invoice-table endpoint="/sdi/rpc/invoices/?status=E_VALID" title="Valide"></invoice-table>
@@ -24,12 +21,9 @@
       <invoice-table endpoint="/sdi/rpc/invoices/?status=E_REFUSED" title="Rifiutate"></invoice-table>
       <invoice-table endpoint="/sdi/rpc/invoices/?status=E_EXPIRED" title="Termini scaduti"></invoice-table>
     </div>
-        </main>
-        <footer>
+{% endblock %}
+{% block footer %}
     <script type="text/javascript" src="js/index.js"></script>
     <hr/>
-                &copy; Copyright 2018 by <a href="http://simevo.com/">simevo.com</a>.
-
-        </footer>
-    </body>
-</html>
+    {{ parent() }}
+{% endblock %}
