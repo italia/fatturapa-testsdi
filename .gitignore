@@ -9,6 +9,7 @@ www/css/all.min.css
 www/css/bootstrap.min.css
 
 www/js/bootstrap.bundle.min.js
+www/js/bootstrap.bundle.min.js.map
 www/js/jquery.min.js
 www/js/vue.js
 www/js/vue.min.js
