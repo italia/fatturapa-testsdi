@@ -35,13 +35,14 @@ Each tab or sub-tab will show all queues for the role, and present buttons to tr
 ### Prerequisites
 
 ```
-sudo apt install yarnpkg make curl
+sudo apt install yarnpkg make curl composer
 ```
 
 ### Configuring and Installing
 
 ```
 yarnpkg install
+composer install
 make
 ```
 
@@ -68,9 +69,17 @@ TODO
 
 ### Linting
 
-This project complies with the [PSR-2: Coding Style Guide](https://www.php-fig.org/psr/psr-2/).
+This project's JavaScript code complies with [JSHint code style](http://jshint.com/docs/).
 
-Lint the code with:
+Lint the JS code with:
+```
+./vendor/bin/phpcs --standard=PSR2 xxx.php
+```
+
+
+This project's PHP code complies with the [PSR-2: Coding Style Guide](https://www.php-fig.org/psr/psr-2/).
+
+Lint the PHP code with:
 ```
 ./vendor/bin/phpcs --standard=PSR2 xxx.php
 ```

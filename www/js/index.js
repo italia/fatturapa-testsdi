@@ -1,31 +1,31 @@
 // configuration for jshint
-/* jshint browser: true, devel: true */
-/* global Vue, Handlebars, jsonSchema */
+/* jshint browser: true, devel: true, multistr: true */
+/* global Vue */
 
 "use strict";
 
 Vue.component('invoice-table', {
-  props: ['endpoint', 'title'],
-  data: function () {
-    return {
-      invoices: []
-    }
-  },
-  mounted: function () {
-    var self = this;
-    var request = new XMLHttpRequest();
-    request.open("GET", self.endpoint);
-    request.onload = function() {
-        if (request.status == 200) {
-            if (request.responseText) {
-                var invoices = JSON.parse(request.responseText);
-                self.invoices = invoices;
+    props: ['endpoint', 'title'],
+    data: function() {
+        return {
+            invoices: []
+        };
+    },
+    mounted: function() {
+        var self = this;
+        var request = new XMLHttpRequest();
+        request.open("GET", self.endpoint);
+        request.onload = function() {
+            if (request.status == 200) {
+                if (request.responseText) {
+                    var invoices = JSON.parse(request.responseText);
+                    self.invoices = invoices;
+                }
             }
-        }
-    };
-    request.send();
-  },
-  template: '\
+        };
+        request.send();
+    },
+    template: '\
     <div>\
       <h3>{{ title }}</h3>\
       <table>\
@@ -40,9 +40,9 @@ Vue.component('invoice-table', {
 });
 
 var app = new Vue({
-  el: '#tables'
+    el: '#tables'
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-  console.log("DOM fully loaded and parsed");
+    console.log("DOM fully loaded and parsed");
 });
