@@ -5,11 +5,12 @@
     <script type="text/javascript" src="js/vue.min.js"></script>
 {% endblock %}
 {% block header %}
+
+{% endblock %}
+{% block content %}
     <h2>FatturaPA testUI</h2>
     <a href="https://github.com/simevo/fatturapa-testui">https://github.com/simevo/fatturapa-testui</a>
     <hr/>
-{% endblock %}
-{% block content %}
     <div id="tables">
       <invoice-table endpoint="/sdi/rpc/invoices/?status=E_RECEIVED" title="Ricevute"></invoice-table>
       <invoice-table endpoint="/sdi/rpc/invoices/?status=E_VALID" title="Valide"></invoice-table>
@@ -23,7 +24,7 @@
     </div>
 {% endblock %}
 {% block footer %}
-    <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript" src="js/simevo.js"></script>
     <hr/>
     {{ parent() }}
 {% endblock %}
