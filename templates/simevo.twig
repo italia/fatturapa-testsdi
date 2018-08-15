@@ -4,6 +4,7 @@
     {{ parent() }}
     <script type="text/javascript" src="js/vue.min.js"></script>
 {% endblock %}
+<<<<<<< HEAD
 {% block header %}
 
 {% endblock %}
@@ -11,6 +12,9 @@
     <h2>FatturaPA testUI</h2>
     <a href="https://github.com/simevo/fatturapa-testui">https://github.com/simevo/fatturapa-testui</a>
     <hr/>
+=======
+{% block content %}
+>>>>>>> fde5300e9af5e1e2dbbc038ab02e226f75720d8b
     <div id="tables">
       <invoice-table endpoint="/sdi/rpc/invoices/?status=E_RECEIVED" title="Ricevute"></invoice-table>
       <invoice-table endpoint="/sdi/rpc/invoices/?status=E_VALID" title="Valide"></invoice-table>

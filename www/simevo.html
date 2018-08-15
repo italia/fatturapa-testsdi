@@ -2,23 +2,20 @@
 <html lang="it">
   <head>
     <meta charset="UTF-8">
-    <title>FatturaPA testUI</title>
-    <script type="text/javascript" src="js/vue.min.js"></script>
-      <!-- Bootstrap core CSS-->
+    <title>FatturaPA testUI - simevo</title>
+
+    <!-- Bootstrap core CSS-->
     <link href="css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom fonts for this template-->
     <link href="css/all.min.css" rel="stylesheet" type="text/css">
 
-    <!-- Page level plugin CSS-->
-    <!-- do we **need** datatables ?? 
-    <link href="vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet">
-    -->
-  
     <!-- Custom styles for this template-->
     <link href="css/sb-admin.css" rel="stylesheet">  
+    
+    <script type="text/javascript" src="js/vue.min.js"></script>
+
   </head>
-  <!-- start header layout -->
   <body id="page-top">
 
     <nav class="navbar navbar-expand navbar-dark bg-dark static-top">
@@ -95,16 +92,15 @@
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <i class="fas fa-fw fa-folder"></i>
-            <span>Exchange system</span>
+            <span>SDI</span>
           </a>
           <div class="dropdown-menu" aria-labelledby="pagesDropdown">
-            <!-- <h6 class="dropdown-header">TD000001</h6> -->
-            <a class="dropdown-item" href="sdi.html">SDI</a>
-            <a class="dropdown-item" href="simevo.html">Simevo</a>
-            <a class="dropdown-item" href="#">Riccardo</a>
-            <a class="dropdown-item" href="#">Enrico</a>
+            <h6 class="dropdown-header">TD000001</h6>
+            <a class="dropdown-item" href="#">TD000002</a>
+            <a class="dropdown-item" href="#">TD000003</a>
+            <a class="dropdown-item" href="#">TD000004</a>
           </div>
-        </li>     
+        </li>         
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <i class="fas fa-fw fa-folder"></i>
@@ -135,6 +131,8 @@
 
       <div id="content-wrapper">
 
+        <div class="container-fluid">
+
           <!-- Breadcrumbs-->
           <ol class="breadcrumb">
             <li class="breadcrumb-item">
@@ -143,130 +141,23 @@
             <li class="breadcrumb-item active">Overview</li>
           </ol>
 
-    <!-- end header layout -->
-    <h2>Simevo</h2>
-    <hr/>
-    <!-- tabs -->
-    <ul class="nav nav-tabs" role="tablist" style="margin-bottom: 20px;">
-      <li class="nav-item">
-        <a class="nav-link active" id="emissione-tab" data-toggle="tab" href="#emissione" role="tab" aria-controls="emissione" aria-selected="true">emissione</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" id="ricezione-tab" data-toggle="tab" href="#ricezione" role="tab" aria-controls="ricezione" aria-selected="false">Ricezione</a>
-      </li>
-    </ul>
-    <div class="tab-content">
-      <div class="tab-pane fade show active" id="emissione" role="tabpanel" aria-labelledby="emissione-tab">
-        <!-- tab content emissione -->
-        <div class="container-fluid">
-          <div class="col-sm-6 offset-sm-3">
-            <button type="button" class="btn btn-info btn-block" onclick="document.getElementById('inputFile').click()">Carica fattura</button>
-            <div class="form-group inputDnD">
-              <label class="sr-only" for="inputFile">File Upload</label>
-              <input type="file" class="form-control-file text-info font-weight-bold" id="inputFile" accept="text/xml" onchange="readUrl(this)" data-title="oppure trascina qui la fattura in formato XML">
-            </div>
-          </div>
-        <div id="tables">     
-                    <invoice-table endpoint="/sdi/rpc/invoices/?status=E_RECEIVED" title="Ricevute"></invoice-table>
-                    <div class="actions"><button type="button" class="btn btn-info">Validazione</button></div>
-
-                    <invoice-table endpoint="/sdi/rpc/invoices/?status=E_VALID" title="Valide"></invoice-table>
-                    <div class="actions"><button type="button" class="btn btn-info">Trasmetti</button></div>
-      
-
-                    <invoice-table endpoint="/sdi/rpc/invoices/?status=E_FAILED_DELIVERY" title="Mancata consegna"></invoice-table>
-
-                    <invoice-table endpoint="/sdi/rpc/invoices/?status=E_DELIVERED" title="Consegnate"></invoice-table>
-                    <div class="actions"><button type="button" class="btn btn-info">Verifica Termini</button></div>
-
-                    <invoice-table endpoint="/sdi/rpc/invoices/?status=E_INVALID" title="Invalide"></invoice-table>
-                    <invoice-table endpoint="/sdi/rpc/invoices/?status=E_IMPOSSIBLE_DELIVERY" title="Consegna impossibile"></invoice-table>
-                    <invoice-table endpoint="/sdi/rpc/invoices/?status=E_ACCEPTED" title="Accettate"></invoice-table>
-                    <invoice-table endpoint="/sdi/rpc/invoices/?status=E_REFUSED" title="Rifiutate"></invoice-table>
-                    <invoice-table endpoint="/sdi/rpc/invoices/?status=E_EXPIRED" title="Termini scaduti"></invoice-table>
-        </div> <!-- end tables -->
-
-        </div> <!-- end container-fluid -->
-        
-      </div> <!-- end content tab emissione -->
-    </div> <!-- end content tab content -->
-      <div class="tab-pane fade" id="ricezione" role="tabpanel" aria-labelledby="ricezione-tab">
-        <!-- start content tab ricezione -->
-        <div class="container-fluid">
-
-          <!-- DataTables Example -->
-          <div class="card mb-3">
-            <div class="card-header">
-              <i class="fas fa-table"></i>
-              Data Table Example</div>
-            <div class="card-body">
-              <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Trasmittente</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tfoot>
-                    <tr>
-                      <th>ID</th>
-                      <th>Trasmittente</th>
-                      <th>Actions</th>
-                    </tr>
-                  </tfoot>
-                  <tbody>
-                    <tr>
-                      <td>12</td>
-                      <td>2</td>
-                      <td><button type="button" class="btn btn-info">Accetta</button> <button type="button" class="btn btn-info">Rifiuta</button></td>
-                    </tr>
-                    <tr>
-                      <td>12</td>
-                      <td>2</td>
-                      <td><button type="button" class="btn btn-info">Accetta</button> <button type="button" class="btn btn-info">Rifiuta</button></td>
-                    </tr>
-                    <tr>
-                      <td>12</td>
-                      <td>2</td>
-                      <td><button type="button" class="btn btn-info">Accetta</button> <button type="button" class="btn btn-info">Rifiuta</button></td>
-                    </tr>
-                    <tr>
-                      <td>12</td>
-                      <td>2</td>
-                      <td><button type="button" class="btn btn-info">Accetta</button> <button type="button" class="btn btn-info">Rifiuta</button></td>
-                    </tr>
-                    <tr>
-                      <td>12</td>
-                      <td>2</td>
-                      <td><button type="button" class="btn btn-info">Accetta</button> <button type="button" class="btn btn-info">Rifiuta</button></td>
-                    </tr>                                                                                
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
-          </div>
-
-        <div id="tables-ricezione"> 
-          <invoice-table endpoint="/sdi/rpc/invoices/?status=E_ACCEPTED" title="Accettate"></invoice-table>
-          <invoice-table endpoint="/sdi/rpc/invoices/?status=E_REFUSED" title="Rifiutate"></invoice-table>
-          <invoice-table endpoint="/sdi/rpc/invoices/?status=E_EXPIRED" title="Termini scaduti"></invoice-table>
-        </div> 
-        <!-- end content tab ricezione -->
-      </div>
-    </div><!-- end tabs -->
-
-
-
-    <div class="actions"><button type="button" class="btn btn-info">Invia notifiche</button></div>
+    <div id="tables">
+      <invoice-table endpoint="/sdi/rpc/invoices/?status=E_RECEIVED" title="Ricevute"></invoice-table>
+      <invoice-table endpoint="/sdi/rpc/invoices/?status=E_VALID" title="Valide"></invoice-table>
+      <invoice-table endpoint="/sdi/rpc/invoices/?status=E_FAILED_DELIVERY" title="Mancata consegna"></invoice-table>
+      <invoice-table endpoint="/sdi/rpc/invoices/?status=E_DELIVERED" title="Consegnate"></invoice-table>
+      <invoice-table endpoint="/sdi/rpc/invoices/?status=E_INVALID" title="Invalide"></invoice-table>
+      <invoice-table endpoint="/sdi/rpc/invoices/?status=E_IMPOSSIBLE_DELIVERY" title="Consegna impossibile"></invoice-table>
+      <invoice-table endpoint="/sdi/rpc/invoices/?status=E_ACCEPTED" title="Accettate"></invoice-table>
+      <invoice-table endpoint="/sdi/rpc/invoices/?status=E_REFUSED" title="Rifiutate"></invoice-table>
+      <invoice-table endpoint="/sdi/rpc/invoices/?status=E_EXPIRED" title="Termini scaduti"></invoice-table>
+    </div>
 
         <!-- Sticky Footer -->
         <footer class="sticky-footer">
           <div class="container my-auto">
             <div class="copyright text-center my-auto">
-              <span>Copyright © Your Website 2018</span>
+            &copy; Copyright 2018 by <a href="http://simevo.com/">simevo.com</a>.
             </div>
           </div>
         </footer>
@@ -305,102 +196,12 @@
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.bundle.min.js"></script>
 
-    <!-- Core plugin JavaScript-->
-    <!-- do we **need** easing ?? 
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-    -->
-
-    <!-- Page level plugin JavaScript-->
-    <!-- do we **need** datatables ?? 
-    <script src="vendor/chart.js/Chart.min.js"></script>
-    <script src="vendor/datatables/jquery.dataTables.js"></script>
-    <script src="vendor/datatables/dataTables.bootstrap4.js"></script>
-    -->
-
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin.min.js"></script>
 
-    <!-- Demo scripts for this page-->
-    <!-- do we **need** datatables ?? 
-    <script src="js/demo/datatables-demo.js"></script>
-    <script src="js/demo/chart-area-demo.js"></script>
-    -->
-<script type="text/javascript"> 
-  function readUrl(input) {
-
-  if (input.files && input.files[0]) {
-    var reader = new FileReader();
-    reader.onload = function (e) {
-      var xmlData = e.target.result;
-      var xmlName = input.files[0].name;
-      input.setAttribute("data-title", xmlName);
-      console.log(e.target.result);
-    };
-    reader.readAsDataURL(input.files[0]);
-  }
-}
-</script>
-    <script type="text/javascript">
-    // configuration for jshint
-    /* jshint browser: true, devel: true */
-    /* global Vue, Handlebars, jsonSchema */
+    <script type="text/javascript" src="js/simevo.js"></script>
+    <hr/>
     
-    "use strict";
-    
-    Vue.component('invoice-table', {
-      props: ['endpoint', 'title'],
-      data: function () {
-        return {
-          invoices: []
-        }
-      },
-      mounted: function () {
-        var self = this;
-        var request = new XMLHttpRequest();
-        request.open("GET", self.endpoint);
-        request.onload = function() {
-            if (request.status == 200) {
-                if (request.responseText) {
-                    var invoices = JSON.parse(request.responseText);
-                    self.invoices = invoices;
-                }
-            }
-        };
-        request.send();
-      },
-      template: '\
-      <div class="card mb-3">\
-      <div class="card-header">\
-      <i class="fas fa-table"></i> {{ title }}</div>\
-      <div class="card-body">\
-      <div class="table-responsive">\
-      <div>\
-      <table class="table table-bordered" width="100%" cellspacing="0">\
-      <thead><tr><th>Id</th><th>Da</th><th>A</th></tr></thead>\
-      <tfoot><tr v-for="i in invoices">\
-      <td>{{ i.id }}</td>\
-      <td>{{ i.source }}</td>\
-      <td>{{ i.destination }}</td>\
-      </tr></tfoot>\
-      </table>\
-      </div>\
-      </div>\
-      </div>\
-      <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>\
-      </div>'
-    });
 
-    var app = new Vue({
-      el: '#tables'
-    });
-    var app2 = new Vue({
-      el: '#tables-ricezione'
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log("DOM fully loaded and parsed");
-    });
-</script>
-</body>
-
+  </body>
 </html>

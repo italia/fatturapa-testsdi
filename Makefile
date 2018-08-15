@@ -6,6 +6,7 @@ all:
 	cp node_modules/@fortawesome/fontawesome-free/css/all.min.css www/css/.
 	cp node_modules/jquery/dist/jquery.min.js www/js/.
 	cp node_modules/bootstrap/dist/js/bootstrap.bundle.min.js www/js/.
+	cp node_modules/bootstrap/dist/js/bootstrap.bundle.min.js.map www/js/.
 
 	mkdir -p www/webfonts
 	cp node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2 www/webfonts/.
@@ -16,3 +17,4 @@ all:
 	cp node_modules/bootstrap-italia/dist/css/italia-icon-font.css www/css/.
 
 	./bin/build.php index "FatturaPA testUI" > www/index.html
+	./bin/build.php simevo "FatturaPA testUI - simevo" > www/simevo.html
