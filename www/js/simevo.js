@@ -1,7 +1,7 @@
-// configuration for jshint
-/* jshint browser: true, devel: true */
-/* global Vue, Handlebars, jsonSchema */
-
+    // configuration for jshint
+    /* jshint browser: true, devel: true */
+    /* global Vue, Handlebars, jsonSchema */
+    
 "use strict";
 
 Vue.component('invoice-table', {
@@ -49,7 +49,9 @@ Vue.component('invoice-table', {
 var app = new Vue({
   el: '#tables'
 });
-
+var app2 = new Vue({
+  el: '#tables-ricezione'
+});
 document.addEventListener('DOMContentLoaded', function() {
   console.log("DOM fully loaded and parsed");
 });
