@@ -12,8 +12,8 @@
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin.css" rel="stylesheet">  
-{% block head %}{% endblock %}
-
+    {% block head %}
+    {% endblock %}
   </head>
   <body id="page-top">
 
@@ -140,7 +140,7 @@
             <li class="breadcrumb-item active">Overview</li>
           </ol>
 
-{% block content %}{% endblock %}
+        {% block content %}{% endblock %}
 
         <!-- Sticky Footer -->
         <footer class="sticky-footer">
@@ -188,7 +188,7 @@
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin.min.js"></script>
 
-{% block footer %}{% endblock %}
+    {% block footer %}{% endblock %}
 
   </body>
 </html>
