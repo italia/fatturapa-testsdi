@@ -4,9 +4,6 @@
     {{ parent() }}
     <script type="text/javascript" src="js/vue.min.js"></script>
 {% endblock %}
-{% block header %}
-
-{% endblock %}
 {% block content %}
     <h2>Simevo</h2>
     <hr/>
@@ -121,22 +118,7 @@
         <!-- end content tab ricezione -->
       </div>
     </div><!-- end tabs -->
-
-
-
     <div class="actions"><button type="button" class="btn btn-info">Invia notifiche</button></div>
-{% block content %}
-    <div id="tables">
-      <invoice-table endpoint="/sdi/rpc/invoices/?status=E_RECEIVED" title="Ricevute"></invoice-table>
-      <invoice-table endpoint="/sdi/rpc/invoices/?status=E_VALID" title="Valide"></invoice-table>
-      <invoice-table endpoint="/sdi/rpc/invoices/?status=E_FAILED_DELIVERY" title="Mancata consegna"></invoice-table>
-      <invoice-table endpoint="/sdi/rpc/invoices/?status=E_DELIVERED" title="Consegnate"></invoice-table>
-      <invoice-table endpoint="/sdi/rpc/invoices/?status=E_INVALID" title="Invalide"></invoice-table>
-      <invoice-table endpoint="/sdi/rpc/invoices/?status=E_IMPOSSIBLE_DELIVERY" title="Consegna impossibile"></invoice-table>
-      <invoice-table endpoint="/sdi/rpc/invoices/?status=E_ACCEPTED" title="Accettate"></invoice-table>
-      <invoice-table endpoint="/sdi/rpc/invoices/?status=E_REFUSED" title="Rifiutate"></invoice-table>
-      <invoice-table endpoint="/sdi/rpc/invoices/?status=E_EXPIRED" title="Termini scaduti"></invoice-table>
-    </div>
 {% endblock %}
 {% block footer %}
     <script type="text/javascript" src="js/simevo.js"></script>
