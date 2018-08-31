@@ -232,7 +232,7 @@ The `Issuer` class is used to implement the **issuer** actor and has:
   - `Issuer::delivered(invoices)` send to I_DELIVERED
   - `Issuer::accepted(invoices)` send to I_ACCEPTED, via I_DELIVERED if necessary
   - `Issuer::refused(invoices)` send to I_REFUSED, via I_DELIVERED if necessary
-  - `Issuer::failed(invoices)` send to I_EXPIRED, via I_DELIVERED if necessary
+  - `Issuer::expired(invoices)` send to I_EXPIRED, via I_DELIVERED if necessary
 
 The `Exchange` class is used to implement the **exchange system** actor and has:
 - `Exchange::Exchange(db)`: instantiate and point to a dedicated database instance
@@ -282,45 +282,145 @@ The `Recipient` class is used to implement the **recipent** actor and has:
 
 ## Getting Started
 
+Tested on: amd64 Debian 9.5 (stretch, current stable) with PHP 7.0 and Laravel 5.1.46.
+
 ### Prerequisites
 
 Install prerequisites:
-```
-sudo apt install php-cli php-fpm composer nginx php-soap
-```
-then PHP packages:
-```
-composer install
+```sh
+sudo apt install php-cli php-fpm composer nginx php-soap php-mbstring php-dom php-zip composer nginx postgresql
 ```
 
 ### Configuring and Installing
 
-Configure the number of simulated issuer/receiver (IR) actors in `config.php`.
-
-Install the repo content at the root of your webserver with nginx and fpm properly configured, or start locally with:
-```sh
-php -S localhost:8000
-```
-
-Dynamic routing will make sure that your actors will be reachable at `/sdi` (there's only one exchange system), `/td000001`, `/td000002`  ... (td stands for trasmittente/destinatario, Italian for issuer/receiver).
+**TODO**: In a future release you'll be able to configure the number of simulated issuer/receiver (IR) actors in `config.php` and dynamic routing will make sure that the actors will be reachable at `/sdi` (there's only one exchange system), `/td000001`, `/td000002`  ... (td stands for trasmittente/destinatario, Italian for issuer/receiver).
 
 For example if you configure with three I/R actors, your SOAP endpoints will be at:
 - exchange
-  - https://test.example.com/sdi/soap/SdIRiceviFile
-  - https://test.example.com/sdi/soap/SdIRiceviNotifica
+  - https://www.example.com/sdi/soap/SdIRiceviFile
+  - https://www.example.com/sdi/soap/SdIRiceviNotifica
 - issuer / recipient 1:
-  - https://test.example.com/td000001/soap/RicezioneFatture
-  - https://test.example.com/td000001/soap/TrasmissioneFatture
+  - https://www.example.com/td000001/soap/RicezioneFatture
+  - https://www.example.com/td000001/soap/TrasmissioneFatture
 - issuer / recipient 2:
-  - https://test.example.com/td000002/soap/RicezioneFatture
-  - https://test.example.com/td000002/soap/TrasmissioneFatture
+  - https://www.example.com/td000002/soap/RicezioneFatture
+  - https://www.example.com/td000002/soap/TrasmissioneFatture
 - issuer / recipient 3:
-  - https://test.example.com/td000003/soap/RicezioneFatture
-  - https://test.example.com/td000003/soap/TrasmissioneFatture
+  - https://www.example.com/td000003/soap/RicezioneFatture
+  - https://www.example.com/td000003/soap/TrasmissioneFatture
 
-### Demo
+For the moment being **only one actor** is supported (sdi), so clone the repo to the `/var/www/html/sdi` directory on your webserver.
 
-Sample manual session to demonstrate flow of one invoice from issuer 0000001 to recipient 0000002, and acceptance:
+Install prerequisites with composer:
+
+```sh
+cd /var/www/html/sdi/illuminate
+composer install
+composer dumpautoload
+composer dumpautoload -o
+cd ../soap
+composer install
+cd ../rpc
+composer install
+composer dumpautoload
+composer dumpautoload -o
+```
+
+Set up Laravel:
+```sh
+cd rpc
+sudo chown -R www-data:www-data storage/logs/
+sudo chown -R www-data:www-data storage/framework/
+sudo chown -R www-data:www-data bootstrap/cache/
+cp .env.example .env
+php artisan key:generate
+sudo su -s /bin/bash www-data
+php artisan migrate
+^d
+```
+
+Configure nginx:
+```
+sudo rm /etc/nginx/sites-enabled/*
+sudo vi /etc/nginx/sites-enabled/fatturapa
+server {
+  listen 80 default_server;
+  listen [::]:80 default_server;
+  server_name teamdigitale3.simevo.com;
+  root /var/www/html;
+  index index.html index.htm index.php;
+  location /sdi/rpc {
+    try_files $uri $uri/ /sdi/rpc/index.php$is_args$args;
+  }
+  location ~ \.php$ {
+    include snippets/fastcgi-php.conf;
+    fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+    fastcgi_read_timeout 300;
+  }
+}
+sudo nginx -t
+sudo systemctl restart nginx
+```
+
+Configure the database:
+
+1. add this line:
+```
+    local   testsdi     www-data                                   md5
+```
+  before this one:
+```
+    # "local" is for Unix domain socket connections only
+    local   all             all                                     peer
+```
+  in `/etc/postgresql/9.6/main/pg_hba.conf`
+
+2. restart postgresql with: `sudo systemctl restart postgresql`
+
+3. Create the database:
+```sh
+sudo su - postgres
+psql
+CREATE DATABASE testsdi OWNER "www-data";
+ALTER USER "www-data" WITH PASSWORD 'www-data';
+^d
+^d
+```
+
+You'll be able to access the database with:
+```sh
+PGPASSWORD="www-data" psql -U www-data testsdi
+```
+
+Configure database credentials in `illuminate/config.php` and in `rpc/config/database.php`.
+
+Configure `HOSTNAME` in `soap/config.php`.
+
+### Simple demo
+
+Send a test invoice to the exchange system with:
+```
+./soap/test.php
+```
+or via this form:
+http://teamdigitale3.simevo.com/sdi/receiveForm.php
+which will POST to `https://www.example.com/sdi/soap/SdIRiceviFile/test_RiceviFile.php`.
+
+Both `test.php` and `test_RiceviFile.php` in turn pose as SOAP clients and forward to the SOAP server which listens at: 
+http://www.example.com/sdi/soap/SdIRiceviFile/
+The SOAP server will insert the invoice entry in the database.
+
+Sample RPC endpoint:
+http://www.example.com/sdi/rpc/invoices?state=E_RECEIVED
+According to `rpc/packages/fatturapa/libsdi/src/routes/web.php`:
+```php
+Route::get('invoices', 'fatturapa\libsdi\InvoicesController@index');
+```
+this route is handled by the `InvoicesController` class defined in `rpc/packages/fatturapa/libsdi/src/InvoicesController.php`
+
+### Full demo
+
+Sample manual session to demonstrate the flow of one invoice from issuer 0000001 to recipient 0000002, and acceptance:
 
 1. clear status
 ```
