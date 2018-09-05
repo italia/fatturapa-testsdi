@@ -31,14 +31,6 @@
 
     <div id="content-wrapper">
       <div class="container-fluid">
-        <!-- Breadcrumbs-->
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item">
-            <a href="#">Dashboard</a>
-          </li>
-          <li class="breadcrumb-item active">Overview</li>
-        </ol>
-
         <div id="tables">
           <invoice-table endpoint="/sdi/rpc/invoices/?status=E_RECEIVED" title="Ricevute"></invoice-table>
           <invoice-table endpoint="/sdi/rpc/invoices/?status=E_VALID" title="Valide"></invoice-table>
@@ -50,7 +42,6 @@
           <invoice-table endpoint="/sdi/rpc/invoices/?status=E_REFUSED" title="Rifiutate"></invoice-table>
           <invoice-table endpoint="/sdi/rpc/invoices/?status=E_EXPIRED" title="Termini scaduti"></invoice-table>
         </div>
-
       </div>  <!-- /.container-fluid -->
     </div> <!-- /.content-wrapper -->
 
