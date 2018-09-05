@@ -73,7 +73,10 @@ This project's JavaScript code complies with [JSHint code style](http://jshint.c
 
 Lint the JS code with:
 ```
-./vendor/bin/phpcs --standard=PSR2 xxx.php
+./node_modules/jshint/bin/jshint www/js/www/js/InvoiceTable.js
+./node_modules/jshint/bin/jshint --extract=auto www/index.html
+./node_modules/jshint/bin/jshint --extract=auto www/td0000001.html
+./node_modules/jshint/bin/jshint --extract=auto www/td0000002.html
 ```
 
 

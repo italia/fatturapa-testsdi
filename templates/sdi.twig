@@ -9,13 +9,13 @@
 
     <!-- Sidebar -->
     <ul class="sidebar navbar-nav">
-      <li class="nav-item active">
+      <li class="nav-item">
         <a class="nav-link" href="index.html">
           <i class="fas fa-fw fa-tachometer-alt"></i>
           <span>Dashboard</span>
         </a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item active">
         <a class="nav-link" href="sdi.html">
           <i class="fas fa-fw fa-exchange-alt"></i>
           <span>SDI</span>
@@ -39,12 +39,18 @@
           <li class="breadcrumb-item active">Overview</li>
         </ol>
 
-        <ul>
-          <li>clear (reset the state of all actors)</li>
-          <li>set the current time</li>
-          <li>set factor for simulated time to wallclock time</li>
-          <li>show current simulation time</li>
-        </ul>
+        <div id="tables">
+          <invoice-table endpoint="/sdi/rpc/invoices/?status=E_RECEIVED" title="Ricevute"></invoice-table>
+          <invoice-table endpoint="/sdi/rpc/invoices/?status=E_VALID" title="Valide"></invoice-table>
+          <invoice-table endpoint="/sdi/rpc/invoices/?status=E_FAILED_DELIVERY" title="Mancata consegna"></invoice-table>
+          <invoice-table endpoint="/sdi/rpc/invoices/?status=E_DELIVERED" title="Consegnate"></invoice-table>
+          <invoice-table endpoint="/sdi/rpc/invoices/?status=E_INVALID" title="Invalide"></invoice-table>
+          <invoice-table endpoint="/sdi/rpc/invoices/?status=E_IMPOSSIBLE_DELIVERY" title="Consegna impossibile"></invoice-table>
+          <invoice-table endpoint="/sdi/rpc/invoices/?status=E_ACCEPTED" title="Accettate"></invoice-table>
+          <invoice-table endpoint="/sdi/rpc/invoices/?status=E_REFUSED" title="Rifiutate"></invoice-table>
+          <invoice-table endpoint="/sdi/rpc/invoices/?status=E_EXPIRED" title="Termini scaduti"></invoice-table>
+        </div>
+
       </div>  <!-- /.container-fluid -->
     </div> <!-- /.content-wrapper -->
 

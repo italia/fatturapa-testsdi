@@ -16,5 +16,6 @@ all:
 	cp node_modules/bootstrap-italia/dist/css/bootstrap-italia.min.css www/css/.
 	cp node_modules/bootstrap-italia/dist/css/italia-icon-font.css www/css/.
 
-	./bin/build.php index "FatturaPA testUI" > www/index.html
-	./bin/build.php simevo "FatturaPA testUI - Simevo S.r.l." > www/simevo.html
+	./bin/build.php index "FatturaPA testUI - Dashboard" > www/index.html
+	./bin/build.php sdi "FatturaPA testUI - Sistema di Interscambio" > www/sdi.html
+	./bin/build.php td0000001 "FatturaPA testUI - Trasmittente / destinatario 00000001" > www/td0000001.html
