@@ -9,8 +9,13 @@
     ],
     "minimum-stability": "dev",
     "autoload": {
+    	"files": [
+            "../../../../database/config.php"
+        ],
     	"psr-4": {	
-    		"Fatturapa\\Libsdi\\" : "src/"
+    		"Fatturapa\\Libsdi\\" : "src/",
+    		"Models\\": "../../../../database/app/models/",
+    		"Lib\\": "../../../../database/app/lib/"
     	}
     },
     "require": {

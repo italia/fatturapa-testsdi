@@ -29,7 +29,7 @@ class RicezioneFatture_service extends \SoapClient
         'features' => 1,
         ), $options);
         if (!$wsdl) {
-            $wsdl = './RicezioneFatture/RicezioneFatture_v1.0.wsdl';
+            $wsdl = ROOT .'RicezioneFatture/RicezioneFatture_v1.0.wsdl';
         }
         parent::__construct($wsdl, $options);
     }

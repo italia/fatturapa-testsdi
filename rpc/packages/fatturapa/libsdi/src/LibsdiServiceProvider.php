@@ -26,5 +26,6 @@ class LibsdiServiceProvider extends ServiceProvider
         include __DIR__.'/routes/web.php';
         $this->app->make('Fatturapa\Libsdi\LibsdiController');
         $this->app->make('Fatturapa\Libsdi\InvoicesController');
+		$this->app->make('Fatturapa\Libsdi\BaseController');
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
 require_once("autoload.php");
-require '../../illuminate/config.php';
-require '../../illuminate/vendor/autoload.php';
+require '../../database/config.php';
+require '../../database/vendor/autoload.php';
 
 use Lib\Exchange;
 

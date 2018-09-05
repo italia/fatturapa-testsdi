@@ -1,1 +1,4 @@
 .directory
+database/config.php
+rpc/config/database.php
+soap/config.php

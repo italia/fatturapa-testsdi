@@ -8,7 +8,7 @@ require ROOT.'TrasmissioneFatture/autoload.php';
 
 
 $service = new \SdIRiceviFile_service(array('trace' => 1));
-$service->__setLocation(HOSTNAME.'SdIRiceviFile/location.php');
+$service->__setLocation(HOSTNAME.'SdIRiceviFile/');
 
 $NomeFile = $_REQUEST['NomeFile'];
 $File = '';
@@ -29,7 +29,7 @@ try {
 }
 echo '<pre>';
 print_r($response);
-exit;
+//exit;
 
 $ric_fatture_service = new \RicezioneFatture_service(array('trace' => 1));
 $ric_fatture_service->__setLocation(HOSTNAME.'RicezioneFatture/');
@@ -41,10 +41,17 @@ $fileSdIConMetadati_Type = new fileSdIConMetadati_Type(
     $metadati,
     $base64_meta
 );
+
+
+
 $response2 = $ric_fatture_service->RiceviFatture($fileSdIConMetadati_Type);
+echo "<pre>";
+print_r($response2);
+
 
 $fileSdI_Type = new \fileSdI_Type($response->getIdentificativoSdI(), $NomeFile, $File);
 
-$ric_fatture_service->NotificaDecorrenzaTermini($fileSdI_Type);
+$response3 = $ric_fatture_service->NotificaDecorrenzaTermini($fileSdI_Type);
 
-//echo '<pre>'; print_r($response); exit;
+echo '<pre>'; print_r($response); exit;
+
