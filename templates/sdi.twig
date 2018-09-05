@@ -31,8 +31,13 @@
 
     <div id="content-wrapper">
       <div class="container-fluid" id="tables">
-        <div class="actions"><button type="button" v-on:click="dispatch();" class="btn btn-info">Invia notifiche</button></div>
-          <div class="col-sm-4">
+        <div class="actions row">
+          <div class="col-sm">
+            <button type="button" v-on:click="dispatch();" class="btn btn-info">Invia notifiche</button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm">
             <invoice-table
               endpoint="/rpc/invoices/?status=E_RECEIVED"
               description="E_RECEIVED: received from transmitter"
@@ -46,7 +51,7 @@
               :home=home
               title="Invalide"></invoice-table>
           </div>
-          <div class="col-sm-4">
+          <div class="col-sm">
             <invoice-table
               endpoint="/rpc/invoices/?status=E_VALID"
               description="E_VALID: passed checks"
@@ -64,6 +69,8 @@
               description="E_IMPOSSIBLE_DELIVERY: failed delivery within 48 hours + 10 days"
               :home=home
               title="Consegna impossibile"></invoice-table>
+          </div>
+          <div class="col-sm">
             <invoice-table
               endpoint="/rpc/invoices/?status=E_DELIVERED"
               description="E_DELIVERED: delivered to recipient"
@@ -71,22 +78,23 @@
               action="/rpc/checkExpiration"
               :home=home
               title="Consegnate"></invoice-table>
-          </div>
-          <div class="col-sm-4">
             <invoice-table
               endpoint="/rpc/invoices/?status=E_ACCEPTED"
               description="E_ACCEPTED: Recipient notified that it accepted the invoice"
+              :home=home
               title="Accettate"></invoice-table>
             <invoice-table
               endpoint="/rpc/invoices/?status=E_REFUSED"
               description="E_REFUSED: Recipient notified that it refused the invoice"
+              :home=home
               title="Rifiutate"></invoice-table>
             <invoice-table
               endpoint="/rpc/invoices/?status=E_EXPIRED"
               description="E_EXPIRED: not accepted / refused by the recipient for more than 15 days"
+              :home=home
               title="Termini scaduti"></invoice-table>
           </div>
-        </div>
+        </div>  <!-- /.row -->
       </div>  <!-- /.container-fluid -->
     </div> <!-- /.content-wrapper -->
 

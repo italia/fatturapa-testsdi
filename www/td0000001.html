@@ -104,7 +104,11 @@
 
     <div id="content-wrapper">
       <div class="container-fluid" id="tables">
-        <div class="actions"><button type="button" v-on:click="dispatch();" class="btn btn-info">Invia notifiche</button></div>
+        <div class="actions row">
+          <div class="col-sm">
+            <button type="button" v-on:click="dispatch();" class="btn btn-info">Invia notifiche</button>
+          </div>
+        </div>
         <!-- tabs -->
         <ul class="nav nav-tabs" role="tablist" style="margin-bottom: 20px;">
           <li class="nav-item">
@@ -118,146 +122,148 @@
           <div class="tab-pane fade show active" id="emissione" role="tabpanel" aria-labelledby="emissione-tab">
             <!-- tab content emissione -->
             <div class="container-fluid">
-              <div class="col-sm-6 offset-sm-3">
-                <button type="button" class="btn btn-info btn-block" onclick="document.getElementById('inputFile').click()">Carica fattura</button>
-                <div class="form-group inputDnD">
-                  <label class="sr-only" for="inputFile">File Upload</label>
-                  <input type="file" class="form-control-file text-info font-weight-bold" id="inputFile" accept="text/xml" onchange="readUrl(this)" data-title="oppure trascina qui la fattura in formato XML">
+              <div class="row">
+                <div class="col-sm-6 offset-sm-3">
+                  <button type="button" class="btn btn-info btn-block" onclick="document.getElementById('inputFile').click()">Carica fattura</button>
+                  <div class="form-group inputDnD">
+                    <label class="sr-only" for="inputFile">File Upload</label>
+                    <input type="file" class="form-control-file text-info font-weight-bold" id="inputFile" accept="text/xml" onchange="readUrl(this)" data-title="oppure trascina qui la fattura in formato XML">
+                  </div>
                 </div>
-              </div>
-              <div class="col-sm-4">
-                <invoice-table
-                  endpoint="/rpc/invoices/?status=I_UPLOADED"
-                  description="I_UPLOADED: ready to be transmitted to ES"
-                  button="Trasmetti"
-                  action="/rpc/transmit"
-                  :home=home
-                  title="Caricate"></invoice-table>
-                <invoice-table
-                  endpoint="/rpc/invoices/?status=I_TRANSMITTED"
-                  description="I_TRANSMITTED: transmitted to ES"
-                  :home=home
-                  title="Trasmesse"></invoice-table>
-                <invoice-table
-                  endpoint="/rpc/invoices/?status=I_INVALID"
-                  description="I_INVALID:	ES notified it was invalid"
-                  :home=home
-                  title="Invalide"></invoice-table>
-              </div>
-              <div class="col-sm-4">
-                <invoice-table
-                  endpoint="/rpc/invoices/?status=I_DELIVERED"
-                  description="I_DELIVERED: ES notified that it was delivered to Recipient"
-                  :home=home
-                  title="Consegnate"></invoice-table>
-                <invoice-table
-                  endpoint="/rpc/invoices/?status=I_FAILED_DELIVERY"
-                  description="I_FAILED_DELIVERY: failed delivery within 48 hours"
-                  :home=home
-                  title="Mancata consegna"></invoice-table>
-                <invoice-table
-                  endpoint="/rpc/invoices/?status=I_IMPOSSIBLE_DELIVERY"
-                  description="I_IMPOSSIBLE_DELIVERY: ES notified that it was not delivered to the recipient within 48 hours + 10 days"
-                  :home=home
-                  title="Consegna impossibile"></invoice-table>
-              </div>
-              <div class="col-sm-4">
-                <invoice-table
-                  endpoint="/rpc/invoices/?status=I_ACCEPTED:"
-                  description="I_ACCEPTED: ES notified that it was not accepted by the recipient"
-                  :home=home
-                  title="Accettate"></invoice-table>
-                <invoice-table
-                  endpoint="/rpc/invoices/?status=I_REFUSED"
-                  description="I_REFUSED: ES notified that it was not refused by the recipient"
-                  :home=home
-                  title="Rifiutate"></invoice-table>
-                <invoice-table
-                  endpoint="/rpc/invoices/?status=I_EXPIRED"
-                  description="I_EXPIRED: ES notified that it was not accepted / refused by the recipient for more than 15 days"
-                  :home=home
-                  title="Termini scaduti"></invoice-table>
-              </div>
+              </div> <!-- end row -->
+            </div> <!-- end container-fluid -->
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-sm">
+                  <invoice-table
+                    endpoint="/rpc/invoices/?status=I_UPLOADED"
+                    description="I_UPLOADED: ready to be transmitted to ES"
+                    button="Trasmetti"
+                    action="/rpc/transmit"
+                    :home=home
+                    title="Caricate"></invoice-table>
+                  <invoice-table
+                    endpoint="/rpc/invoices/?status=I_TRANSMITTED"
+                    description="I_TRANSMITTED: transmitted to ES"
+                    :home=home
+                    title="Trasmesse"></invoice-table>
+                  <invoice-table
+                    endpoint="/rpc/invoices/?status=I_INVALID"
+                    description="I_INVALID:	ES notified it was invalid"
+                    :home=home
+                    title="Invalide"></invoice-table>
+                </div>
+                <div class="col-sm">
+                  <invoice-table
+                    endpoint="/rpc/invoices/?status=I_DELIVERED"
+                    description="I_DELIVERED: ES notified that it was delivered to Recipient"
+                    :home=home
+                    title="Consegnate"></invoice-table>
+                  <invoice-table
+                    endpoint="/rpc/invoices/?status=I_FAILED_DELIVERY"
+                    description="I_FAILED_DELIVERY: failed delivery within 48 hours"
+                    :home=home
+                    title="Mancata consegna"></invoice-table>
+                  <invoice-table
+                    endpoint="/rpc/invoices/?status=I_IMPOSSIBLE_DELIVERY"
+                    description="I_IMPOSSIBLE_DELIVERY: ES notified that it was not delivered to the recipient within 48 hours + 10 days"
+                    :home=home
+                    title="Consegna impossibile"></invoice-table>
+                </div>
+                <div class="col-sm">
+                  <invoice-table
+                    endpoint="/rpc/invoices/?status=I_ACCEPTED:"
+                    description="I_ACCEPTED: ES notified that it was not accepted by the recipient"
+                    :home=home
+                    title="Accettate"></invoice-table>
+                  <invoice-table
+                    endpoint="/rpc/invoices/?status=I_REFUSED"
+                    description="I_REFUSED: ES notified that it was not refused by the recipient"
+                    :home=home
+                    title="Rifiutate"></invoice-table>
+                  <invoice-table
+                    endpoint="/rpc/invoices/?status=I_EXPIRED"
+                    description="I_EXPIRED: ES notified that it was not accepted / refused by the recipient for more than 15 days"
+                    :home=home
+                    title="Termini scaduti"></invoice-table>
+                </div>
+              </div> <!-- end row -->
             </div> <!-- end container-fluid -->
           </div> <!-- end content tab emissione -->
           <div class="tab-pane fade" id="ricezione" role="tabpanel" aria-labelledby="ricezione-tab">
             <!-- start content tab ricezione -->
             <div class="container-fluid">
-
-              <div class="card mb-3 col-sm-8">
-                <div class="card-header">
-                  <i class="fas fa-table"></i>
-                  Ricevute</div>
-                <div class="card-body">
-                  <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                      <thead>
-                        <tr>
-                          <th>ID</th>
-                          <th>Trasmittente</th>
-                          <th>Actions</th>
-                        </tr>
-                      </thead>
-                      <tfoot>
-                        <tr>
-                          <th>ID</th>
-                          <th>Trasmittente</th>
-                          <th>Actions</th>
-                        </tr>
-                      </tfoot>
-                      <tbody>
-                        <tr>
-                          <td>12</td>
-                          <td>2</td>
-                          <td><button type="button" class="btn btn-info">Accetta</button> <button type="button" class="btn btn-info">Rifiuta</button></td>
-                        </tr>
-                        <tr>
-                          <td>12</td>
-                          <td>2</td>
-                          <td><button type="button" class="btn btn-info">Accetta</button> <button type="button" class="btn btn-info">Rifiuta</button></td>
-                        </tr>
-                        <tr>
-                          <td>12</td>
-                          <td>2</td>
-                          <td><button type="button" class="btn btn-info">Accetta</button> <button type="button" class="btn btn-info">Rifiuta</button></td>
-                        </tr>
-                        <tr>
-                          <td>12</td>
-                          <td>2</td>
-                          <td><button type="button" class="btn btn-info">Accetta</button> <button type="button" class="btn btn-info">Rifiuta</button></td>
-                        </tr>
-                        <tr>
-                          <td>12</td>
-                          <td>2</td>
-                          <td><button type="button" class="btn btn-info">Accetta</button> <button type="button" class="btn btn-info">Rifiuta</button></td>
-                        </tr>                                                                                
-                      </tbody>
-                    </table>
+              <div class="row">
+                <div class="col-sm-8">
+                  <div class="card mb-3">
+                    <div class="card-header">
+                      <i class="fas fa-table"></i>
+                      Ricevute</div>
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                          <thead>
+                            <tr>
+                              <th>ID</th>
+                              <th>Trasmittente</th>
+                              <th>Azioni</th>
+                            </tr>
+                          </thead>
+                          <tfoot></tfoot>
+                          <tbody>
+                            <tr>
+                              <td>12</td>
+                              <td>2</td>
+                              <td><button type="button" class="btn btn-info">Accetta</button> <button type="button" class="btn btn-info">Rifiuta</button></td>
+                            </tr>
+                            <tr>
+                              <td>12</td>
+                              <td>2</td>
+                              <td><button type="button" class="btn btn-info">Accetta</button> <button type="button" class="btn btn-info">Rifiuta</button></td>
+                            </tr>
+                            <tr>
+                              <td>12</td>
+                              <td>2</td>
+                              <td><button type="button" class="btn btn-info">Accetta</button> <button type="button" class="btn btn-info">Rifiuta</button></td>
+                            </tr>
+                            <tr>
+                              <td>12</td>
+                              <td>2</td>
+                              <td><button type="button" class="btn btn-info">Accetta</button> <button type="button" class="btn btn-info">Rifiuta</button></td>
+                            </tr>
+                            <tr>
+                              <td>12</td>
+                              <td>2</td>
+                              <td><button type="button" class="btn btn-info">Accetta</button> <button type="button" class="btn btn-info">Rifiuta</button></td>
+                            </tr>                                                                                
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    <div class="card-footer small text-muted">R_RECEIVED: received from ES</div>
                   </div>
                 </div>
-                <div class="card-footer small text-muted">R_RECEIVED: received from ES</div>
-              </div>
-              <div class="col-sm-4">
-                <invoice-table
-                  endpoint="/rpc/invoices/?status=R_ACCEPTED:"
-                  description="R_ACCEPTED: Accepted"
-                  :home=home
-                  title="Accettate"></invoice-table>
-                <invoice-table
-                  endpoint="/rpc/invoices/?status=R_REFUSED"
-                  description="R_REFUSED: Refused"
-                  :home=home
-                  title="Rifiutate"></invoice-table>
-                <invoice-table
-                  endpoint="/rpc/invoices/?status=R_EXPIRED"
-                  description="R_EXPIRED: ES notified that it was not accepted / refused by the recipient for more than 15 days"
-                  :home=home
-                  title="Termini scaduti"></invoice-table>
+                <div class="col-sm">
+                  <invoice-table
+                    endpoint="/rpc/invoices/?status=R_ACCEPTED:"
+                    description="R_ACCEPTED: Accepted"
+                    :home=home
+                    title="Accettate"></invoice-table>
+                  <invoice-table
+                    endpoint="/rpc/invoices/?status=R_REFUSED"
+                    description="R_REFUSED: Refused"
+                    :home=home
+                    title="Rifiutate"></invoice-table>
+                  <invoice-table
+                    endpoint="/rpc/invoices/?status=R_EXPIRED"
+                    description="R_EXPIRED: ES notified that it was not accepted / refused by the recipient for more than 15 days"
+                    :home=home
+                    title="Termini scaduti"></invoice-table>
                 </div>
-              </div> <!-- end container-fluid -->
-              </div> <!-- end content tab ricezione -->
-          </div> </div> <!-- end content tab content -->
-
+              </div> <!-- end row -->
+            </div> <!-- end container-fluid -->
+          </div> <!-- end content tab ricezione -->
+        </div> <!-- end tab content -->
       </div>  <!-- /.container-fluid -->
     </div> <!-- /.content-wrapper -->
 
