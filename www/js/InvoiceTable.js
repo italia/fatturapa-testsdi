@@ -5,7 +5,7 @@
     "use strict";
 
     Vue.component('invoice-table', {
-        props: ['endpoint', 'title'],
+        props: ['endpoint', 'title', 'description', 'button', 'action', 'home'],
         data: function() {
             return {
                 invoices: []
@@ -14,7 +14,7 @@
         mounted: function() {
             var self = this;
             var request = new XMLHttpRequest();
-            request.open("GET", self.endpoint);
+            request.open("GET", self.home + self.endpoint);
             request.onload = function() {
                 if (request.status == 200) {
                     if (request.responseText) {
@@ -25,24 +25,41 @@
             };
             request.send();
         },
+        methods: {
+            doit: function() {
+                console.log(this.home + this.action);
+            }
+        },
         template: '\
-  <div class="card mb-3">\
-  <div class="card-header">\
-  <i class="fas fa-table"></i> {{ title }}</div>\
-  <div class="card-body">\
-  <div class="table-responsive">\
-  <div>\
-  <table class="table table-bordered" width="100%" cellspacing="0">\
-  <thead><tr><th>Id</th><th>Da</th><th>A</th></tr></thead>\
-  <tfoot><tr v-for="i in invoices">\
-  <td>{{ i.id }}</td>\
-  <td>{{ i.source }}</td>\
-  <td>{{ i.destination }}</td>\
-  </tr></tfoot>\
-  </table>\
-  </div>\
-  </div>\
-  </div>\
-  <div class="card-footer small text-muted"></div>\
-  </div>'
+<div class="card mb-3">\
+    <div class="card-header">\
+        <i class="fas fa-table"></i> {{ title }}\
+    </div>\
+    <div class="card-body">\
+        <div class="table-responsive">\
+            <div>\
+                <table class="table table-bordered" width="100%" cellspacing="0">\
+                    <thead>\
+                        <tr>\
+                            <th>Id</th>\
+                            <th>Da</th>\
+                            <th>A</th>\
+                        </tr>\
+                    </thead>\
+                    <tfoot>\
+                        <tr v-for="i in invoices">\
+                            <td>{{ i.id }}</td>\
+                            <td>{{ i.source }}</td>\
+                            <td>{{ i.destination }}</td>\
+                        </tr>\
+                    </tfoot>\
+                </table>\
+            </div>\
+        </div>\
+    </div>\
+    <div class="card-footer small text-muted">\
+        <span class="text-muted">{{ description }}</span>\
+        <button style="float: right;" v-if="button" type="button" v-on:click="doit();" class="btn btn-info">{{ button }}</button>\
+    </div>\
+</div>'
     });

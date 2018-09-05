@@ -30,17 +30,62 @@
     </ul>
 
     <div id="content-wrapper">
-      <div class="container-fluid">
-        <div id="tables">
-          <invoice-table endpoint="/sdi/rpc/invoices/?status=E_RECEIVED" title="Ricevute"></invoice-table>
-          <invoice-table endpoint="/sdi/rpc/invoices/?status=E_VALID" title="Valide"></invoice-table>
-          <invoice-table endpoint="/sdi/rpc/invoices/?status=E_FAILED_DELIVERY" title="Mancata consegna"></invoice-table>
-          <invoice-table endpoint="/sdi/rpc/invoices/?status=E_DELIVERED" title="Consegnate"></invoice-table>
-          <invoice-table endpoint="/sdi/rpc/invoices/?status=E_INVALID" title="Invalide"></invoice-table>
-          <invoice-table endpoint="/sdi/rpc/invoices/?status=E_IMPOSSIBLE_DELIVERY" title="Consegna impossibile"></invoice-table>
-          <invoice-table endpoint="/sdi/rpc/invoices/?status=E_ACCEPTED" title="Accettate"></invoice-table>
-          <invoice-table endpoint="/sdi/rpc/invoices/?status=E_REFUSED" title="Rifiutate"></invoice-table>
-          <invoice-table endpoint="/sdi/rpc/invoices/?status=E_EXPIRED" title="Termini scaduti"></invoice-table>
+      <div class="container-fluid" id="tables">
+        <div class="actions"><button type="button" v-on:click="dispatch();" class="btn btn-info">Invia notifiche</button></div>
+          <div class="col-sm-4">
+            <invoice-table
+              endpoint="/rpc/invoices/?status=E_RECEIVED"
+              description="E_RECEIVED: received from transmitter"
+              button="Valida"
+              action="/rpc/checkValidity"
+              :home=home
+              title="Ricevute"></invoice-table>
+            <invoice-table
+              endpoint="/rpc/invoices/?status=E_INVALID"
+              description="E_INVALID: did not pass test"
+              :home=home
+              title="Invalide"></invoice-table>
+          </div>
+          <div class="col-sm-4">
+            <invoice-table
+              endpoint="/rpc/invoices/?status=E_VALID"
+              description="E_VALID: passed checks"
+              button="Consegna"
+              action="/rpc/deliver"
+              :home=home
+              title="Valide"></invoice-table>
+            <invoice-table
+              endpoint="/rpc/invoices/?status=E_FAILED_DELIVERY"
+              description="E_FAILED_DELIVERY: failed delivery within 48 hours"
+              :home=home
+              title="Mancata consegna"></invoice-table>
+            <invoice-table 
+              endpoint="/rpc/invoices/?status=E_IMPOSSIBLE_DELIVERY"
+              description="E_IMPOSSIBLE_DELIVERY: failed delivery within 48 hours + 10 days"
+              :home=home
+              title="Consegna impossibile"></invoice-table>
+            <invoice-table
+              endpoint="/rpc/invoices/?status=E_DELIVERED"
+              description="E_DELIVERED: delivered to recipient"
+              button="Verifica termini"
+              action="/rpc/checkExpiration"
+              :home=home
+              title="Consegnate"></invoice-table>
+          </div>
+          <div class="col-sm-4">
+            <invoice-table
+              endpoint="/rpc/invoices/?status=E_ACCEPTED"
+              description="E_ACCEPTED: Recipient notified that it accepted the invoice"
+              title="Accettate"></invoice-table>
+            <invoice-table
+              endpoint="/rpc/invoices/?status=E_REFUSED"
+              description="E_REFUSED: Recipient notified that it refused the invoice"
+              title="Rifiutate"></invoice-table>
+            <invoice-table
+              endpoint="/rpc/invoices/?status=E_EXPIRED"
+              description="E_EXPIRED: not accepted / refused by the recipient for more than 15 days"
+              title="Termini scaduti"></invoice-table>
+          </div>
         </div>
       </div>  <!-- /.container-fluid -->
     </div> <!-- /.content-wrapper -->
@@ -50,7 +95,15 @@
     {{ parent() }}
     <script type="text/javascript">
       var app = new Vue({
-        el: '#tables'
+        el: '#tables',
+        data: {
+          home: '/sdi'
+        },
+        methods: {
+          dispatch: function() {
+            console.log(this.home + '/rpc/dispatch');
+          }
+        }
       });
       document.addEventListener('DOMContentLoaded', function() {
         console.log("DOM fully loaded and parsed");
