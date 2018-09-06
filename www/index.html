@@ -114,7 +114,7 @@
             <button type="button" onclick="post('/sdi/rpc/timestamp', 'timestamp', 'dt');" class="btn btn-info">Set the simulated date & time</button>
           </li>
           <li>
-            <input id="speed" type="number">
+            <input id="speed" type="number" min="1" max="1000000000">
             <button type="button" onclick="post('/sdi/rpc/speed', 'speed', 'speed');" class="btn btn-info">Set factor for simulated time to wallclock time</button>
           </li>
           <li>
@@ -141,7 +141,8 @@
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin.min.js"></script>
 
-            <script type="text/javascript" src="js/InvoiceTable.js"></script>
+            <script type="text/javascript" src="js/common.js"></script>
+    <script type="text/javascript" src="js/InvoiceTable.js"></script>
     <!-- Sticky Footer -->
     <footer class="sticky-footer">
         <div class="container my-auto">
@@ -155,32 +156,6 @@
     </footer>
     
     <script type="text/javascript">
-      function get(url, element) {
-        var request = new XMLHttpRequest();
-        request.open("GET", url);
-        request.onload = function() {
-          if (request.status == 200) {
-            if (element) {
-              document.getElementById(element).innerHTML = request.responseText;
-            }
-          } else {
-            console.error(request.responseText);
-          }
-        };
-        request.send();
-      }
-      function post(url, parameter, element) {
-        var request = new XMLHttpRequest();
-        request.open("POST", url);
-        request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        request.onload = function() {
-          if ((request.status != 200) && (request.status != 201)) {
-            console.error(request.responseText);
-          }
-        };
-        var value = document.getElementById(element).value;
-        request.send(parameter + '=' + value);
-      }
       var app = new Vue({
         el: '#tables'
       });

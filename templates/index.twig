@@ -55,32 +55,6 @@
 {% block footer %}
     {{ parent() }}
     <script type="text/javascript">
-      function get(url, element) {
-        var request = new XMLHttpRequest();
-        request.open("GET", url);
-        request.onload = function() {
-          if (request.status == 200) {
-            if (element) {
-              document.getElementById(element).innerHTML = request.responseText;
-            }
-          } else {
-            console.error(request.responseText);
-          }
-        };
-        request.send();
-      }
-      function post(url, parameter, element) {
-        var request = new XMLHttpRequest();
-        request.open("POST", url);
-        request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        request.onload = function() {
-          if ((request.status != 200) && (request.status != 201)) {
-            console.error(request.responseText);
-          }
-        };
-        var value = document.getElementById(element).value;
-        request.send(parameter + '=' + value);
-      }
       var app = new Vue({
         el: '#tables'
       });

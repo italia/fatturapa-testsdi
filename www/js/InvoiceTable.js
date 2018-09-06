@@ -1,36 +1,36 @@
-    // configuration for jshint
-    /* jshint browser: true, devel: true */
-    /* global Vue */
+// configuration for jshint
+/* jshint browser: true, devel: true */
+/* global Vue, get */
 
-    "use strict";
+"use strict";
 
-    Vue.component('invoice-table', {
-        props: ['endpoint', 'title', 'description', 'button', 'action', 'home'],
-        data: function() {
-            return {
-                invoices: []
-            }
-        },
-        mounted: function() {
-            var self = this;
-            var request = new XMLHttpRequest();
-            request.open("GET", self.home + self.endpoint);
-            request.onload = function() {
-                if (request.status == 200) {
-                    if (request.responseText) {
-                        var invoices = JSON.parse(request.responseText);
-                        self.invoices = invoices;
-                    }
+Vue.component('invoice-table', {
+    props: ['endpoint', 'title', 'description', 'button', 'action', 'home'],
+    data: function() {
+        return {
+            invoices: []
+        };
+    },
+    mounted: function() {
+        var self = this;
+        var request = new XMLHttpRequest();
+        request.open("GET", self.home + self.endpoint);
+        request.onload = function() {
+            if (request.status == 200) {
+                if (request.responseText) {
+                    var data = JSON.parse(request.responseText);
+                    self.invoices = data.invoices;
                 }
-            };
-            request.send();
-        },
-        methods: {
-            doit: function() {
-                console.log(this.home + this.action);
             }
-        },
-        template: '\
+        };
+        request.send();
+    },
+    methods: {
+        doit: function() {
+            get(this.home + this.action);
+        }
+    },
+    template: '\
 <div class="card mb-3">\
     <div class="card-header">\
         <i class="fas fa-table"></i> {{ title }}\
@@ -42,15 +42,15 @@
                     <thead>\
                         <tr>\
                             <th>Id</th>\
-                            <th>Da</th>\
-                            <th>A</th>\
+                            <th>Nome file</th>\
+                            <th>Data e ora</th>\
                         </tr>\
                     </thead>\
                     <tfoot>\
                         <tr v-for="i in invoices">\
-                            <td>{{ i.id }}</td>\
-                            <td>{{ i.source }}</td>\
-                            <td>{{ i.destination }}</td>\
+                            <td>{{ i.uuid }}</td>\
+                            <td>{{ i.nomefile }}</td>\
+                            <td>{{ i.ctime }}</td>\
                         </tr>\
                     </tfoot>\
                 </table>\
@@ -62,4 +62,4 @@
         <button style="float: right;" v-if="button" type="button" v-on:click="doit();" class="btn btn-info">{{ button }}</button>\
     </div>\
 </div>'
-    });
+});
