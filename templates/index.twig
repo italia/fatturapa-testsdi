@@ -32,10 +32,21 @@
     <div id="content-wrapper">
       <div class="container-fluid">
         <ul>
-          <li>clear (reset the state of all actors)</li>
-          <li>set the current time</li>
-          <li>set factor for simulated time to wallclock time</li>
-          <li>show current simulation time</li>
+          <li>
+            <button type="button" onclick="get('/sdi/rpc/clear');" class="btn btn-info">Clear (resets the state)</button>
+          </li>
+          <li>
+            <input id="dt" type="datetime-local">
+            <button type="button" onclick="post('/sdi/rpc/timestamp', 'timestamp', 'dt');" class="btn btn-info">Set the simulated date & time</button>
+          </li>
+          <li>
+            <input id="speed" type="number" min="1" max="1000000000">
+            <button type="button" onclick="post('/sdi/rpc/speed', 'speed', 'speed');" class="btn btn-info">Set factor for simulated time to wallclock time</button>
+          </li>
+          <li>
+            <button type="button" onclick="get('/sdi/rpc/datetime', 'simtime');" class="btn btn-info">Show current simulation time</button>
+            <span id="simtime"></span>
+          </li>
         </ul>
       </div>  <!-- /.container-fluid -->
     </div> <!-- /.content-wrapper -->
@@ -44,6 +55,32 @@
 {% block footer %}
     {{ parent() }}
     <script type="text/javascript">
+      function get(url, element) {
+        var request = new XMLHttpRequest();
+        request.open("GET", url);
+        request.onload = function() {
+          if (request.status == 200) {
+            if (element) {
+              document.getElementById(element).innerHTML = request.responseText;
+            }
+          } else {
+            console.error(request.responseText);
+          }
+        };
+        request.send();
+      }
+      function post(url, parameter, element) {
+        var request = new XMLHttpRequest();
+        request.open("POST", url);
+        request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        request.onload = function() {
+          if ((request.status != 200) && (request.status != 201)) {
+            console.error(request.responseText);
+          }
+        };
+        var value = document.getElementById(element).value;
+        request.send(parameter + '=' + value);
+      }
       var app = new Vue({
         el: '#tables'
       });
