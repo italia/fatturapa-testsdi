@@ -288,7 +288,7 @@ Tested on: amd64 Debian 9.5 (stretch, current stable) with PHP 7.0 and Laravel 5
 
 Install prerequisites:
 ```sh
-sudo apt install php-cli php-fpm composer nginx php-soap php-mbstring php-dom php-zip composer nginx postgresql php-dev
+sudo apt install php-cli php-fpm composer nginx php-soap php-mbstring php-dom php-zip composer nginx postgresql
 ```
 
 ### Configuring and Installing
@@ -310,24 +310,6 @@ For example if you configure with three I/R actors, your SOAP endpoints will be 
   - https://www.example.com/td000003/soap/TrasmissioneFatture
 
 For the moment being **only one actor** is supported (sdi), so clone the repo to the `/var/www/html/sdi` directory on your webserver.
-
-Install [php-timecop](https://github.com/hnw/php-timecop) extension using `phpize`:
-```
-git clone https://github.com/hnw/php-timecop.git
-cd php-timecop
-phpize
-./configure
-make
-make test
-sudo make install
-```
-add a file `99-timecop.ini` in `/etc/php/7.0/cli/conf.d/` and in `/etc/php/7.0/fpm/conf.d/`:
-```
-; configuration for https://github.com/hnw/php-timecop
-; priority=99
-extension=timecop.so
-```
-and restart php-fpm: `sudo systemctl restart php7.0-fpm.service`
 
 Install prerequisites with composer:
 
