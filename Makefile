@@ -19,3 +19,4 @@ all:
 	./bin/build.php index "FatturaPA testUI - Dashboard" > www/index.html
 	./bin/build.php sdi "FatturaPA testUI - Sistema di Interscambio" > www/sdi.html
 	./bin/build.php td0000001 "FatturaPA testUI - Trasmittente / destinatario 00000001" > www/td0000001.html
+	./bin/build.php td0000002 "FatturaPA testUI - Trasmittente / destinatario 00000002" > www/td0000002.html
