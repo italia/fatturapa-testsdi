@@ -4,6 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
+    "hash": "fd60cb5b53bc1c8ad84eac3b1f78e8cc",
     "content-hash": "ea25e69621405e0d0043b04345a67647",
     "packages": [
         {
@@ -60,7 +61,7 @@
                 "utility",
                 "utils"
             ],
-            "time": "2015-07-23T00:54:12+00:00"
+            "time": "2015-07-23 00:54:12"
         },
         {
             "name": "doctrine/inflector",
@@ -127,7 +128,7 @@
                 "singularize",
                 "string"
             ],
-            "time": "2017-07-22T12:18:28+00:00"
+            "time": "2017-07-22 12:18:28"
         },
         {
             "name": "illuminate/container",
@@ -170,7 +171,7 @@
             ],
             "description": "The Illuminate Container package.",
             "homepage": "http://laravel.com",
-            "time": "2016-06-14T13:37:44+00:00"
+            "time": "2016-06-14 13:37:44"
         },
         {
             "name": "illuminate/contracts",
@@ -212,7 +213,7 @@
             ],
             "description": "The Illuminate Contracts package.",
             "homepage": "http://laravel.com",
-            "time": "2015-09-24T11:16:48+00:00"
+            "time": "2015-09-24 11:16:48"
         },
         {
             "name": "illuminate/database",
@@ -271,7 +272,7 @@
                 "orm",
                 "sql"
             ],
-            "time": "2015-07-20T16:50:34+00:00"
+            "time": "2015-07-20 16:50:34"
         },
         {
             "name": "illuminate/support",
@@ -325,7 +326,7 @@
             ],
             "description": "The Illuminate Support package.",
             "homepage": "http://laravel.com",
-            "time": "2016-06-11T16:44:59+00:00"
+            "time": "2016-06-11 16:44:59"
         },
         {
             "name": "nesbot/carbon",
@@ -380,7 +381,7 @@
                 "datetime",
                 "time"
             ],
-            "time": "2018-08-07T08:39:47+00:00"
+            "time": "2018-08-07 08:39:47"
         },
         {
             "name": "paragonie/random_compat",
@@ -428,7 +429,7 @@
                 "pseudorandom",
                 "random"
             ],
-            "time": "2018-04-04T21:48:54+00:00"
+            "time": "2018-04-04 21:48:54"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -487,7 +488,7 @@
                 "portable",
                 "shim"
             ],
-            "time": "2018-08-06T14:22:27+00:00"
+            "time": "2018-08-06 14:22:27"
         },
         {
             "name": "symfony/translation",
@@ -555,7 +556,7 @@
             ],
             "description": "Symfony Translation Component",
             "homepage": "https://symfony.com",
-            "time": "2018-07-26T11:19:56+00:00"
+            "time": "2018-07-26 11:19:56"
         }
     ],
     "packages-dev": [],

@@ -213,9 +213,9 @@ The handler class is implemented in [a file with the same name `SdIRiceviFileHan
 
 All `libsdi` classes have a common `Base` class with:
 - `Base::clear`: resets the state, called by `POST /clear`
-- `Base::setTimeStamp(timestamp)`: used to tweak the timestamp of all following events, called by `POST /timestamp/ {iso8601_UTC_timetamp: 2018-09-15T23:59Z}`
+- `Base::setDateTime(datetime)`: used to tweak the timestamp of all following events, called by `POST /timestamp/ timestamp: 2018-09-15T23:59Z`
 - `Base::setSpeed(multiplier)`: between calls to `setTimeStamp`, time will flow at 1 x factor w.r.t. to wallclock time, called by `POST /speed/10`
-- `Base::getTimestamp`: retrieves current simulated date and time, called by `GET /timestamp`
+- `Base::getDateTime`: retrieves current simulated date and time, called by `GET /datetime`
 - SDICoop Transmit / TrasmissioneFatture notifications servers are implemented calling:
   - `Base::receive(invoice, type, notification_blob)` stores a N_RECEIVED notification for the invoice+type, including the notification payload as binary blob
 - all `Exchange` and `Recipient` methods that must notify call:
@@ -255,8 +255,8 @@ The `Recipient` class is used to implement the **recipent** actor and has:
 
 - general simulation control:
   - `POST /clear`: resets the state
-  - `GET /timestamp`: retrieves current simulated date and time
-  - `POST /timestamp/ {iso8601_UTC_timetamp: 2018-09-15T23:59Z}`: tweak the timestamp of all following events
+  - `GET /datetime`: retrieves current simulated date and time
+  - `POST /timestamp/ timetamp: 2018-09-15T23:59Z`: tweak the timestamp of all following events
   - `POST /speed/10`: set factor for simulated time to wallclock time
 
 - notifications:
@@ -288,7 +288,7 @@ Tested on: amd64 Debian 9.5 (stretch, current stable) with PHP 7.0 and Laravel 5
 
 Install prerequisites:
 ```sh
-sudo apt install php-cli php-fpm composer nginx php-soap php-mbstring php-dom php-zip composer nginx postgresql
+sudo apt install php-cli php-fpm composer nginx php-soap php-mbstring php-dom php-zip composer nginx postgresql phpunit
 ```
 
 ### Configuring and Installing
@@ -328,10 +328,15 @@ composer dumpautoload -o
 
 Set up Laravel:
 ```sh
-cd rpc
-sudo chown -R www-data:www-data storage/logs/
-sudo chown -R www-data:www-data storage/framework/
-sudo chown -R www-data:www-data bootstrap/cache/
+cd database
+touch storage/time_travel.json
+sudo chown www-data storage/time_travel.json
+cd ../rpc
+sudo chown -R www-data storage/logs
+touch storage/logs/laravel.log
+sudo chmod g+w storage/logs/laravel.log
+sudo chown -R www-data storage/framework
+sudo chown -R www-data bootstrap/cache
 cp .env.example .env
 php artisan key:generate
 sudo su -s /bin/bash www-data

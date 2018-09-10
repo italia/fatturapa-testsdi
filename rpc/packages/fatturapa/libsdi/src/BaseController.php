@@ -22,21 +22,27 @@ class BaseController extends Controller
 		echo "clear";
 		exit;
 	}
-	public function settimestamp()
+	public function setdatetime(Request $request)
 	{
-		Base::setTimeStamp('2019-01-01 00:00:00');
-		echo "timestamp";
+		$timestamp = $request->input('timestamp');					
+		$datetime = new \DateTime($timestamp);
+		Base::setDateTime($datetime);
+		echo "timestamp: ".$timestamp;
 		exit;
 	}	
-	public function speed()
+	public function speed(Request $request)
 	{
-		Base::setSpeed(3600);
+		$speed = $request->input('speed');
+		Base::setSpeed($speed);
 		echo "speed";
 		exit;
 	}
-	public function gettimestamp()
+	public function getdatetime()
 	{
-		echo Base::getTimeStamp();		
+		
+		$dateTime=Base::getDateTime();
+		
+		echo "timestamp: " . $dateTime->date;
 		exit;
 	}
 

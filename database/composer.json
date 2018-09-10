@@ -7,7 +7,8 @@
     	},
     "autoload": {
     	"files": [
-            "app/lib/Exchange/Exchange.php"
+            "app/lib/Exchange/Exchange.php",
+            "app/lib/Base/Base.php"
         ],
         "psr-4": {
                    "Controllers\\": "app/controllers/",

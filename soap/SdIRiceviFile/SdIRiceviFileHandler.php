@@ -11,17 +11,13 @@ class SdIRiceviFileHandler
 
     public function RiceviFile($parametersIn)
     {
+    	// ADD TO DB
+        $Invoice=Exchange::receive($parametersIn->File, $parametersIn->NomeFile, 1);        
         // Get current timestamp
-        date_default_timezone_set('Europe/Berlin');
-        $DataOraRicezione = new \DateTime();
-        $IdentificativoSdI = 'TODO';
-        $new_elem = array("identificativo_sdi" => $IdentificativoSdI,
-                          "nome_file" => $parametersIn->NomeFile,
-                          "data_ricezione" => $DataOraRicezione,
-                          "stato" => 1);
-        // ADD TO DB
-        Exchange::receive($parametersIn->File, $parametersIn->NomeFile);
-        //
+        //date_default_timezone_set('Europe/Berlin');
+        $DataOraRicezione =  new \DateTime($Invoice->ctime);
+        $IdentificativoSdI = $Invoice->uuid;       
+       
         $rispostaSdIRiceviFile = new \rispostaSdIRiceviFile_Type($IdentificativoSdI, $DataOraRicezione);
         $errore = "EI01";
         $rispostaSdIRiceviFile->setErrore($errore);

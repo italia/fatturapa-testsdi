@@ -3,6 +3,6 @@
 Route::get('invoices', 'fatturapa\libsdi\InvoicesController@index');
 Route::get('checkValidity', 'fatturapa\libsdi\InvoicesController@checkValidity');
 Route::get('clear', 'fatturapa\libsdi\BaseController@clear');
-Route::get('timestamp', 'fatturapa\libsdi\BaseController@settimestamp');
-Route::get('speed', 'fatturapa\libsdi\BaseController@speed');
-Route::get('gettimestamp', 'fatturapa\libsdi\BaseController@gettimestamp');
+Route::post('timestamp', 'fatturapa\libsdi\BaseController@setdatetime');
+Route::post('speed', 'fatturapa\libsdi\BaseController@speed');
+Route::get('datetime', 'fatturapa\libsdi\BaseController@getdatetime');

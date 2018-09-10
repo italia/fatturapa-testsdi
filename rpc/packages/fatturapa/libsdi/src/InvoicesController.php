@@ -11,12 +11,11 @@ class InvoicesController extends Controller
 	
     public function index(Request $request)
     {
-    	$state = $request->input('state');	
-    	$Invoices = Invoice::all()->where('status', $state);		
-		echo "<pre>";
-		print_r($Invoices->toArray());
-		exit;
-    				    			
+    	$status = $request->input('status');	
+    	$Invoices = Invoice::all()->where('status', $status);
+	
+		return response()->json(array(            
+            'invoices' => $Invoices->toArray()));			    				    		
     }
 	public function checkValidity()
 	{		
