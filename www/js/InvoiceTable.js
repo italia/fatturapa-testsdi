@@ -27,7 +27,7 @@ Vue.component('invoice-table', {
     },
     methods: {
         doit: function() {
-            get(this.home + this.action);
+            post(this.home + this.action);
         }
     },
     template: '\

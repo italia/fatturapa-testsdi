@@ -30,8 +30,12 @@ function post(url, parameter, element) {
             console.error(request.responseText);
         }
     };
-    var value = document.getElementById(element).value;
-    var data = parameter + '=' + value; // TODO urlescape !
-    console.log('POSTing ' + data + ' to ' + url);
-    request.send(data);
+    if (parameter && value) {
+        var value = document.getElementById(element).value;
+        var data = parameter + '=' + value; // TODO urlescape !
+        console.log('POSTing ' + data + ' to ' + url);
+        request.send(data);
+    } else {
+        request.send();
+    }
 }
