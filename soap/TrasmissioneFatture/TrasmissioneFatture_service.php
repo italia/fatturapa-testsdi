@@ -26,8 +26,8 @@ class TrasmissioneFatture_service extends \SoapClient
         $options = array_merge(array (
         'features' => 1,
         ), $options);
-        if (!$wsdl) {
-            $wsdl = './TrasmissioneFatture/TrasmissioneFatture_v1.1.wsdl';
+        if (!$wsdl) {            
+			$wsdl = ROOT . 'TrasmissioneFatture/TrasmissioneFatture_v1.1.wsdl';
         }
         parent::__construct($wsdl, $options);
     }
@@ -37,7 +37,7 @@ class TrasmissioneFatture_service extends \SoapClient
      * @return void
      */
     public function RicevutaConsegna(fileSdI_Type $ricevuta)
-    {
+    {    	
         return $this->__soapCall('RicevutaConsegna', array($ricevuta));
     }
 

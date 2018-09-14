@@ -10,7 +10,12 @@
     "minimum-stability": "dev",
     "autoload": {
     	"files": [
-            "../../../../database/config.php"
+            "../../../../database/config.php",
+            "../../../../soap/config.php",           
+            "../../../../soap/SdIRiceviFile/autoload.php",
+            "../../../../soap/SdIRiceviNotifica/autoload.php",
+            "../../../../soap/RicezioneFatture/autoload.php",
+            "../../../../soap/TrasmissioneFatture/autoload.php"
         ],
     	"psr-4": {	
     		"Fatturapa\\Libsdi\\" : "src/",

@@ -8,6 +8,6 @@ class Notification extends Model
 {
     protected $primaryKey = 'uuid';
     public $timestamps = false;
-    protected $table = 'invoices';
-    protected $fillable = ['uuid','invoice_uuid','type','state','blob'];
+    protected $table = 'notifications';
+    protected $fillable = ['uuid','invoice_uuid','type','status','blob','actor'];
 }

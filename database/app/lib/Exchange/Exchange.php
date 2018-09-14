@@ -14,7 +14,7 @@ class Exchange
     {
         new Database();
     }
-    public static function receive($XML, $NomeFile, $posizione)
+    public static function receive($XML, $NomeFile, $posizione, $actor)
     {
         Exchange::Exchange();
         $xmlString = base64_decode($XML);
@@ -33,13 +33,15 @@ class Exchange
                 'anno' => substr($data, 0, 4),
                 'status' => 'E_RECEIVED',
                 'blob' => $XML,
-                'ctime' => $dateTime->date
+                'ctime' => $dateTime->date,
+                'actor' => $actor
             ]
         );
         return $Invoice;
     }
     public static function checkValidity()
     {
+        
         Exchange::Exchange();
         $Invoice = Invoice::all()->where('status', 'E_RECEIVED');
         $Invoices = $Invoice->toArray();
