@@ -56,7 +56,7 @@
             <div class="container-fluid">
               <div class="row">
                 <div class="col-sm-6 offset-sm-3">
-                  <form action="<?php echo BASENAME; ?>rpc/upload" method="POST" enctype="multipart/form-data">
+                  <form action="{{ app.request.pathinfo }}rpc/upload" method="POST" enctype="multipart/form-data">
                     <button type="button" class="btn btn-info btn-block" onclick="document.getElementById('inputFile').click()">Scegli fattura...</button>
                     <div class="form-group inputDnD">
                     <label class="sr-only" for="inputFile">File Upload</label>
