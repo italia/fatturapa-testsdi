@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <title>FatturaPA testUI - Trasmittente / destinatario 00000002</title>
 
-    <!-- Bootstrap core CSS-->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap core CSS 
+    <link href="css/bootstrap.min.css" rel="stylesheet"> -->
 
-    <!-- Custom fonts for this template-->
-    <link href="css/all.min.css" rel="stylesheet" type="text/css">
+    <!-- Custom fonts for this template
+    <link href="css/all.min.css" rel="stylesheet" type="text/css"> -->
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin.css" rel="stylesheet">  
@@ -130,14 +130,13 @@
             <div class="container-fluid">
               <div class="row">
                 <div class="col-sm-6 offset-sm-3">
-                  <form action="<?php echo BASENAME; ?>rpc/upload" method="POST" enctype="multipart/form-data">
-                    <button type="button" class="btn btn-info btn-block" onclick="document.getElementById('inputFile').click()">Carica fattura</button>
+                  <form action="rpc/upload" method="POST" enctype="multipart/form-data">
+                    <button type="button" class="btn btn-info btn-block" onclick="document.getElementById('inputFile').click()">Scegli fattura...</button>
                     <div class="form-group inputDnD">
                     <label class="sr-only" for="inputFile">File Upload</label>
                     <input type="file" name="File" class="form-control-file text-info font-weight-bold" id="inputFile" accept="text/xml" onchange="readUrl(this)" data-title="oppure trascina qui la fattura in formato XML" />
-                    <input type="text" name="NomeFile" hidden/>
-                    <input type="submit" name="submit" value="submit" />
                     </div>
+                    <input type="submit" name="submit" value="Carica" class="btn btn-info btn-block"/>
                   </form>
                 </div>
               </div> <!-- end row -->
@@ -322,5 +321,12 @@
         console.log("DOM fully loaded and parsed");
       });
     </script>
+
+      <link rel="stylesheet" href="css/bootstrap-italia.min.css" />
+    <link rel="stylesheet" href="css/italia-icon-font.css" />
+  
+      <script src="js/bootstrap-italia.bundle.min.js"></script>
+    <script src="js/bootstrap-italia.min.js"></script>
+      
   </body>
 </html>

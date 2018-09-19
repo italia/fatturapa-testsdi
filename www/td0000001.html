@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <title>FatturaPA testUI - Trasmittente / destinatario 00000001</title>
 
-    <!-- Bootstrap core CSS-->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap core CSS 
+    <link href="css/bootstrap.min.css" rel="stylesheet"> -->
 
-    <!-- Custom fonts for this template-->
-    <link href="css/all.min.css" rel="stylesheet" type="text/css">
+    <!-- Custom fonts for this template
+    <link href="css/all.min.css" rel="stylesheet" type="text/css"> -->
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin.css" rel="stylesheet">  
@@ -130,7 +130,7 @@
             <div class="container-fluid">
               <div class="row">
                 <div class="col-sm-6 offset-sm-3">
-                  <form action="{{ app.request.pathinfo }}rpc/upload" method="POST" enctype="multipart/form-data">
+                  <form action="rpc/upload" method="POST" enctype="multipart/form-data">
                     <button type="button" class="btn btn-info btn-block" onclick="document.getElementById('inputFile').click()">Scegli fattura...</button>
                     <div class="form-group inputDnD">
                     <label class="sr-only" for="inputFile">File Upload</label>
@@ -321,5 +321,12 @@
         console.log("DOM fully loaded and parsed");
       });
     </script>
+
+      <link rel="stylesheet" href="css/bootstrap-italia.min.css" />
+    <link rel="stylesheet" href="css/italia-icon-font.css" />
+  
+      <script src="js/bootstrap-italia.bundle.min.js"></script>
+    <script src="js/bootstrap-italia.min.js"></script>
+      
   </body>
 </html>

@@ -8,6 +8,10 @@ all:
 	cp node_modules/bootstrap/dist/js/bootstrap.bundle.min.js www/js/.
 	cp node_modules/bootstrap/dist/js/bootstrap.bundle.min.js.map www/js/.
 
+	cp node_modules/bootstrap-italia/dist/js/bootstrap-italia.bundle.min.js www/js/.
+	cp node_modules/bootstrap-italia/dist/js/bootstrap-italia.min.js www/js/.
+
+
 	mkdir -p www/webfonts
 	cp node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2 www/webfonts/.
 	cp node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff www/webfonts/.
