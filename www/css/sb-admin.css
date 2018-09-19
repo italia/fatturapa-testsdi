@@ -408,3 +408,10 @@ body.sidebar-toggled footer.sticky-footer {
   border-style: solid;
   box-shadow: inset 0px 0px 0px 0.25em currentColor;
 }
+
+
+@media (min-width: 992px) {
+  .navbar {
+    padding: 10px !important;
+  }
+}

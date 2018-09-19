@@ -37,23 +37,42 @@
 
     <div id="content-wrapper">
       <div class="container-fluid">
-        <ul>
-          <li>
-            <button type="button" onclick="get('/sdi/rpc/clear');" class="btn btn-info">Clear (resets the state)</button>
-          </li>
-          <li>
-            <input id="dt" type="datetime-local">
-            <button type="button" onclick="post('/sdi/rpc/timestamp', 'timestamp', 'dt');" class="btn btn-info">Set the simulated date & time</button>
-          </li>
-          <li>
-            <input id="speed" type="number" min="1" max="1000000000">
-            <button type="button" onclick="post('/sdi/rpc/speed', 'speed', 'speed');" class="btn btn-info">Set factor for simulated time to wallclock time</button>
-          </li>
-          <li>
-            <button type="button" onclick="get('/sdi/rpc/datetime', 'simtime');" class="btn btn-info">Show current simulation time</button>
-            <span id="simtime"></span>
-          </li>
-        </ul>
+        <div class="card mb-3">
+              <div class="card-body">
+                <h5 class="card-title border-bottom border-italia">Actions...</h5>
+                <div class="card-text">
+                  <div class="col-sm-6 input-group pb-3">
+                    <div class="input-group-prepend">
+                      <button type="button" onclick="get('/sdi/rpc/clear');" class="btn mb-1 btn-primary">Clear (resets the state)</button>
+                    </div>
+                  </div>
+                  <div class="input-group">
+                   <div class="input-group-prepend">
+                      <span class="input-group-text" id="">Set the simulated date & time</span>
+                   </div>                   
+                      <input id="dt" type="datetime-local" class="form-control" aria-label="date">
+                      <button type="button" onclick="post('/sdi/rpc/timestamp', 'timestamp', 'dt');" class="btn mb-1 btn-primary">Set the simulated date & time</button>
+                  </div>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="">Speed</span>
+                    </div>
+                    <input id="speed" type="number" min="1" max="1000000000" class="form-control" placeholder="10" aria-label="speed">
+                  </div>
+                  <div class="input-group">
+                   <div class="input-group-prepend">  
+                      <button type="button" onclick="post('/sdi/rpc/speed', 'speed', 'speed');" class="btn mb-1 btn-primary">Set factor for simulated time to wallclock time</button>
+                    </div>
+                  </div>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <button type="button" onclick="get('/sdi/rpc/datetime', 'simtime');" class="btn mb-1 btn-primary">Show current simulation time</button>
+                      <span id="simtime"></span>
+                    </div>
+                  </div>
+                </div>  <!-- /.card-text -->
+              </div>  <!-- /.card-body -->
+        </div>  <!-- /.card mb-3 -->
       </div>  <!-- /.container-fluid -->
     </div> <!-- /.content-wrapper -->
 
