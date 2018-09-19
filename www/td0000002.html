@@ -130,14 +130,13 @@
             <div class="container-fluid">
               <div class="row">
                 <div class="col-sm-6 offset-sm-3">
-                  <form action="<?php echo BASENAME; ?>rpc/upload" method="POST" enctype="multipart/form-data">
-                    <button type="button" class="btn btn-info btn-block" onclick="document.getElementById('inputFile').click()">Carica fattura</button>
+                  <form action="/td0000002/rpc/upload" method="POST" enctype="multipart/form-data">
+                    <button type="button" class="btn btn-info btn-block" onclick="document.getElementById('inputFile').click()">Scegli fattura...</button>
                     <div class="form-group inputDnD">
                     <label class="sr-only" for="inputFile">File Upload</label>
                     <input type="file" name="File" class="form-control-file text-info font-weight-bold" id="inputFile" accept="text/xml" onchange="readUrl(this)" data-title="oppure trascina qui la fattura in formato XML" />
-                    <input type="text" name="NomeFile" hidden/>
-                    <input type="submit" name="submit" value="submit" />
                     </div>
+                    <input type="submit" name="submit" value="Carica" class="btn btn-info btn-block"/>
                   </form>
                 </div>
               </div> <!-- end row -->
