@@ -1,0 +1,125 @@
+<?php
+
+
+namespace FatturaPa\Core\Actors;
+
+use FatturaPa\Core\Models\Database;
+use FatturaPa\Core\Models\Invoice;
+use FatturaPa\Core\Models\Notification;
+use Illuminate\Support\Facades\URL;
+
+define('TIME_TRAVEL_DB', BASEROOT.'core/storage/time_travel.json');
+
+class Base
+{
+
+    private static function persist($data)
+    {
+        file_put_contents(TIME_TRAVEL_DB, json_encode($data));
+    }
+    private static function retrieve()
+    {
+        $data = json_decode(file_get_contents(TIME_TRAVEL_DB), true);
+        $data['real_time'] = \DateTime::__set_state($data['real_time']);
+        $data['simulated_time'] = \DateTime::__set_state($data['simulated_time']);
+        return $data;
+    }
+    public static function clear()
+    {
+        $data = array(
+            'real_time' => new \DateTime(),
+            'simulated_time' => new \DateTime(),
+            'speed' => 1.0
+        );
+        self::persist($data);
+    }
+    public static function setDateTime($datetime)
+    {
+        $data = self::retrieve();
+        $data['real_time'] = new \DateTime();
+        $data['simulated_time'] = $datetime;
+        self::persist($data);
+    }
+    public static function setSpeed($speed)
+    {
+        self::getDateTime();
+        $data = self::retrieve();
+        $data['speed'] = $speed;
+        self::persist($data);
+    }
+    public static function getDateTime()
+    {
+        $data = self::retrieve();
+        $real_time_now = new \DateTime();
+            
+        $delta_seconds = round(($real_time_now->getTimestamp() - $data['real_time']->getTimestamp()) * $data['speed']);
+        $simulated_time_now = $data['simulated_time']->add(new \DateInterval("PT${delta_seconds}S"));
+        $data['real_time'] = $real_time_now;
+        $data['simulated_time'] = $simulated_time_now;
+        self::persist($data);
+        return $data['simulated_time'];
+    }
+    private static function notification($invoice_id, $type, $notification_blob, $NomeFile, $status)
+    {
+        new Database();
+        $dateTime = Base::getDateTime();
+        $Notification = Notification::create(
+            [
+                'invoice_id' => $invoice_id,
+                'type' => $type,
+                'status' => $status,
+                'blob' => $notification_blob,
+                'actor' => Base::getActor(),
+                'nomefile' => $NomeFile,
+                'ctime' => $dateTime->date
+            ]
+        );
+                    
+        return $Notification;
+    }
+    public static function receive($invoice_id, $type, $notification_blob, $NomeFile)
+    {
+        self::notification($invoice_id, $type, $notification_blob, $NomeFile, 'N_RECEIVED');
+    }
+    public static function enqueue($invoice_id, $type, $notification_blob, $NomeFile)
+    {
+        Notification::where('status', '=', 'N_PENDING')
+            ->where('invoice_id', '=', $invoice_id)
+            ->update(array('status' => 'N_OBSOLETE'));
+        self::notification($invoice_id, $type, $notification_blob, $NomeFile, 'N_PENDING');
+    }
+    public static function dispatch()
+    {
+    }
+    public static function getActor()
+    {
+        if (class_exists('\URL')) {
+            // we're inside Laravel: URL is defined in rpc/config/app.php
+            $url = \URL::current();
+            $urlData = explode("/", $url);
+            $actor = @$urlData[3];
+        } else {
+            $url = $_SERVER['REQUEST_URI'];
+            $urlData = explode("/", $url);
+            $actor = $urlData[1];
+        }
+        return $actor;
+    }
+    public static function unpack($xmlString)
+    {
+        // defend against XML External Entity Injection
+        libxml_disable_entity_loader(true);
+        $collapsed_xml_string = preg_replace("/\s+/", "", $xmlString);
+        $collapsed_xml_string = $collapsed_xml_string ? $collapsed_xml_string : $xmlString;
+        if (preg_match("/\<!DOCTYPE/i", $collapsed_xml_string)) {
+            throw new \InvalidArgumentException('Invalid XML: Detected use of illegal DOCTYPE');
+        }
+
+        libxml_use_internal_errors(true);
+        $xml = simplexml_load_string($xmlString, 'SimpleXMLElement', LIBXML_NOWARNING);
+        if ($xml === false) {
+            throw new \InvalidArgumentException("Cannot load XML\n");
+        }
+        return $xml;
+    }
+}

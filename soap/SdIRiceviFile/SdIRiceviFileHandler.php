@@ -1,28 +1,30 @@
 <?php
 
 require_once("autoload.php");
-require '../../database/config.php';
-require '../../database/vendor/autoload.php';
+require '../../core/config.php';
+require '../../core/vendor/autoload.php';
 
-use Lib\Exchange;
+use FatturaPa\Core\Actors\Exchange;
 
 class SdIRiceviFileHandler
 {
 
     public function RiceviFile($parametersIn)
     {
-    	
-		$url=explode("/",$_SERVER['REQUEST_URI']);				
-    	// ADD TO DB    	
-        $Invoice=Exchange::receive($parametersIn->File, $parametersIn->NomeFile, 1,$url[1]);        
+        error_log('START------------------:');
+        error_log('parametersIn: '.json_encode($parametersIn));
+        error_log('------------------END');
+
+        // ADD TO DB
+        $Invoice=Exchange::receive($parametersIn->File, $parametersIn->NomeFile, 1);
         // Get current timestamp
-        //date_default_timezone_set('Europe/Berlin');
         $DataOraRicezione =  new \DateTime($Invoice->ctime);
-        $IdentificativoSdI = $Invoice->uuid;       
-       
+        $IdentificativoSdI = $Invoice->id;
+
         $rispostaSdIRiceviFile = new \rispostaSdIRiceviFile_Type($IdentificativoSdI, $DataOraRicezione);
-        //$errore = "EI01";
-        //$rispostaSdIRiceviFile->setErrore($errore);
+        // $errore = "EI01";
+        // $rispostaSdIRiceviFile->setErrore($errore);
+
         return $rispostaSdIRiceviFile;
     }
 }

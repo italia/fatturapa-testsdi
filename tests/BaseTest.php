@@ -2,9 +2,9 @@
 declare(strict_types=1);
 
 define("BASEROOT", $_SERVER['DOCUMENT_ROOT']);
-require('database/app/lib/Base/Base.php');
+require 'core/vendor/autoload.php';
 
-use Lib\Base;
+use FatturaPa\Core\Actors\Base;
 
 final class BaseTest extends PHPUnit\Framework\TestCase
 {

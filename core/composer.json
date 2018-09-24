@@ -1,0 +1,14 @@
+{
+    "name": "fatturapa/core",
+    "description": "Core classes required to interact with the Italian B2B invoice system",
+    "type": "project",
+    "require": {
+        "illuminate/database": "5.1.8"
+    },
+    "autoload": {
+        "psr-4": {
+            "FatturaPa\\Core\\Actors\\": "actors/",
+            "FatturaPa\\Core\\Models\\": "models/"
+        }
+    }
+}

@@ -1,5 +1,7 @@
 .directory
-database/config.php
+core/config.php
 rpc/config/database.php
 soap/config.php
-vendor/
+rpc/php_errorlog
+soap/test.json
+vendor

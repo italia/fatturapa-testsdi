@@ -1,6 +1,8 @@
 # fatturapa-testsdi
 
-This repository will contain a complete test environment for the Exchange System (ES, Italian: **SDI**) for Electronic Invoices, including implementations for the ES itself and for the other participants.
+> ⚠️ **WORK IN PROGRESS** ⚠️
+
+This repository contains a complete test environment for the Exchange System (ES, Italian: **SDI**) for Electronic Invoices, including implementations for the ES itself and for the other participants.
 
 The test environment can be used to:
 
@@ -66,6 +68,10 @@ There are three actors:
 
   and uses the ES SdIRiceviNotifica WS to send notifications
 
+The following animation shows the minimal **workflow** from invoice issue to receipt of acceptance:
+
+![Workflow](/images/workflow.gif)
+
 This can also be seen grouping separately the two services:
 
 **SDICoop Transmit**
@@ -82,27 +88,38 @@ There is some [English documentation](http://fatturapa.gov.it/export/fatturazion
 
 The testsdi is monolithic but modular, so that specific functionalities can be easily extracted.
 
-There is a core `libsdi` component, with:
-- state machine abstraction
-- state persistency to database for each invoice and notification
-- `Issuer`, `Exchange` and `Recipient` classes
+A distinctive design choice has been to use the same database schema, API and structure for all actors. Rather than breaking it down in components based on the actors, it has been broken down in layers:
 
-The `libsdi` API is used by the **SOAP adaptor**, which exposes client and server interfaces, plus a `SoapAdaptor` class used by `libsdi` to perform calls to SOAP servers.
+1. The **SOAP server** component exposes the interfaces required to communicate in accordance with the FatturaPA specification; it uses the _fatturapa-core_ classes
 
-The `libsdi` is also used by the **RPC adaptor**, which exposes a subset of methods as Remote Procedure Calls over the HTTP protocol.
-This interface can be used to control the simulation / tests or to show status information in user interfaces.
+2. The **core** component ([fatturapa-core]((/core/README.md)), has:
+  - state machine abstraction
+  - state persistency to database for each invoice and notification
+  - `Base`, `Issuer`, `Exchange` and `Recipient` classes.
+  - accesses the SOAP endpoints acting as SOAP client.
+
+3. The **control** component ([fatturapa-control](/rpc/packages/fatturapa/control/README.md)), 
+also uses _fatturapa-core_, and exposes a Remote Procedure Calls (RPC) API over the HTTP protocol. This API can be used to control the simulation / tests or to show status information in user interfaces.
+
+4. The _fatturapa-control_ is used by the basic **User Interface** [fatturapa-testui](https://github.com/simevo/fatturapa-testui).
 
 ![Architecture](/images/architecture.png)
 
 ## Implementation
 
-### State machines
+## State diagrams
 
-Legend for all state machine diagrams:
+The invoices change state during the workflow; certain state changes trigger notifications that have to be sent to specific actors.
+
+The states are represented with strings starting with `E_` for exchanger states, `I_` for issuer states, `R_` for recipient states and `N_` for notification states.
+
+The possible states, state changes and triggers are shown in the following [state diagrams](https://en.wikipedia.org/wiki/State_diagram).
+
+Legend for all state diagrams:
 
 ![Legend](/images/legend.png)
 
-**issuer** (trasmittente)
+#### Issuer, Italian: trasmittente
 
 | Status | Description |
 | ------------- | ------------- |
@@ -118,7 +135,7 @@ Legend for all state machine diagrams:
 
 ![issuer finite state machine](/images/issuer.png)
 
-**exchange system, ES** (sistema di interscambio, SDI)
+#### Exchange System (ES), Italian: Sistema di Interscambio (SDI)
 
 | Status | Description |
 | ------------- | ------------- |
@@ -134,7 +151,7 @@ Legend for all state machine diagrams:
 
 ![exchange system finite state machine](/images/exchange.png)
 
-**recipent** (destinatario):
+#### Recipent, Italian: destinatario
 
 | Status | Description |
 | ------------- | ------------- |
@@ -145,21 +162,23 @@ Legend for all state machine diagrams:
 
 ![recipient finite state machine](/images/recipient.png)
 
-**notifier**
+#### Notifier
 
 | Status | Description |
 | ------------- | ------------- |
-| N_RECEIVED | event has been triggered and must be processed |
-| N_PENDING | event has been triggered and must be processed |
-| N_OBSOLETE | event has been triggered but must not be processed because another event has been triggered that makes notifcation of this one useless |
-| N_DELIVERED | event has been delivered |
+| N_RECEIVED | inbound notification has been received |
+| N_PENDING | outbound notification has been generated and must be processed |
+| N_OBSOLETE | outbound notification has been generated but must not be processed because another notification has been generated that makes notifcation of this one useless |
+| N_DELIVERED | outbound notification has beensuccessfully delivered |
 
 ### Database schema
 
-There is a common database schema for all actors, consisting in two tables:
+There is a common database for all actors, consisting in three tables:
 
 **invoices**:
-- uuid
+
+- id: integer, primary key
+- remote_id: the id of this invoice for the sdi actor
 - invoice reference based on file and position:
   - nomefile
   - posizione
@@ -167,40 +186,41 @@ There is a common database schema for all actors, consisting in two tables:
   - cedente
   - anno
   - numero
-- status
-- blob
+- status: state machine status
+- blob: base64-encoded blob of the invoice
+- ctime: record creation time in database
+- actor: the actor on behalf on whom we are storing the invoice, one of: sdi, td + 7-characters code
+- issuer: 7-characters code of the original issuer of the invoice
 
 **notifications**:
-- uuid
-- invoice_uuid
-- type
-- state (N_RECEIVED, N_PENDING, N_OBSOLETE, N_DELIVERED)
-- blob
 
-When an instance of one of the three actors is created, it is assigned a separate database instance.
+- id: integer, primary key
+- invoice_id
+- type: one of AT, DT, EC, MC, NE, NS, RC or SE
+- status: one of N_RECEIVED, N_PENDING, N_OBSOLETE, N_DELIVERED
+- blob: base64-encoded blob of the notification
+- actor: the actor on behalf on whom we are storing the notification, one of: sdi, td + 7-characters code
+- nomefile
+- ctime: record creation time in database
 
-The only difference is what states will be stored in the invoices.status column.
+**channels** (lookup table between `cedente` and `issuer`):
 
-### APIs
+- cedente: primary key
+- issuer: 7-characters code for issuer which transmits invoices on behalf of cedente
 
-**SOAP adaptor**
-
-`SoapAdaptor` class exposes the API necessary for the `libsdi` to interact with SOAP servers:
-- `SoapAdaptor::notify(type, invoice_blob, notification_blob)` connects to SDICoop Transmit / TrasmissioneFatture, SDICoop Receive / SdIRiceviNotifica and RicezioneFatture
-- `SoapAdaptor::transmit(invoice_blob)` connects to SDICoop Transmit / SdiRiceviFile.RiceviFile
+### SOAP adaptor
 
 For each of the four SOAP Web Services, we start from the [Web Services Description Language, (**WSDL**)](https://en.wikipedia.org/wiki/Wsdl) and [XML Schema Definition, (**XSD**)](https://en.wikipedia.org/wiki/XML_Schema_(W3C) files from fatturapa.gov.it, feed them to [wsdl2phpgenerator](https://github.com/wsdl2phpgenerator/wsdl2phpgenerator) which generates types and boilerplate for the endpoint in a directory **named as the endpoint**.
 
-This code generation step is performed by the [index.php](/index.php) script.
+This code generation step has been performed once and for all by the [soap/bin/generate.php](/soap/bin/generate.php) script.
 
 In each of the four resulting directory matching the endpoints, we place a `index.php` file similar to (this one is for the `SdIRiceviFile` endpoint):
 ```php
-<?php
-
 require_once("../config.php");
 require_once("SdIRiceviFileHandler.php");
+require_once("../SoapServerDebug.php");
 
-$srv = new SoapServer('SdIRiceviFile_v1.0.wsdl');
+$srv = new \SoapServer('SdIRiceviFile_v1.0.wsdl');
 $srv->setClass("SdIRiceviFileHandler");
 $srv->handle();
 ```
@@ -208,77 +228,6 @@ $srv->handle();
 which leverages the PHP [SoapServer class](http://php.net/manual/en/class.soapserver.php) and delegates the implementation to a handler class `SdIRiceviFileHandler`.
 
 The handler class is implemented in [a file with the same name `SdIRiceviFileHandler.php` in the endpoint directory](/SdIRiceviFile/SdIRiceviFileHandler.php), and uses robust type cheching thanks to **type hinting** and the [type declarations](http://php.net/manual/en/functions.arguments.php#functions.arguments.type-declaration) obtained from wsdl2phpgenerator.
-
-**libsdi**
-
-All `libsdi` classes have a common `Base` class with:
-- `Base::clear`: resets the state, called by `POST /clear`
-- `Base::setDateTime(datetime)`: used to tweak the timestamp of all following events, called by `POST /timestamp/ timestamp: 2018-09-15T23:59Z`
-- `Base::setSpeed(multiplier)`: between calls to `setTimeStamp`, time will flow at 1 x factor w.r.t. to wallclock time, called by `POST /speed/10`
-- `Base::getDateTime`: retrieves current simulated date and time, called by `GET /datetime`
-- SDICoop Transmit / TrasmissioneFatture notifications servers are implemented calling:
-  - `Base::receive(invoice, type, notification_blob)` stores a N_RECEIVED notification for the invoice+type, including the notification payload as binary blob
-- all `Exchange` and `Recipient` methods that must notify call:
-  - `Base::enqueue(invoice, type, notification_blob)` creates a N_PENDING notification for the invoice+type and makes any previous N_PENDING record for the same invoice+type N_OBSOLETE
-- `Base::dispatch` will attempt dispatching calling `SoapAdaptor::notify(type, invoice_blob, notification_blob)` for all N_PENDING notifications, on success makes the notification N_DELIVERED; called by `POST /dispatch`
-
-The `Issuer` class is used to implement the **issuer** actor and has:
-- `Issuer::Issuer(db)`: instantiate and point to a dedicated database instance
-- `Issuer::upload(XML)` send to I_UPLOADED, called by `POST /upload {file XML}`
-- `Issuer::transmit` will attempt transmission calling the `SoapAdaptor::transmit(invoice_blob)` for all invoices in I_UPLOADED state, on success they are moved to I_TRANSMITTED; called by `POST /transmit`
-- SDICoop Transmit / TrasmissioneFatture notifications services are implemented with:
-  - `Issuer::invalid(invoices)` send to I_INVALID
-  - `Issuer::failed(invoices)` send to I_FAILED_DELIVERY
-  - `Issuer::delivered(invoices)` send to I_DELIVERED
-  - `Issuer::accepted(invoices)` send to I_ACCEPTED, via I_DELIVERED if necessary
-  - `Issuer::refused(invoices)` send to I_REFUSED, via I_DELIVERED if necessary
-  - `Issuer::expired(invoices)` send to I_EXPIRED, via I_DELIVERED if necessary
-
-The `Exchange` class is used to implement the **exchange system** actor and has:
-- `Exchange::Exchange(db)`: instantiate and point to a dedicated database instance
-- `Exchange::receive(XML)` send to E_RECEIVED, called by SDICoop Transmit / SdiRiceviFile.RiceviFile server implementation
-- `Exchange::checkValidity` will perform checks for all invoices in E_RECEIVED state and move them to E_INVALID or E_VALID, called by `POST /checkValidity`
-- `Exchange::deliver`: will move all invoices that have been E_VALID for longer than 48 hours to the E_FAILED_DELIVERY, will move all invoices that have been E_FAILED_DELIVERY for longer than 10 days to E_IMPOSSIBLE_DELIVERY; finally, will attempt delivery to recipient with SDICoop Receive
-RicezioneFatture for all the others, on success they are moved to E_DELIVERED; called by `POST /deliver`
-- `Exchange::checkExpiration`: will move all invoices that have been E_DELIVERED for longer than 15 days to the E_EXPIRED, called by `POST /checkExpiration`
-- `Exchange::accept(invoices)` send to E_ACCEPTED, called by SDICoop – Ricezione / SdiRiceviNotifica.NotificaEsito
-- `Exchange::refuse(invoices)` send to E_REFUSED, called by SDICoop – Ricezione / SdiRiceviNotifica.NotificaEsito
-
-The `Recipient` class is used to implement the **recipent** actor and has:
-- `Recipient::Recipient(db)`: instantiate and point to a dedicated database instance
-- `Recipient::receive(XML, metadata)` send to R_RECEIVED, called by SDICoop Ricezione / RicezioneFatture.RiceviFatture server implementation
-- `Recipient::accept(invoices)`: move to R_ACCEPTED; called by `POST /accept {invoices}`
-- `Recipient::refuse(invoices)`: move to R_REFUSED; called by `POST /refuse {invoices}`
-- `Recipient::expire(invoices)` send to R_EXPIRED, called by SDICoop – Ricezione / RicezioneFatture.NotificaDecorrenzaTermini server implementation
-
-**RPC adaptor**
-
-- general simulation control:
-  - `POST /clear`: resets the state
-  - `GET /datetime`: retrieves current simulated date and time
-  - `POST /timestamp/ timetamp: 2018-09-15T23:59Z`: tweak the timestamp of all following events
-  - `POST /speed/10`: set factor for simulated time to wallclock time
-
-- notifications:
-  - `GET /notifications/uuid`: retrieves notification with uuid
-  - `POST /dispatch`: attempt dispatching for all N_PENDING notifications, on success makes the notification N_DELIVERED
-
-- invoices:
-  - `GET /invoices?state=R_ACCEPTED`: retrieves array of uuids in R_ACCEPTED state
-  - `GET /invoices/uuid`: retrieves invoice with uuid
-
-- issuer-specific:
-  - `POST /upload {file XML}` call `Issuer::upload(XML)`
-  - `POST /transmit`: call `Issuer::transmit`
-
-- exchange-specific
-  - `POST /checkValidity`: call `Exchange::checkValidity`
-  - `POST /deliver`: call `Exchange::deliver`
-  - `POST /checkExpiration`: call `Exchange::checkExpiration`
-
-- recipient-specific
-  - `POST /accept {invoices}`: call `Recipient::accept(invoices)`
-  - `POST /refuse {invoices}`: call `Recipient::refuse(invoices)`
 
 ## Getting Started
 
@@ -288,33 +237,59 @@ Tested on: amd64 Debian 9.5 (stretch, current stable) with PHP 7.0 and Laravel 5
 
 Install prerequisites:
 ```sh
-sudo apt install php-cli php-fpm composer nginx php-soap php-mbstring php-dom php-zip composer nginx postgresql phpunit
+sudo apt install php-cli php-fpm nginx php-soap php-mbstring php-dom php-zip composer nginx postgresql php-pgsql php-curl php-xml
 ```
 
 ### Configuring and Installing
 
-**TODO**: In a future release you'll be able to configure the number of simulated issuer/receiver (IR) actors in `config.php` and dynamic routing will make sure that the actors will be reachable at `/sdi` (there's only one exchange system), `/td000001`, `/td000002`  ... (td stands for trasmittente/destinatario, Italian for issuer/receiver).
+**TODO**: In a future release you'll be able to configure the number of simulated issuer/receiver (TD = trasmittente / destinatario) actors in `config.php` and dynamic routing will make sure that the actors will be reachable at `/sdi` (there's only one exchange system), `/td0000001`, `/td0000002`  ... (td stands for trasmittente/destinatario, Italian for issuer/receiver).
 
 For example if you configure with three I/R actors, your SOAP endpoints will be at:
 - exchange
   - https://www.example.com/sdi/soap/SdIRiceviFile
   - https://www.example.com/sdi/soap/SdIRiceviNotifica
 - issuer / recipient 1:
-  - https://www.example.com/td000001/soap/RicezioneFatture
-  - https://www.example.com/td000001/soap/TrasmissioneFatture
+  - https://www.example.com/td0000001/soap/RicezioneFatture
+  - https://www.example.com/td0000001/soap/TrasmissioneFatture
 - issuer / recipient 2:
-  - https://www.example.com/td000002/soap/RicezioneFatture
-  - https://www.example.com/td000002/soap/TrasmissioneFatture
+  - https://www.example.com/td0000002/soap/RicezioneFatture
+  - https://www.example.com/td0000002/soap/TrasmissioneFatture
 - issuer / recipient 3:
   - https://www.example.com/td000003/soap/RicezioneFatture
   - https://www.example.com/td000003/soap/TrasmissioneFatture
 
-For the moment being **only one actor** is supported (sdi), so clone the repo to the `/var/www/html/sdi` directory on your webserver.
+For the moment being **only three actors** are supported (sdi, td0000001 and td0000002), so clone the repo to the `/var/www/html/sdi` directory on your webserver then manually create symlinks and storage dirs as in:
+```sh
+cd /var/www/html
+mkdir td0000001
+mkdir td0000002
+cd td0000001
+ln -s ../sdi/soap/ soap
+mkdir core rpc
+cd core
+ln -s ../../sdi/core/app app
+ln -s ../../sdi/core/config.php config.php
+ln -s ../../sdi/core/storage storage
+ln -s ../../sdi/core/vendor vendor
+cd ../rpc
+ln -s ../../sdi/rpc/app app
+ln -s ../../sdi/rpc/bootstrap bootstrap
+ln -s ../../sdi/rpc/config config
+ln -s ../../sdi/rpc/database database
+ln -s ../../sdi/rpc/index.php index.php
+ln -s ../../sdi/rpc/packages packages
+ln -s ../../sdi/rpc/resources resources
+ln -s ../../sdi/rpc/vendor vendor
+cd ../../td0000002
+...
+```
 
 Install prerequisites with composer:
 
 ```sh
-cd /var/www/html/sdi/illuminate
+cd /var/www/html/sdi
+composer install
+cd core
 composer install
 composer dumpautoload
 composer dumpautoload -o
@@ -326,14 +301,45 @@ composer dumpautoload
 composer dumpautoload -o
 ```
 
+Configure the database:
+
+1. in `/etc/postgresql/9.6/main/pg_hba.conf` add this line:
+```
+local   testsdi         www-data                                md5
+```
+  **before** this one:
+```
+# "local" is for Unix domain socket connections only
+local   all             all                                     peer
+```
+
+2. restart postgresql with: `sudo systemctl restart postgresql`
+
+3. Create the database:
+```sh
+sudo su - postgres
+psql
+CREATE USER "www-data" WITH PASSWORD 'www-data';
+CREATE DATABASE testsdi OWNER "www-data";
+^d
+^d
+```
+
+You'll be able to access the database with:
+```sh
+PGPASSWORD="www-data" psql -U www-data testsdi
+```
+
+Configure database credentials in `core/config.php` and in `rpc/config/database.php`.
+
+Configure `HOSTNAME` in `soap/config.php` and in `core/config.php`.
+
 Set up Laravel:
 ```sh
-cd database
-touch storage/time_travel.json
 sudo chown www-data storage/time_travel.json
 cd ../rpc
-sudo chown -R www-data storage/logs
 touch storage/logs/laravel.log
+sudo chown -R www-data storage/logs
 sudo chmod g+w storage/logs/laravel.log
 sudo chown -R www-data storage/framework
 sudo chown -R www-data bootstrap/cache
@@ -351,11 +357,17 @@ sudo vi /etc/nginx/sites-enabled/fatturapa
 server {
   listen 80 default_server;
   listen [::]:80 default_server;
-  server_name teamdigitale3.simevo.com;
+  server_name testsdi.simevo.com;
   root /var/www/html;
   index index.html index.htm index.php;
   location /sdi/rpc {
     try_files $uri $uri/ /sdi/rpc/index.php$is_args$args;
+  }
+  location /td0000001/rpc {
+    try_files $uri $uri/ /td0000001/rpc/index.php$is_args$args;
+  }
+  location /td0000002/rpc {
+    try_files $uri $uri/ /td0000002/rpc/index.php$is_args$args;
   }
   location ~ \.php$ {
     include snippets/fastcgi-php.conf;
@@ -367,109 +379,51 @@ sudo nginx -t
 sudo systemctl restart nginx
 ```
 
-Configure the database:
-
-1. add this line:
-```
-    local   testsdi     www-data                                   md5
-```
-  before this one:
-```
-    # "local" is for Unix domain socket connections only
-    local   all             all                                     peer
-```
-  in `/etc/postgresql/9.6/main/pg_hba.conf`
-
-2. restart postgresql with: `sudo systemctl restart postgresql`
-
-3. Create the database:
-```sh
-sudo su - postgres
-psql
-CREATE DATABASE testsdi OWNER "www-data";
-ALTER USER "www-data" WITH PASSWORD 'www-data';
-^d
-^d
-```
-
-You'll be able to access the database with:
-```sh
-PGPASSWORD="www-data" psql -U www-data testsdi
-```
-
-Configure database credentials in `illuminate/config.php` and in `rpc/config/database.php`.
-
-Configure `HOSTNAME` in `soap/config.php`.
-
-### Simple demo
-
-Send a test invoice to the exchange system with:
-```
-./soap/test.php
-```
-or via this form:
-http://teamdigitale3.simevo.com/sdi/receiveForm.php
-which will POST to `https://www.example.com/sdi/soap/SdIRiceviFile/test_RiceviFile.php`.
-
-Both `test.php` and `test_RiceviFile.php` in turn pose as SOAP clients and forward to the SOAP server which listens at: 
-http://www.example.com/sdi/soap/SdIRiceviFile/
-The SOAP server will insert the invoice entry in the database.
-
-Sample RPC endpoint:
-http://www.example.com/sdi/rpc/invoices?state=E_RECEIVED
-According to `rpc/packages/fatturapa/libsdi/src/routes/web.php`:
-```php
-Route::get('invoices', 'fatturapa\libsdi\InvoicesController@index');
-```
-this route is handled by the `InvoicesController` class defined in `rpc/packages/fatturapa/libsdi/src/InvoicesController.php`
-
-### Full demo
+### Demo
 
 Sample manual session to demonstrate the flow of one invoice from issuer 0000001 to recipient 0000002, and acceptance:
 
 1. clear status
 ```
 POST https://test.example.com/sdi/rpc/clear
-POST https://test.example.com/td000001/rpc/clear
-POST https://test.example.com/td000002/rpc/clear
+POST https://test.example.com/td0000001/rpc/clear
+POST https://test.example.com/td0000002/rpc/clear
 ```
 
-2. create a valid sample invoice for IR 000002 and upload it to IT 0000001, then check it is in the right queue
+2. create a valid sample invoice for TD 0000002 (`FatturaElettronica.FatturaElettronicaHeader.DatiTrasmissione.CodiceDestinatario` should be set to `0000002`) and upload it to TD 0000001, then check it is in the right queue
+
 ```
-POST https://test.example.com/td000001/rpc/upload {file XML}
-GET https://test.example.com/td000001/rpc/invoices?state=I_UPLOADED
+POST https://test.example.com/td0000001/rpc/upload {file XML}
+GET https://test.example.com/td0000001/rpc/invoices?status=I_UPLOADED
 ```
 
 3. force transmission to ES and check status:
 ```
-POST https://test.example.com/td000001/rpc/transmit
-GET https://test.example.com/sdi/rpc/invoices?state=E_RECEIVED
-GET https://test.example.com/td000001/rpc/invoices?state=I_TRANSMITTED (no response yet)
+POST https://test.example.com/td0000001/rpc/transmit
 ```
 
-4. force ES to dispatch back the notification to the issuer:
+4. Check status with ES (the invoice should be in the E_RECEIVED queue):
 ```
-POST https://test.example.com/sdi/rpc/dispatch
-```
-
-5. check notification and status:
-```
-GET https://test.example.com/td000001/rpc/notifications/uuid
-GET https://test.example.com/td000001/rpc/invoices?state=I_TRANSMITTED
+GET https://test.example.com/sdi/rpc/invoices?status=E_RECEIVED
 ```
 
-6. force validation by ES and check state
+5. Check status with TD 0000001 (the invoice should be in the I_TRANSMITTED queue):
+```
+GET https://test.example.com/td0000001/rpc/invoices?status=I_TRANSMITTED
+```
+
+6. force validation by ES and check status:
 ```
 POST https://test.example.com/sdi/rpc/checkValidity
-GET https://test.example.com/sdi/rpc/invoices?state=E_VALID
+GET https://test.example.com/sdi/rpc/invoices?status=E_VALID
 ```
 
-7. force transmission from ES to recipient and check state
+7. force transmission from ES to recipient and check status:
 ```
 POST https://test.example.com/sdi/rpc/deliver
-GET https://test.example.com/sdi/rpc/invoices?state=E_DELIVERED
-GET https://test.example.com/sdi/td000002/invoices?state=R_RECEIVED
-GET https://test.example.com/td000001/rpc/invoices?state=I_DELIVERED (no response yet)
+GET https://test.example.com/sdi/rpc/invoices?status=E_DELIVERED
+GET https://test.example.com/sdi/td0000002/invoices?status=R_RECEIVED
+GET https://test.example.com/td0000001/rpc/invoices?status=I_DELIVERED (no response yet because ES has not notified to issuer)
 ```
 
 8. force ES to dispatch back the notification to the issuer:
@@ -477,29 +431,29 @@ GET https://test.example.com/td000001/rpc/invoices?state=I_DELIVERED (no respons
 POST https://test.example.com/sdi/rpc/dispatch
 ```
 
-9. check notification and status:
+9. check notification and status, now for the issuer TD 0000001 the invoice should be in the I_DELIVERED queue:
 ```
-GET https://test.example.com/td000001/rpc/notifications/uuid
-GET https://test.example.com/td000001/rpc/invoices?state=I_DELIVERED
+GET https://test.example.com/td0000001/rpc/notifications/id
+GET https://test.example.com/td0000001/rpc/invoices?status=I_DELIVERED
 ```
 
 10. make recipient accept invoice and check status:
 ```
-POST https://test.example.com/td000002/rpc/accept/uuid
-GET https://test.example.com/td000002/rpc/invoices?state=R_ACCEPTED
-GET https://test.example.com/sdi/rpc/invoices?state=E_ACCEPTED (no response yet)
+POST https://test.example.com/td0000002/rpc/accept/id
+GET https://test.example.com/td0000002/rpc/invoices?status=R_ACCEPTED
+GET https://test.example.com/sdi/rpc/invoices?status=E_ACCEPTED (no response yet)
 ```
 
 11. force receiver to dispatch back the notification to the ES:
 ```
-POST https://test.example.com/td000002/rpc/dispatch
+POST https://test.example.com/td0000002/rpc/dispatch
 ```
 
 12. check notification and status:
 ```
-GET https://test.example.com/sdi/rpc/notifications/uuid
-GET https://test.example.com/sdi/rpc/invoices?state=E_ACCEPTED
-GET https://test.example.com/td000002/rpc/invoices?state=I_ACCEPTED (no response yet)
+GET https://test.example.com/sdi/rpc/notifications/id
+GET https://test.example.com/sdi/rpc/invoices?status=E_ACCEPTED
+GET https://test.example.com/td0000002/rpc/invoices?status=I_ACCEPTED (no response yet)
 ```
 
 13. force ES to dispatch back the acceptance notification to the issuer:
@@ -509,8 +463,8 @@ POST https://test.example.com/sdi/rpc/dispatch
 
 14. check notification and status:
 ```
-GET https://test.example.com/td000001/rpc/notifications/uuid
-GET https://test.example.com/td000002/rpc/invoices?state=I_ACCEPTED
+GET https://test.example.com/td0000001/rpc/notifications/id
+GET https://test.example.com/td0000002/rpc/invoices?status=I_ACCEPTED
 ```
 
 ## Testing

@@ -1,0 +1,30 @@
+{
+    "name": "fatturapa/control",
+    "description": "Control API to interact with testsdi",
+    "minimum-stability": "dev",
+    "autoload": {
+        "files": [
+            "../../../../core/config.php",
+            "../../../../soap/config.php",
+            "../../../../soap/SdIRiceviFile/autoload.php",
+            "../../../../soap/SdIRiceviNotifica/autoload.php",
+            "../../../../soap/RicezioneFatture/autoload.php",
+            "../../../../soap/TrasmissioneFatture/autoload.php"
+        ],
+        "psr-4": {
+            "FatturaPa\\Control\\": "src/",
+            "FatturaPa\\Core\\Models\\": "../../../../core/models/",
+            "FatturaPa\\Core\\Actors\\": "../../../../core/actors/"
+        }
+    },
+    "require": {
+        "illuminate/support": "~5"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "FatturaPa\\Control\\ControlServiceProvider"
+            ]
+        }
+    }
+}

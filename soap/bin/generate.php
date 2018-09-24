@@ -5,9 +5,7 @@
 // Copyright (c) 2018, Paolo Greppi <paolo.greppi@simevo.com>
 // License: BSD 3-Clause
 
-// date_default_timezone_set('Europe/Rome');
-
-require_once("./vendor/autoload.php");
+require_once("../rpc/vendor/autoload.php");
 
 $services = array(
     array(

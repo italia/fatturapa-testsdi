@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="NS_v1.0.xsl"?>
+<types:NotificaScarto xmlns:types="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="1.0" xsi:schemaLocation="http://www.fatturapa.gov.it/sdi/messaggi/v1.0 MessaggiTypes_v1.0.xsd ">
+  <IdentificativoSdI>111</IdentificativoSdI>
+  <NomeFile>IT01234567890_11111.xml.p7m</NomeFile>
+  <DataOraRicezione>2013-06-06T12:00:00Z</DataOraRicezione>
+  <RiferimentoArchivio>
+    <IdentificativoSdI>100</IdentificativoSdI>
+    <NomeFile>IT01234567890_11111.zip</NomeFile>
+  </RiferimentoArchivio>
+  <ListaErrori>
+    <Errore>
+      <Codice>00100</Codice>
+      <Descrizione>Certificato di firma scaduto</Descrizione>
+    </Errore>
+  </ListaErrori>
+  <MessageId>123456</MessageId>
+  <Note>Note</Note>
+</types:NotificaScarto>

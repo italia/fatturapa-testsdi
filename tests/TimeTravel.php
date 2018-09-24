@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once(__DIR__ . "/../vendor/autoload.php");
+require_once(__DIR__ . "/../core/config.php");
 
 final class TimeTravel extends PHPUnit\Framework\TestCase
 {
@@ -10,7 +11,7 @@ final class TimeTravel extends PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->client = new GuzzleHttp\Client([
-            'base_uri' => 'http://teamdigitale3.simevo.com',
+            'base_uri' => HOSTMAIN,
             'http_errors' => false
         ]);
     }
