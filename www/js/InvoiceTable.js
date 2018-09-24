@@ -48,7 +48,7 @@ Vue.component('invoice-table', {
                     </thead>\
                     <tfoot>\
                         <tr v-for="i in invoices">\
-                            <td>{{ i.uuid }}</td>\
+                            <td>{{ i.id }}</td>\
                             <td>{{ i.nomefile }}</td>\
                             <td>{{ i.ctime }}</td>\
                         </tr>\

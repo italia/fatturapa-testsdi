@@ -1,65 +1,31 @@
 # fatturapa-testui
 
-Testing UI for [fatturapa-testsdi](https://github.com/italia/fatturapa-testsdi).
+This repository contains a User Interface to connect to a test environment for the Exchange System (ES, Italian: SDI) for Electronic Invoices, and manually run a simulation of the complete process of invoice issue, transmission and receipt.
 
-With the **testui** you can connect to a test environment for the Exchange System (ES, Italian: SDI) for Electronic Invoices, and manually run a simulation of the complete process of invoice issue, transmission and receipt.
+For more details, refer to [fatturapa-testsdi](https://github.com/italia/fatturapa-testsdi), the test environment for the Italian B2B invoice system.
 
-## Design
+## How it works
 
-The UI reads and writes to the invoice and notification queues using the **testsdi** RPC interface.
+The UI reads and writes to the invoice and notification queues using the **testsdi** RPC interface provided by [fatturapa-control](https://github.com/italia/fatturapa-testsdi/rpc/packages/fatturapa/control/README.md).
 
-The UI will have a general controls tab where you can:
+The UI has a dashboard page where you can:
 - clear (reset the state of all actors)
 - set the current time
 - set factor for simulated time to wallclock time
 
-Additionally there will be one tab for the exchange system, and one for each issuer/receiver.
-The issuer/receiver tab will have separate sub-tabs for the two roles.
+Additionally there is one page for the exchange system (**sdi**), and at least two for the issuer/receivers (**td000000x**).
 
-Each tab or sub-tab will show all queues for the role, and present buttons to trigger events (i.e. upload invoice for the issuer, accept / refuse invoice for the receiver etc).
+Each issuer/receiver has separate tabs for the two roles (**Emissione** and **Ricezione**).
 
-**Exchange system, ES** (sistema di interscambio, SDI) view mock-up:
-
-![SDI](/mockups/SDI.JPG)
-
-**Issuer** (trasmittente) view mock-up:
-
-![SDI](/mockups/TD_emissione.JPG)
-
-**Recipent** (destinatario) view mock-up:
-
-![SDI](/mockups/TD_ricezione.JPG)
+Each page or tab shows all the **invoice queues** for the role, and present buttons to force **actions** (i.e. upload invoice for the issuer, accept / refuse invoice for the receiver etc).
 
 ## Getting Started
 
-### Prerequisites
+Install on a testsdi instance by copying the content of the `www` directory into a `ui` dir side-by-side with the `/sdi` and `td0000000x` dirs, then visit https://testsdi.simevo.com/ui.
 
-```
-sudo apt install yarnpkg make curl composer
-```
+This screencast demonstrates an (incomplete) workflow:
 
-### Configuring and Installing
-
-```
-yarnpkg install
-composer install
-make
-```
-
-### Demo
-
-Start [json-server](https://github.com/typicode/json-server):
-```
-./node_modules/json-server/bin/index.js data.json --routes routes.json --static www --port 8000
-```
-
-Check that routes are simulated:
-```
-curl -X POST http://localhost:8000/td0000001/rpc/dispatch
-curl -X GET http://localhost:8000/sdi/rpc/invoices/?status=E_ACCEPTED
-```
-
-Now open the index.html in browser: [http://localhost:8000](http://localhost:8000).
+![img](images/screencast.gif)
 
 ## Testing
 
@@ -79,7 +45,6 @@ Lint the JS code with:
 ./node_modules/jshint/bin/jshint --extract=auto www/td0000002.html
 ```
 
-
 This project's PHP code complies with the [PSR-2: Coding Style Guide](https://www.php-fig.org/psr/psr-2/).
 
 Lint the PHP code with:
@@ -93,10 +58,10 @@ For your contributions please use the [git-flow workflow](https://danielkummer.g
 
 ## Authors
 
-TODO
+Riccardo Mariani, Paolo Greppi
 
 ## License
 
-Copyright (c) 2018, XXX
+Copyright (c) 2018, simevo s.r.l.
 
 License: AGPL 3, see [LICENSE](LICENSE) file.
