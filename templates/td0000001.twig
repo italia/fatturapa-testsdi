@@ -55,6 +55,33 @@
             <!-- tab content emissione -->
             <div class="container-fluid">
               <div class="row">
+
+
+  <form>
+    <div class="col-md-4 col-md-offset-4">
+      <div class="input-group">
+          <span class="input-group-btn">
+            <div class="btn btn-default browse-button">
+                <span class="browse-button-text">
+                <i class="fa fa-folder-open"></i> Browse</span>
+                <input type="file" accept=".pdf" name="attachment"/>
+            </div>
+            <button type="button" class="btn btn-default clear-button" style="display:none;">
+              <span class="fa fa-times"></span> Clear
+            </button>
+          </span>
+          <input type="text" class="form-control filename" disabled="disabled" placeholder="Please click on browse button and select a pdf file">
+          <span class="input-group-btn">
+            <button class="btn btn-primary upload-button" type="button">
+                <i class="fa fa-upload"></i>
+                Upload
+              </button>
+          </span>
+        </div>
+    </div>
+</form>
+
+                
                 <div class="col-sm-6 offset-sm-3">
                   <form action="/td0000001/rpc/upload" method="POST" enctype="multipart/form-data">
                     <button type="button" class="btn btn-info btn-block" onclick="document.getElementById('inputFile').click()">Scegli fattura...</button>
