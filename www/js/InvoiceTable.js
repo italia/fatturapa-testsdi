@@ -48,7 +48,7 @@ Vue.component('invoice-table', {
                     </thead>\
                     <tfoot>\
                         <tr v-for="i in invoices">\
-                            <td>{{ i.uuid }}</td>\
+                            <td>{{ i.id }}</td>\
                             <td>{{ i.nomefile }}</td>\
                             <td>{{ i.ctime }}</td>\
                         </tr>\
@@ -63,6 +63,7 @@ Vue.component('invoice-table', {
     </div>\
 </div>'
 });
+<<<<<<< HEAD
 
 
 // Show filename, show clear button and change browse 
@@ -83,3 +84,5 @@ $('.clear-button').click(function(){
     $('.browse-button input:file').val("");
     $(".browse-button-text").html('<i class="fa fa-folder-open"></i> Browse'); 
 }); 
+=======
+>>>>>>> 1422ba5f094f021c2728a926b5255018f61abacb
