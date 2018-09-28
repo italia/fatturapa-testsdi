@@ -16,6 +16,8 @@ class SdIRiceviNotificaHandler
             $notification_blob = $parametersIn->File,
             $NomeFile = $parametersIn->NomeFile
         );
+	
         // TODO: change status of invoices as required: R_ACCEPTED or R_REFUSED
+        Invoice::where('id', '=', $invoice_id)->update(array('status' => 'E_ACCEPTED'));
     }
 }

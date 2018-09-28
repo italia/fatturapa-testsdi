@@ -196,7 +196,7 @@ There is a common database for all actors, consisting in three tables:
 
 - id: integer, primary key
 - invoice_id
-- type: one of AT, DT, EC, MC, NE, NS, RC or SE
+- type: one of AttestazioneTrasmissioneFattura, NotificaDecorrenzaTermini, RicevutaConsegna, ...
 - status: one of N_RECEIVED, N_PENDING, N_OBSOLETE, N_DELIVERED
 - blob: base64-encoded blob of the notification
 - actor: the actor on behalf on whom we are storing the notification, one of: sdi, td + 7-characters code

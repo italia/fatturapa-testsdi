@@ -5,7 +5,7 @@
 // Copyright (c) 2018, Paolo Greppi <paolo.greppi@simevo.com>
 // License: BSD 3-Clause
 
-require_once("../rpc/vendor/autoload.php");
+require_once("vendor/autoload.php");
 
 $services = array(
     array(

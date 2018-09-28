@@ -16,7 +16,7 @@ class SdIRiceviFileHandler
         error_log('------------------END');
 
         // ADD TO DB
-        $Invoice=Exchange::receive($parametersIn->File, $parametersIn->NomeFile, 1);
+        $Invoice = Exchange::receive($parametersIn->File, $parametersIn->NomeFile, 1);
         // Get current timestamp
         $DataOraRicezione =  new \DateTime($Invoice->ctime);
         $IdentificativoSdI = $Invoice->id;

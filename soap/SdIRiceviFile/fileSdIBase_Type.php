@@ -6,12 +6,12 @@ class fileSdIBase_Type
     /**
      * @var nomeFile_Type $NomeFile
      */
-    public $NomeFile = null;
+    protected $NomeFile = null;
 
     /**
      * @var base64Binary $File
      */
-    public $File = null;
+    protected $File = null;
 
     /**
      * @param nomeFile_Type $NomeFile

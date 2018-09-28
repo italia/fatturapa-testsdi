@@ -17,7 +17,7 @@ if (Base::getActor() == 'sdi') {
     Route::post('upload', 'fatturapa\control\InvoicesController@upload');
     Route::post('transmit', 'fatturapa\control\InvoicesController@transmit');
     // recipient-specific
-    Route::post('accept', 'fatturapa\control\InvoicesController@accept');
+    Route::post('accept/{udid}', 'fatturapa\control\InvoicesController@accept');
     // TODO: refuse
 }
 // common routes

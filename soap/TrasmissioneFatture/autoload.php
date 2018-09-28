@@ -4,6 +4,7 @@
 function autoload_f0424e3c2af8ede38d3a8920d83db7e0($class)
 {
     $classes = array(
+       'SoapClientDebug' => __DIR__ .'/../SoapClientDebug.php',
        'TrasmissioneFatture_service' => __DIR__ .'/TrasmissioneFatture_service.php',
        'fileSdIBase_Type' => __DIR__ .'/fileSdIBase_Type.php',
        'fileSdI_Type' => __DIR__ .'/fileSdI_Type.php',

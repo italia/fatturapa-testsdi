@@ -10,25 +10,22 @@ use Log;
 
 class Issuer
 {
-    public static function Issuer()
-    {
-    }
-    public static function upload($NomeFile, $XML)
+    public static function upload($filename, $invoice_blob)
     {
         $dateTime = Base::getDateTime();
-        $Invoice = Invoice::create(
+        $invoice = Invoice::create(
             [
-                'nomefile' => $NomeFile,
+                'nomefile' => $filename,
                 'posizione' => '',
                 'cedente' => '',
                 'anno' => '',
                 'status' => 'I_UPLOADED',
-                'blob' => $XML,
+                'blob' => $invoice_blob,
                 'ctime' => $dateTime->date,
                 'actor' => Base::getActor()
             ]
         );
-        return $Invoice;
+        return $invoice;
     }
     public static function transmit()
     {
@@ -64,31 +61,18 @@ class Issuer
         }
         return true;
     }
-    // sets all invoices with ids in $invoices array to $status
-    private static function setStatus($invoices, $status)
+	public static function receive($notification_blob, $filename, $type, $status)
     {
-        foreach ($invoices as $invoice) {
-            error_log("invoice $invoice delivered");
-            // Invoice::find($invoice)->update(['status' => $status ]);
-        }
-    }
-    public static function invalid($invoices)
-    {
-    }
-    public static function failed($invoices)
-    {
-    }
-    public static function delivered($invoices)
-    {
-        self::setStatus($invoices, 'I_DELIVERED');
-    }
-    public static function accepted($invoices)
-    {
-    }
-    public static function refused($invoices)
-    {
-    }
-    public static function expired($invoices)
-    {
+    	new Database();
+        error_log("receiving notification $filename");
+        $xmlString = base64_decode($notification_blob);
+    	$xml = Base::unpack($xmlString);
+        $invoice_remote_id = $xml->IdentificativoSdI;
+        error_log("remote_id = $invoice_remote_id");
+        $invoice = Invoice::where('remote_id', $invoice_remote_id)->first();
+        $invoice_id = $invoice['id'];
+        error_log("id = $invoice_id");
+        Base::receive($notification_blob, $filename, $type, $invoice_id);
+        Invoice::find($invoice_id)->update(['status' => $status ]);
     }
 }

@@ -16,24 +16,24 @@ class Exchange
     {
         new Database();
     }
-    public static function receive($XML, $NomeFile, $posizione)
+    public static function receive($invoice_blob, $filename, $position)
     {
         Exchange::Exchange();
         $dateTime = Base::getDateTime();
-        $Invoice = Invoice::create(
+        $invoice = Invoice::create(
             [
-                'nomefile' => $NomeFile,
-                'posizione' => $posizione,
+                'nomefile' => $filename,
+                'posizione' => $position,
                 'cedente' => '',
                 'anno' => '',
                 'status' => 'E_RECEIVED',
-                'blob' => $XML,
+                'blob' => $invoice_blob,
                 'ctime' => $dateTime->date,
                 'actor' => 'sdi',
                 'issuer' => ''
             ]
         );
-        return $Invoice;
+        return $invoice;
     }
     public static function checkValidity()
     {
@@ -84,94 +84,55 @@ XML;
                 $File = base64_encode($notification);
                 $NomeFile = 'IT01234567890_11111_NS_001.xml';
                 Base::enqueue(
-                    $invoice_id = $Invoice['id'],
-                    $type = 'NS',
                     $notification_blob = $File,
-                    $NomeFile = $NomeFile
+                    $filename = $NomeFile,
+                    $type = 'NotificaScarto',
+                    $invoice_id = $Invoice['id']
                 );
             }
         }
         return true;
     }
+
     public static function dispatchi()
     {
-        
+        $service = new \TrasmissioneFatture_service(array('trace' => 1));
+
         $notifications = Notification::all()
-//            ->where('status', 'N_PENDING')
+            // ->where('status', 'N_PENDING')
             ->where('actor', Base::getActor());
         $notifications = $notifications->toArray();
         
-        //echo "<pre>";print_r($notifications);exit;
-        
         foreach ($notifications as $notification) {
-            // TODO1: send notification to correct actor (notification addressee)
-            // When the notication has to be sent to a Recipient,
-            // we can fetch the addressee peeking in the invoice XML from
-            // `FatturaElettronicaHeader.DatiTrasmissione.CodiceDestinatario` field
-            // When the notification has to be sent to an Issuer, the notification must be sent to the invoice issuer,
-            // as in:
-            // $invoice = Invoice::all()->where('id', $notification['invoice_id']);
+            echo 'looking at notification  ' . json_encode($notification);
             $invoice = Invoice::find($notification['invoice_id']);
-            $issuer=$invoice->issuer;
-            if ($issuer=='') {
-                return; // this should not happen
-            } else {
-                $addressee = "td$issuer";
-            }
-            echo('addressee = ' . $addressee . PHP_EOL);
+            $issuer = $invoice->issuer;
 
-            $service = new \TrasmissioneFatture_service(array('trace' => 1));
-            $service->__setLocation(HOSTMAIN.$addressee.'/soap/TrasmissioneFatture/');
+            $xmlString = base64_decode($invoice['blob']);
+            $xml = Base::unpack($xmlString);
+            $recipient = $xml->FatturaElettronicaHeader->DatiTrasmissione->CodiceDestinatario;
+
             $fileSdI = new \fileSdI_Type($notification['id'], $notification['nomefile'], $notification['blob']);
-
-            $sent = false;
-            try {
-                // TODO2: send to correct operation based on the notification type:
-                // for notifications from Exchange to Issuer:
-                // 1. Rejection notice (Notifica di scarto = NS) NotificaScarto operation
-                // 2. Delivery receipt (Ricevuta di consegna = RC) RicevutaConsegna operation
-                // 3. Failed delivery notice (Notifica di mancata consegna = MC) NotificaMancataConsegna operation
-                // 4. Outcome notice (Notifica di esito = NE) NotificaEsito operation
-                // 5. Deadline passed notice (Notifica di decorrenza termini = DT) NotificaDecorrenzaTermini operation
-                // 6. Statement of happened transmission with delivery impossibility (Attestazione di avvenuta
-                //  trasmissione con impossibilità di recapito = AT) AttestazioneTrasmissioneFattura operation
-                if ($notification['type']=='NS') {
-                    $service->NotificaScarto($fileSdI);
-                    $sent = true;
-                } elseif ($notification['type']=='RC') {
-                    $service->RicevutaConsegna($fileSdI);
-                    $sent = true;
-                } elseif ($notification['type']=='MC') {
-                    $response = $service->NotificaMancataConsegna($fileSdI);
-                    $sent = true;
-                } elseif ($notification['type']=='NE') {
-                    $response = $service->NotificaEsito($fileSdI);
-                    $sent = true;
-                } elseif ($notification['type']=='DT') {
-                    $response = $service->NotificaDecorrenzaTermini($fileSdI);
-                    $sent = true;
-                } elseif ($notification['type']=='AT') {
-                    $response = $service->AttestazioneTrasmissioneFattura($fileSdI);
-                    $sent = true;
-                }
-                // TODO
-                // for notifications from Exchange to Recipient:
-                // 1. Deadline passed notice (Notifica di decorrenza termini = DT) NotificaDecorrenzaTermini operation
-                /*if($notification['type']=='DT')
-                {
-                    $service->NotificaEsito($fileSdI);
-                    $sent = true;
-                }*/
-
-                if ($sent) {
-                    echo "sent !";
-                    Notification::find($notification['id'])->update(['status' => 'N_DELIVERED' ]);
-                }
-            } catch (SoapFault $e) {
-                echo "failure !";
+            $sent = Base::dispatchNotification(
+                $service,
+                "td$issuer",
+                "TrasmissioneFatture",
+                $notification['type'],
+                $fileSdI);
+            if ($notification['type'] == 'NotificaDecorrenzaTermini') {
+                $sent &= Base::dispatchNotification(
+                    $service,
+                    "td$recipient",
+                    "RicezioneFatture",
+                    $notification['type'],
+                    $fileSdI);
+            }
+            if ($sent) {
+                echo "sent !";
+                Notification::find($notification['id'])->update(['status' => 'N_DELIVERED' ]);
             }
         }
-         return true;
+        return true;
     }
     // if dummy is set and true, it will simulate failure to deliver
     public static function deliver($dummy)
@@ -202,22 +163,31 @@ XML;
 </types:NotificaDecorrenzaTermini>
 XML;
                 // TODO: sign notification (on hold)
-                $File = base64_encode($notification);
-                $NomeFile = 'IT01234567890_11111_DT_001.xml';
                 Base::enqueue(
-                    $invoice_id = $Invoice['id'],
-                    $type = 'DT',
-                    $notification_blob = $File,
-                    $NomeFile = $NomeFile
+                    $notification_blob = base64_encode($notification),
+                    $filename = 'IT01234567890_11111_DT_001.xml',
+                    $type = 'NotificaDecorrenzaTermini',
+                    $invoice_id = $Invoice['id']
                 );
             } else {
                 if (!$dummy) {
                     $xmlString = base64_decode($Invoice['blob']);
                     $xml = Base::unpack($xmlString);
-                    $data = $xml->FatturaElettronicaHeader->DatiTrasmissione->CodiceDestinatario;
-                    $addressee = "td$data";
-                    
-                    $metadati='metadata';
+                    $recipient = $xml->FatturaElettronicaHeader->DatiTrasmissione->CodiceDestinatario;
+                    $addressee = "td$recipient";
+                    $metadati = <<<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="MT_v1.0.xsl"?>
+<types:MetadatiInvioFile xmlns:types="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="1.0" xsi:schemaLocation="http://www.fatturapa.gov.it/sdi/messaggi/v1.0 MessaggiTypes_v1.0.xsd ">
+    <IdentificativoSdI>111</IdentificativoSdI>
+    <NomeFile>IT01234567890_11111.xml.p7m</NomeFile>
+    <CodiceDestinatario>AAA111</CodiceDestinatario>
+    <Formato>SDI10</Formato>
+    <TentativiInvio>1</TentativiInvio>
+    <MessageId>123456</MessageId>
+    <Note>Esempio</Note>
+</types:MetadatiInvioFile>
+XML;
                     $nomeFileMetadati = '';
                     libxml_disable_entity_loader(false);
                     $service = new \RicezioneFatture_service(array('trace' => 1));
@@ -254,17 +224,15 @@ XML;
 </types:AttestazioneTrasmissioneFattura>
 XML;
                             // TODO: sign notification (on hold)
-                            $File = base64_encode($notification);
-                            $NomeFile = 'IT01234567890_11111_AT_001.xml';
                             Base::enqueue(
-                                $invoice_id = $Invoice['id'],
-                                $type = 'AT',
-                                $notification_blob = $File,
-                                $NomeFile = $NomeFile
+                                $notification_blob = base64_encode($notification),
+                                $filename = 'IT01234567890_11111_AT_001.xml',
+                                $type = 'AttestazioneTrasmissioneFattura',
+                                $invoice_id = $Invoice['id']
                             );
                         }
                     } catch (SoapFault $e) {
-                    }                    
+                    }
                 }
 
                 if (($currentTime >= $timeAfter48Hour) && $Invoice['status']=='E_VALID') {
@@ -283,15 +251,13 @@ XML;
 </types:NotificaMancataConsegna>
 XML;
                     // TODO: sign notification (on hold)
-                    $File = base64_encode($notification);
-                    $NomeFile = 'IT01234567890_11111_MC_001.xml';
                     Base::enqueue(
-                        $invoice_id = $Invoice['id'],
-                        $type = 'NS',
-                        $notification_blob = $File,
-                        $NomeFile = $NomeFile
+                        $notification_blob = base64_encode($notification),
+                        $filename = 'IT01234567890_11111_MC_001.xml',
+                        $type = 'NotificaMancataConsegna',
+                        $invoice_id = $Invoice['id']
                     );
-                }    
+                }
             }
         }
     

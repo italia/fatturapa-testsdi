@@ -8,6 +8,7 @@ use FatturaPa\Core\Models\Invoice;
 use FatturaPa\Core\Actors\Exchange;
 use FatturaPa\Core\Actors\Issuer;
 use FatturaPa\Core\Actors\Base;
+use FatturaPa\Core\Actors\Recipient;
 
 class InvoicesController extends Controller
 {
@@ -55,7 +56,10 @@ class InvoicesController extends Controller
         echo "deliver $dummy";
         exit;
     }
-    public function accept()
-    {
+    public function accept(Request $request, $id)
+    {    	
+		Recipient::accept($id);
+		echo "accept";
+    	exit;
     }
 }

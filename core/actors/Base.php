@@ -59,7 +59,7 @@ class Base
         self::persist($data);
         return $data['simulated_time'];
     }
-    private static function notification($invoice_id, $type, $notification_blob, $NomeFile, $status)
+    private static function notification($notification_blob, $filename, $type, $invoice_id, $status)
     {
         new Database();
         $dateTime = Base::getDateTime();
@@ -70,26 +70,36 @@ class Base
                 'status' => $status,
                 'blob' => $notification_blob,
                 'actor' => Base::getActor(),
-                'nomefile' => $NomeFile,
+                'nomefile' => $filename,
                 'ctime' => $dateTime->date
             ]
         );
                     
         return $Notification;
     }
-    public static function receive($invoice_id, $type, $notification_blob, $NomeFile)
+    public static function receive($notification_blob, $filename, $type, $invoice_id)
     {
-        self::notification($invoice_id, $type, $notification_blob, $NomeFile, 'N_RECEIVED');
+        self::notification($notification_blob, $filename, $type, $invoice_id, 'N_RECEIVED');
     }
-    public static function enqueue($invoice_id, $type, $notification_blob, $NomeFile)
+    public static function enqueue($notification_blob, $filename, $type, $invoice_id)
     {
         Notification::where('status', '=', 'N_PENDING')
             ->where('invoice_id', '=', $invoice_id)
             ->update(array('status' => 'N_OBSOLETE'));
-        self::notification($invoice_id, $type, $notification_blob, $NomeFile, 'N_PENDING');
+        self::notification($notification_blob, $filename, $type, $invoice_id, 'N_PENDING');
     }
-    public static function dispatch()
+    public static function dispatchNotification($service, $addressee, $endpoint, $operation, $fileSdI)
     {
+        echo('dispatchNotification to: ' . $addressee . PHP_EOL);
+        $service->__setLocation(HOSTMAIN.$addressee."/soap/$endpoint/");
+        $sent = false;
+        try {
+            $service->$operation($fileSdI);
+            $sent = true;
+        } catch (SoapFault $e) {
+            echo "failure !";
+        }
+        return $sent;
     }
     public static function getActor()
     {

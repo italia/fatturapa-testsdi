@@ -38,7 +38,7 @@ final class FullDemo extends PHPUnit\Framework\TestCase
 
     private function expectedInvoices($actor, $count, $status = '')
     {
-        $invoices = $this->getTable($actor, 'invoices', $status);
+        $invoices = $this->getTable($actor, 'invoices', $status);		
         $this->assertEquals($count, sizeof($invoices));
     }
 
@@ -245,8 +245,8 @@ final class FullDemo extends PHPUnit\Framework\TestCase
 
     private function deliver($baseInvoice, $issuer, $recipient, $timeDelta, $dummy=false)
     {
-        $this->clearActors();
-        $this->freezeActors('2019-07-01T12:00Z');
+       $this->clearActors();
+       $this->freezeActors('2019-07-01T12:00Z');
         $invoice = str_replace(
             "<CodiceDestinatario>ABC1234</CodiceDestinatario>",
             "<CodiceDestinatario>$recipient</CodiceDestinatario>",
@@ -346,7 +346,8 @@ final class FullDemo extends PHPUnit\Framework\TestCase
     // on forcing delivery it will be delivered to the recipient specified in the
     // `FatturaElettronica.FatturaElettronicaHeader.DatiTrasmissione.CodiceDestinatario` field
     // of the invoice XML; on successful delivery, the invoice will be moved to E_DELIVERED status
-    // and all other invoice queues will be empty except I_TRANSMITTED for td000000x
+    // and all other invoice queues will be empty except I_TRANSMITTED for td000000x and 
+    // R_RECEIVED for td000000y
     public function testDeliver3()
     {
         $xml = $this->getValidInvoice();
@@ -358,8 +359,9 @@ final class FullDemo extends PHPUnit\Framework\TestCase
 
                     $this->expectedInvoices("td$issuer", 1, 'I_TRANSMITTED');
                     $this->expectedInvoices("sdi", 1, 'E_DELIVERED');
+                    $this->expectedInvoices("td$recipient", 1, 'R_RECEIVED');
                     foreach (self::$actors as $actor) {
-                        $this->expectedInvoices($actor, $actor == "td$issuer" || $actor == 'sdi' ? 1 : 0);
+                        $this->expectedInvoices($actor, $actor == "td$issuer" || $actor == 'sdi' || $actor == "td$recipient" ? 1 : 0);
                         $this->expectedNotifications($actor, $actor == 'sdi' ? 1 : 0);
                     }
                 }
@@ -371,7 +373,8 @@ final class FullDemo extends PHPUnit\Framework\TestCase
     // 48 hours + 10 days, on forcing delivery it will be delivered to the recipient specified in
     // the `FatturaElettronica.FatturaElettronicaHeader.DatiTrasmissione.CodiceDestinatario` field
     // of the invoice XML; on successful delivery, the invoice will be moved to E_DELIVERED status
-    // and all other invoice queues will be empty except I_TRANSMITTED for td000000x
+    // and all other invoice queues will be empty except I_TRANSMITTED for td000000x and R_RECEIVED
+    // for td000000y
     public function testDeliver4()
     {
         $xml = $this->getValidInvoice();
@@ -396,8 +399,9 @@ final class FullDemo extends PHPUnit\Framework\TestCase
             
                     $this->expectedInvoices("td$issuer", 1, 'I_TRANSMITTED');
                     $this->expectedInvoices("sdi", 1, 'E_DELIVERED');
+                    $this->expectedInvoices("td$recipient", 1, 'R_RECEIVED');
                     foreach (self::$actors as $actor) {
-                        $this->expectedInvoices($actor, $actor == "td$issuer" || $actor == 'sdi' ? 1 : 0);
+                        $this->expectedInvoices($actor, $actor == "td$issuer" || $actor == 'sdi' || $actor == "td$recipient" ? 1 : 0);
                         $this->expectedNotifications($actor, $actor == 'sdi' ? 2 : 0);
                     }
                 }
@@ -421,8 +425,107 @@ final class FullDemo extends PHPUnit\Framework\TestCase
 
                     $this->expectedInvoices("td$issuer", 1, 'I_DELIVERED');
                     $this->expectedInvoices("sdi", 1, 'E_DELIVERED');
+                    $this->expectedInvoices("td$recipient", 1, 'R_RECEIVED');
                     foreach (self::$actors as $actor) {
-                        $this->expectedInvoices($actor, $actor == "td$issuer" || $actor == 'sdi' ? 1 : 0);
+                        $this->expectedInvoices($actor, $actor == "td$issuer" || $actor == 'sdi' || $actor == "td$recipient" ? 1 : 0);
+                        $this->expectedNotifications($actor, $actor == "td$issuer" || $actor == 'sdi' ? 1 : 0);
+                    }
+                }
+            }
+        }
+    }
+
+    // test item 10 of full demo: status after an invoice has been accepted by the recipient
+    public function testAccept1()
+    {
+        $xml = $this->getValidInvoice();
+        foreach (self::$tds as $issuer) {
+            foreach (self::$tds as $recipient) {
+                if ($recipient != $issuer) {
+                    $timeDelta = '6 h';
+                    $this->deliver($xml, $issuer, $recipient, $timeDelta);
+					
+                    $response = $this->client->post("sdi/rpc/dispatch");
+                    $this->assertEquals(200, $response->getStatusCode());                    
+                    $invoices = $this->getTable("td$recipient", 'invoices');					
+                    $id = $invoices[0]['id'];										
+                    $response = $this->client->post("td$recipient/rpc/accept/$id");
+					$this->assertEquals(200, $response->getStatusCode());					
+                    				
+                    $this->expectedInvoices("td$issuer", 1, 'I_DELIVERED');
+                    $this->expectedInvoices("sdi", 1, 'E_DELIVERED');
+                    $this->expectedInvoices("td$recipient", 1, 'R_ACCEPTED');
+                    foreach (self::$actors as $actor) {
+                        $this->expectedInvoices($actor, $actor == "td$issuer" || $actor == 'sdi' || $actor == "td$recipient" ? 1 : 0);
+                        $this->expectedNotifications($actor, $actor == "td$issuer" || $actor == 'sdi' ? 1 : 0);
+                    }
+                }
+            }
+        }
+    }
+
+    // test item 11 and 12 of full demo: status after an invoice has been accepted by the recipient and notified back to sdi
+    public function testAccept2()
+    {
+        $xml = $this->getValidInvoice();
+        foreach (self::$tds as $issuer) {
+            foreach (self::$tds as $recipient) {
+                if ($recipient != $issuer) {
+                    $timeDelta = '6 h';
+                    $this->deliver($xml, $issuer, $recipient, $timeDelta);
+
+                    $response = $this->client->post("sdi/rpc/dispatch");
+                    $this->assertEquals(200, $response->getStatusCode());
+                    
+                    $invoices = $this->getTable("td$recipient", 'invoices');
+                    $id = $invoices[0]['id'];
+                    $response = $this->client->post("td$recipient/rpc/accept/$id");
+                    $this->assertEquals(200, $response->getStatusCode());
+
+                    $response = $this->client->post("td$recipient/rpc/dispatch");					
+                    $this->assertEquals(200, $response->getStatusCode());
+
+                    $this->expectedInvoices("td$issuer", 1, 'I_DELIVERED');
+                    $this->expectedInvoices("sdi", 1, 'E_ACCEPTED');
+                    $this->expectedInvoices("td$recipient", 1, 'R_ACCEPTED');
+                    foreach (self::$actors as $actor) {
+                        $this->expectedInvoices($actor, $actor == "td$issuer" || $actor == 'sdi' || $actor == "td$recipient" ? 1 : 0);
+                        $this->expectedNotifications($actor, $actor == "td$issuer" || $actor == 'sdi' ? 1 : 0);
+                    }
+                }
+            }
+        }
+    }
+
+    // test item 13 and 14 of full demo: status after an invoice has been accepted by the recipient and notified back to sdi and to issuer
+    public function testAccept3()
+    {
+        $xml = $this->getValidInvoice();
+        foreach (self::$tds as $issuer) {
+            foreach (self::$tds as $recipient) {
+                if ($recipient != $issuer) {
+                    $timeDelta = '6 h';
+                    $this->deliver($xml, $issuer, $recipient, $timeDelta);
+
+                    $response = $this->client->post("sdi/rpc/dispatch");
+                    $this->assertEquals(200, $response->getStatusCode());
+                    
+                    $invoices = $this->getTable('$recipient', 'invoices');
+                    $id = $invoices[0]->id;
+                    $response = $this->client->post("$recipient/rpc/accept/$id");
+                    $this->assertEquals(200, $response->getStatusCode());
+
+                    $response = $this->client->post("$recipient/rpc/dispatch");
+                    $this->assertEquals(200, $response->getStatusCode());
+
+                    $response = $this->client->post("sdi/rpc/dispatch");
+                    $this->assertEquals(200, $response->getStatusCode());
+
+                    $this->expectedInvoices("td$issuer", 1, 'I_ACCEPTED');
+                    $this->expectedInvoices("sdi", 1, 'E_ACCEPTED');
+                    $this->expectedInvoices("td$recipient", 1, 'R_ACCEPTED');
+                    foreach (self::$actors as $actor) {
+                        $this->expectedInvoices($actor, $actor == "td$issuer" || $actor == 'sdi' || $actor == "td$recipient" ? 1 : 0);
                         $this->expectedNotifications($actor, $actor == "td$issuer" || $actor == 'sdi' ? 1 : 0);
                     }
                 }
