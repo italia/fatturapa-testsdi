@@ -350,6 +350,12 @@ php artisan migrate
 ^d
 ```
 
+Fill in channels table so that invoices can be sent (needed for the tests):
+```sql
+INSERT INTO channels(cedente, issuer) VALUES ('IT-01234567890', '0000001');
+INSERT INTO channels(cedente, issuer) VALUES ('IT-12345678901', '0000002');
+```
+
 Configure nginx:
 ```
 sudo rm /etc/nginx/sites-enabled/*

@@ -41,11 +41,16 @@ class TrasmissioneFattureHandler
 
     public function NotificaEsito($parametersIn)
     {
+        // TODO: set the status to I_ACCEPTED or I_REFUSED
+        // depending on the content of the Esito field in the notification blob:
+        // Esito == EC01 => I_ACCEPTED
+        // Esito == EC02 => I_REFUSED
+        $status = 'I_ACCEPTED';
         Issuer::receive(
             $notification_blob = $parametersIn->File,
             $filename = $parametersIn->NomeFile,
             $type = 'NotificaEsito',
-            $status = 'I_DELIVERED'
+            $status = $status
         );
     }
 

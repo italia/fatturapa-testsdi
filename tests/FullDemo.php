@@ -205,6 +205,7 @@ final class FullDemo extends PHPUnit\Framework\TestCase
             $this->expectedInvoices("sdi", 1, 'E_INVALID');
             foreach (self::$actors as $actor) {
                 $this->expectedInvoices($actor, $actor == "td$issuer" || $actor == 'sdi' ? 1 : 0);
+                // sdi has a N_PENDING NotificaScarto notification for Issuer
                 $this->expectedNotifications($actor, $actor == 'sdi' ? 1 : 0);
             }
         }
@@ -231,7 +232,7 @@ final class FullDemo extends PHPUnit\Framework\TestCase
             $response = $this->client->post("td$issuer/rpc/transmit");
             $this->assertEquals(200, $response->getStatusCode());
             $response = $this->client->post("sdi/rpc/checkValidity");
-            echo $response->getBody();
+            //echo $response->getBody();
             $this->assertEquals(200, $response->getStatusCode());
 
             $this->expectedInvoices("td$issuer", 1, 'I_TRANSMITTED');
@@ -299,6 +300,7 @@ final class FullDemo extends PHPUnit\Framework\TestCase
                     $this->expectedInvoices("sdi", 1, 'E_FAILED_DELIVERY');
                     foreach (self::$actors as $actor) {
                         $this->expectedInvoices($actor, $actor == "td$issuer" || $actor == 'sdi' ? 1 : 0);
+                        // sdi has a N_PENDING NotificaMancataConsegna notification for issuer
                         $this->expectedNotifications($actor, $actor == 'sdi' ? 1 : 0);
                     }
 
@@ -312,6 +314,8 @@ final class FullDemo extends PHPUnit\Framework\TestCase
                     $this->expectedInvoices("sdi", 1, 'E_IMPOSSIBLE_DELIVERY');
                     foreach (self::$actors as $actor) {
                         $this->expectedInvoices($actor, $actor == "td$issuer" || $actor == 'sdi' ? 1 : 0);
+                        // sdi has a N_OBSOLETE NotificaMancataConsegna notification for issuer
+                        // and a N_PENDING NotificaDecorrenzaTermini notification for issuer
                         $this->expectedNotifications($actor, $actor == 'sdi' ? 2 : 0);
                     }
                 }
@@ -335,6 +339,7 @@ final class FullDemo extends PHPUnit\Framework\TestCase
                     $this->expectedInvoices("sdi", 1, 'E_IMPOSSIBLE_DELIVERY');
                     foreach (self::$actors as $actor) {
                         $this->expectedInvoices($actor, $actor == "td$issuer" || $actor == 'sdi' ? 1 : 0);
+                        // sdi has a N_PENDING NotificaDecorrenzaTermini notification for issuer
                         $this->expectedNotifications($actor, $actor == 'sdi' ? 1 : 0);
                     }
                 }
@@ -362,6 +367,7 @@ final class FullDemo extends PHPUnit\Framework\TestCase
                     $this->expectedInvoices("td$recipient", 1, 'R_RECEIVED');
                     foreach (self::$actors as $actor) {
                         $this->expectedInvoices($actor, $actor == "td$issuer" || $actor == 'sdi' || $actor == "td$recipient" ? 1 : 0);
+                        // sdi has N_PENDING AttestazioneTrasmissioneFattura notification for issuer
                         $this->expectedNotifications($actor, $actor == 'sdi' ? 1 : 0);
                     }
                 }
@@ -388,6 +394,7 @@ final class FullDemo extends PHPUnit\Framework\TestCase
                     $this->expectedInvoices("sdi", 1, 'E_FAILED_DELIVERY');
                     foreach (self::$actors as $actor) {
                         $this->expectedInvoices($actor, $actor == "td$issuer" || $actor == 'sdi' ? 1 : 0);
+                        // sdi has a N_PENDING NotificaMancataConsegna notification for issuer
                         $this->expectedNotifications($actor, $actor == 'sdi' ? 1 : 0);
                     }
 
@@ -402,6 +409,8 @@ final class FullDemo extends PHPUnit\Framework\TestCase
                     $this->expectedInvoices("td$recipient", 1, 'R_RECEIVED');
                     foreach (self::$actors as $actor) {
                         $this->expectedInvoices($actor, $actor == "td$issuer" || $actor == 'sdi' || $actor == "td$recipient" ? 1 : 0);
+                        // sdi has a N_OBSOLETE NotificaMancataConsegna notification for issuer
+                        // and a N_PENDING AttestazioneTrasmissioneFattura notification for issuer
                         $this->expectedNotifications($actor, $actor == 'sdi' ? 2 : 0);
                     }
                 }
@@ -428,6 +437,8 @@ final class FullDemo extends PHPUnit\Framework\TestCase
                     $this->expectedInvoices("td$recipient", 1, 'R_RECEIVED');
                     foreach (self::$actors as $actor) {
                         $this->expectedInvoices($actor, $actor == "td$issuer" || $actor == 'sdi' || $actor == "td$recipient" ? 1 : 0);
+                        // sdi has a AttestazioneTrasmissioneFattura notification N_DELIVERED to issuer
+                        // issuer has a N_RECEIVED AttestazioneTrasmissioneFattura notification from sdi
                         $this->expectedNotifications($actor, $actor == "td$issuer" || $actor == 'sdi' ? 1 : 0);
                     }
                 }
@@ -444,20 +455,23 @@ final class FullDemo extends PHPUnit\Framework\TestCase
                 if ($recipient != $issuer) {
                     $timeDelta = '6 h';
                     $this->deliver($xml, $issuer, $recipient, $timeDelta);
-					
+
                     $response = $this->client->post("sdi/rpc/dispatch");
                     $this->assertEquals(200, $response->getStatusCode());                    
                     $invoices = $this->getTable("td$recipient", 'invoices');					
                     $id = $invoices[0]['id'];										
                     $response = $this->client->post("td$recipient/rpc/accept/$id");
-					$this->assertEquals(200, $response->getStatusCode());					
-                    				
+                    $this->assertEquals(200, $response->getStatusCode());					
+
                     $this->expectedInvoices("td$issuer", 1, 'I_DELIVERED');
                     $this->expectedInvoices("sdi", 1, 'E_DELIVERED');
                     $this->expectedInvoices("td$recipient", 1, 'R_ACCEPTED');
                     foreach (self::$actors as $actor) {
                         $this->expectedInvoices($actor, $actor == "td$issuer" || $actor == 'sdi' || $actor == "td$recipient" ? 1 : 0);
-                        $this->expectedNotifications($actor, $actor == "td$issuer" || $actor == 'sdi' ? 1 : 0);
+                        // sdi has a AttestazioneTrasmissioneFattura notification N_DELIVERED to issuer
+                        // issuer has a N_RECEIVED AttestazioneTrasmissioneFattura notification from sdi
+                        // recipient has a N_PENDING NotificaEsito notification for sdi
+                        $this->expectedNotifications($actor, 1);
                     }
                 }
             }
@@ -490,7 +504,12 @@ final class FullDemo extends PHPUnit\Framework\TestCase
                     $this->expectedInvoices("td$recipient", 1, 'R_ACCEPTED');
                     foreach (self::$actors as $actor) {
                         $this->expectedInvoices($actor, $actor == "td$issuer" || $actor == 'sdi' || $actor == "td$recipient" ? 1 : 0);
-                        $this->expectedNotifications($actor, $actor == "td$issuer" || $actor == 'sdi' ? 1 : 0);
+                        // sdi has a AttestazioneTrasmissioneFattura notification N_DELIVERED to issuer
+                        // issuer has a N_RECEIVED AttestazioneTrasmissioneFattura notification from sdi
+                        // recipient has a NotificaEsito notification N_DELIVERED to sdi
+                        // sdi has a N_RECEIVED NotificaEsito notification from recipient
+                        // sdi has a N_PENDING NotificaEsito notification for issuer
+                        $this->expectedNotifications($actor, $actor == 'sdi' ? 3 : 1);
                     }
                 }
             }
@@ -510,12 +529,12 @@ final class FullDemo extends PHPUnit\Framework\TestCase
                     $response = $this->client->post("sdi/rpc/dispatch");
                     $this->assertEquals(200, $response->getStatusCode());
                     
-                    $invoices = $this->getTable('$recipient', 'invoices');
-                    $id = $invoices[0]->id;
-                    $response = $this->client->post("$recipient/rpc/accept/$id");
+                    $invoices = $this->getTable("td$recipient", 'invoices');
+                    $id = $invoices[0]['id'];
+                    $response = $this->client->post("td$recipient/rpc/accept/$id");
                     $this->assertEquals(200, $response->getStatusCode());
 
-                    $response = $this->client->post("$recipient/rpc/dispatch");
+                    $response = $this->client->post("td$recipient/rpc/dispatch");
                     $this->assertEquals(200, $response->getStatusCode());
 
                     $response = $this->client->post("sdi/rpc/dispatch");
@@ -526,7 +545,13 @@ final class FullDemo extends PHPUnit\Framework\TestCase
                     $this->expectedInvoices("td$recipient", 1, 'R_ACCEPTED');
                     foreach (self::$actors as $actor) {
                         $this->expectedInvoices($actor, $actor == "td$issuer" || $actor == 'sdi' || $actor == "td$recipient" ? 1 : 0);
-                        $this->expectedNotifications($actor, $actor == "td$issuer" || $actor == 'sdi' ? 1 : 0);
+                        // sdi has a AttestazioneTrasmissioneFattura notification N_DELIVERED to issuer
+                        // issuer has a N_RECEIVED AttestazioneTrasmissioneFattura notification from sdi
+                        // recipient has a NotificaEsito notification N_DELIVERED to sdi
+                        // sdi has a N_RECEIVED NotificaEsito notification from recipient
+                        // sdi has a NotificaEsito notification N_DELIVERED to issuer
+                        // issuer has a N_RECEIVED NotificaEsito notification from sdi
+                        $this->expectedNotifications($actor, $actor == 'sdi' ? 3 : ($actor == "td$issuer" ? 2 : 1));
                     }
                 }
             }

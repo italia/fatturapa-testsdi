@@ -132,4 +132,5 @@ class Base
         }
         return $xml;
     }
+	
 }

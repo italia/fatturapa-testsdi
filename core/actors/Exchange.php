@@ -51,7 +51,7 @@ class Exchange
                     '-' .
                     $xml->FatturaElettronicaHeader->CedentePrestatore->DatiAnagrafici->IdFiscaleIVA->IdCodice;
                 $data = $xml->FatturaElettronicaBody[0]->DatiGenerali->DatiGeneraliDocumento->Data;
-                $anno = substr($data, 0, 4);
+                $anno = substr($data, 0, 4);				
                 $issuer = Channel::find($cedente)->issuer;
                 Invoice::find($Invoice['id'])->update(['cedente' => $cedente ]);
                 Invoice::find($Invoice['id'])->update(['anno' => $anno ]);
@@ -99,7 +99,7 @@ XML;
         $service = new \TrasmissioneFatture_service(array('trace' => 1));
 
         $notifications = Notification::all()
-            // ->where('status', 'N_PENDING')
+            ->where('status', 'N_PENDING')
             ->where('actor', Base::getActor());
         $notifications = $notifications->toArray();
         
@@ -266,8 +266,34 @@ XML;
     public static function checkExpiration()
     {
     }
-    public static function accept($invoices)
+    public static function accept($invoice_id)
     {
+    	new Database();
+        Invoice::where('id', '=', $invoice_id)->update(array('status' => 'E_ACCEPTED'));
+		$notification = <<<XML
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="EC_v1.0.xsl"?>
+<types:NotificaEsitoCommittente xmlns:types="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="1.0" xsi:schemaLocation="http://www.fatturapa.gov.it/sdi/messaggi/v1.0 MessaggiTypes_v1.0.xsd ">
+  <IdentificativoSdI>$invoice_id</IdentificativoSdI>
+  <RiferimentoFattura>
+    <NumeroFattura>1111</NumeroFattura>
+    <AnnoFattura>2013</AnnoFattura>
+    <PosizioneFattura>2</PosizioneFattura>
+  </RiferimentoFattura>
+  <Esito>EC01</Esito>
+  <Descrizione>Esempio</Descrizione>
+  <MessageIdCommittente>123456</MessageIdCommittente>
+</types:NotificaEsitoCommittente>
+XML;
+    
+        // TODO: sign notification (on hold)
+        $File = base64_encode($notification);
+        $NomeFile = 'IT01234567890_11111_EC_001.xml';
+        Base::enqueue(
+            $notification_blob = $File,
+            $filename = $NomeFile,
+            $type = 'NotificaEsito',
+            $invoice_id = $invoice_id
+        );
     }
     public static function refuse($invoices)
     {

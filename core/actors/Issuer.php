@@ -69,7 +69,7 @@ class Issuer
     	$xml = Base::unpack($xmlString);
         $invoice_remote_id = $xml->IdentificativoSdI;
         error_log("remote_id = $invoice_remote_id");
-        $invoice = Invoice::where('remote_id', $invoice_remote_id)->first();
+        $invoice = Invoice::where('remote_id', $invoice_remote_id)->where('actor', Base::getActor())->first();
         $invoice_id = $invoice['id'];
         error_log("id = $invoice_id");
         Base::receive($notification_blob, $filename, $type, $invoice_id);
