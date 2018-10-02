@@ -82,10 +82,13 @@
                     <label class="sr-only" for="inputFile">File Upload</label>
                     <input type="file" name="File" class="form-control-file text-info font-weight-bold" id="inputFile" accept="text/xml" onchange="readUrl(this)" data-title="oppure trascina qui la fattura in formato XML" />
                     </div>
-                    <input type="submit" name="submit" value="Carica" class="btn btn-primary btn-block"/>
+                    <input type="submit" name="submit" value="Carica" class="btn btn-primary btn-block" id="carica"/>
                   </form>
                 </div>
               </div> <!-- end row -->
+
+<button type="button" name="refreshTables" class="btn btn-primary btn-block" v-on:click="refreshTables()"/>refresh</button>
+
             </div> <!-- end container-fluid -->
             <div class="container-fluid">
               <div class="row">
@@ -253,6 +256,7 @@
     </footer>
     
     <script type="text/javascript">
+      var EventBus = new Vue();
       var app = new Vue({
         el: '#tables',
         data: {
@@ -261,14 +265,16 @@
         methods: {
           dispatch: function() {
             console.log(this.home + '/rpc/dispatch');
+          },
+          refreshTables: function() {
+            EventBus.$emit('refreshTables');
           }
         }
       });
       document.addEventListener('DOMContentLoaded', function() {
         console.log("DOM fully loaded and parsed");
       });
-    </script>
-    
+    </script>  
     <link rel="stylesheet" href="css/bootstrap-italia.min.css" />
     <link rel="stylesheet" href="css/italia-icon-font.css" />
   

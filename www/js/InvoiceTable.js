@@ -25,6 +25,10 @@ Vue.component('invoice-table', {
         };
         request.send();
     },
+    created: function() {
+          EventBus.$on('refreshTables', function() {
+            console.log("ciao");
+        }),  
     methods: {
         doit: function() {
             post(this.home + this.action);
@@ -63,8 +67,6 @@ Vue.component('invoice-table', {
     </div>\
 </div>'
 });
-<<<<<<< HEAD
-
 
 // Show filename, show clear button and change browse 
 //button text when a valid extension file is selected
@@ -84,5 +86,3 @@ $('.clear-button').click(function(){
     $('.browse-button input:file').val("");
     $(".browse-button-text").html('<i class="fa fa-folder-open"></i> Browse'); 
 }); 
-=======
->>>>>>> 1422ba5f094f021c2728a926b5255018f61abacb
