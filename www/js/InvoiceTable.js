@@ -26,11 +26,10 @@ Vue.component('invoice-table', {
         request.send();
     },
     created: function() {
-    /*
+        this.loadData();
         EventBus.$on('refreshTables', function() {
-            console.log("ciao");
+            this.loadData();
         });
-    */
     },
     methods: {
         doit: function() {
