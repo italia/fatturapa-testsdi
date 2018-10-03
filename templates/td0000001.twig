@@ -108,7 +108,7 @@
                 </div>
                 <div class="col-sm">
                   <invoice-table
-                    endpoint="/rpc/invoices/?status=I_ACCEPTED:"
+                    endpoint="/rpc/invoices/?status=I_ACCEPTED"
                     description="I_ACCEPTED: ES notified that it was not accepted by the recipient"
                     :home=home
                     title="Accettate"></invoice-table>
@@ -131,57 +131,15 @@
             <div class="container-fluid">
               <div class="row">
                 <div class="col-sm-8">
-                  <div class="card mb-3">
-                    <div class="card-header">
-                      <i class="fas fa-table"></i>
-                      Ricevute</div>
-                    <div class="card-body">
-                      <div class="table-responsive">
-                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                          <thead>
-                            <tr>
-                              <th>ID</th>
-                              <th>Trasmittente</th>
-                              <th>Azioni</th>
-                            </tr>
-                          </thead>
-                          <tfoot></tfoot>
-                          <tbody>
-                            <tr>
-                              <td>12</td>
-                              <td>2</td>
-                              <td><button type="button" class="btn btn-primary">Accetta</button> <button type="button" class="btn btn-primary">Rifiuta</button></td>
-                            </tr>
-                            <tr>
-                              <td>12</td>
-                              <td>2</td>
-                              <td><button type="button" class="btn btn-primary">Accetta</button> <button type="button" class="btn btn-primary">Rifiuta</button></td>
-                            </tr>
-                            <tr>
-                              <td>12</td>
-                              <td>2</td>
-                              <td><button type="button" class="btn btn-primary">Accetta</button> <button type="button" class="btn btn-primary">Rifiuta</button></td>
-                            </tr>
-                            <tr>
-                              <td>12</td>
-                              <td>2</td>
-                              <td><button type="button" class="btn btn-primary">Accetta</button> <button type="button" class="btn btn-primary">Rifiuta</button></td>
-                            </tr>
-                            <tr>
-                              <td>12</td>
-                              <td>2</td>
-                              <td><button type="button" class="btn btn-primary">Accetta</button> <button type="button" class="btn btn-primary">Rifiuta</button></td>
-                            </tr>                                                                                
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                    <div class="card-footer small text-muted">R_RECEIVED: received from ES</div>
-                  </div>
+                  <invoice-table2
+                    endpoint="/rpc/invoices/?status=R_RECEIVED"
+                    description="R_RECEIVED: received from ES"
+                    :home=home
+                    title="Ricevute"></invoice-table2>
                 </div>
                 <div class="col-sm">
                   <invoice-table
-                    endpoint="/rpc/invoices/?status=R_ACCEPTED:"
+                    endpoint="/rpc/invoices/?status=R_ACCEPTED"
                     description="R_ACCEPTED: Accepted"
                     :home=home
                     title="Accettate"></invoice-table>

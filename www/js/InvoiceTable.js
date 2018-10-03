@@ -36,18 +36,18 @@ Vue.component('invoice-table', {
             post(this.home + this.action);
         },
         loadData: function() {
-        var self = this;
-        var request = new XMLHttpRequest();
-        request.open("GET", self.home + self.endpoint);
-        request.onload = function() {
-            if (request.status == 200) {
-                if (request.responseText) {
-                    var data = JSON.parse(request.responseText);
-                    self.invoices = data.invoices;
+            var self = this;
+            var request = new XMLHttpRequest();
+            request.open("GET", self.home + self.endpoint);
+            request.onload = function() {
+                if (request.status == 200) {
+                    if (request.responseText) {
+                        var data = JSON.parse(request.responseText);
+                        self.invoices = data.invoices;
+                    }
                 }
-            }
-        };
-        request.send();            
+            };
+            request.send();
         }
     },
     template: '\
@@ -66,13 +66,13 @@ Vue.component('invoice-table', {
                             <th>Data e ora</th>\
                         </tr>\
                     </thead>\
-                    <tfoot>\
+                    <tbody>\
                         <tr v-for="i in invoices">\
                             <td>{{ i.id }}</td>\
                             <td>{{ i.nomefile }}</td>\
                             <td>{{ i.ctime }}</td>\
                         </tr>\
-                    </tfoot>\
+                    </tbody>\
                 </table>\
             </div>\
         </div>\
