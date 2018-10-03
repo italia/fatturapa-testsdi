@@ -28,8 +28,8 @@ function post(url, parameter, element) {
     request.onload = function() {
         if ((request.status != 200) && (request.status != 201)) {
             console.error(request.responseText);
-        } esle {
-            EventBus.$emit('refreshTables'):
+        } else {
+            EventBus.$emit('refreshTables');
         }
     };
     if (parameter && element) {

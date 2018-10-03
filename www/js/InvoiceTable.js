@@ -31,7 +31,6 @@ Vue.component('invoice-table', {
             console.log("ciao");
         });
     */
-    loadData();
     },
     methods: {
         doit: function() {
