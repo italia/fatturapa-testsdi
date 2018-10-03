@@ -129,8 +129,8 @@ Legend for all state diagrams:
 | I_FAILED_DELIVERY | failed delivery within 48 hours |
 | I_INVALID | ES notified it was invalid |
 | I_IMPOSSIBLE_DELIVERY | ES notified that it was not delivered to the recipient within 48 hours + 10 days |
-| I_ACCEPTED | ES notified that it was not accepted by the recipient |
-| I_REFUSED | ES notified that it was not refused by the recipient |
+| I_ACCEPTED | ES notified that it was accepted by the recipient |
+| I_REFUSED | ES notified that it was refused by the recipient |
 | I_EXPIRED | ES notified that it was not accepted / refused by the recipient for more than 15 days |
 
 ![issuer finite state machine](/images/issuer.png)
