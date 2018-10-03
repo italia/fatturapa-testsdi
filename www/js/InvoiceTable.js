@@ -26,13 +26,30 @@ Vue.component('invoice-table', {
         request.send();
     },
     created: function() {
+    /*
         EventBus.$on('refreshTables', function() {
             console.log("ciao");
         });
+    */
+    loadData();
     },
     methods: {
         doit: function() {
             post(this.home + this.action);
+        },
+        loadData: function() {
+        var self = this;
+        var request = new XMLHttpRequest();
+        request.open("GET", self.home + self.endpoint);
+        request.onload = function() {
+            if (request.status == 200) {
+                if (request.responseText) {
+                    var data = JSON.parse(request.responseText);
+                    self.invoices = data.invoices;
+                }
+            }
+        };
+        request.send();            
         }
     },
     template: '\

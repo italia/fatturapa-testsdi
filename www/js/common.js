@@ -21,13 +21,15 @@ function get(url, element) {
 }
 
 // POST parameter=element.value to url
-function post(url, parameter, element) {
+function post(url, parameter, element, callback) {
     var request = new XMLHttpRequest();
     request.open("POST", url);
     request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     request.onload = function() {
         if ((request.status != 200) && (request.status != 201)) {
             console.error(request.responseText);
+        } esle {
+            callback();
         }
     };
     if (parameter && element) {
