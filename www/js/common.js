@@ -21,7 +21,7 @@ function get(url, element) {
 }
 
 // POST parameter=element.value to url
-function post(url, parameter, element, callback) {
+function post(url, parameter, element) {
     var request = new XMLHttpRequest();
     request.open("POST", url);
     request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -29,7 +29,7 @@ function post(url, parameter, element, callback) {
         if ((request.status != 200) && (request.status != 201)) {
             console.error(request.responseText);
         } esle {
-            callback();
+            EventBus.$emit('refreshTables'):
         }
     };
     if (parameter && element) {
