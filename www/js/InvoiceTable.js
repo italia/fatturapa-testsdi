@@ -1,6 +1,6 @@
 // configuration for jshint
 /* jshint browser: true, devel: true */
-/* global Vue, get */
+/* global Vue, get, post, $, EventBus */
 
 "use strict";
 
@@ -26,9 +26,10 @@ Vue.component('invoice-table', {
         request.send();
     },
     created: function() {
-        this.loadData();
+        var self = this;
+        self.loadData();
         EventBus.$on('refreshTables', function() {
-            this.loadData();
+            self.loadData();
         });
     },
     methods: {

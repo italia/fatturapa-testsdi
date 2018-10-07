@@ -1,7 +1,10 @@
 // configuration for jshint
 /* jshint browser: true, devel: true */
+/* global Vue */
 
 "use strict";
+
+var EventBus = new Vue();
 
 // GET url and on success if element id is supplied, show response text inside element
 function get(url, element) {
