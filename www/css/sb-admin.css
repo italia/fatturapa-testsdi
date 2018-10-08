@@ -428,7 +428,6 @@ input[type=file] {
   padding: 0;
   font-size: 20px;
   cursor: pointer;
-  opacity: 0;
   filter: alpha(opacity=0);
 }
 .fileName {font-weight: bold;}
