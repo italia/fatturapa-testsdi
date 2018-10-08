@@ -54,7 +54,12 @@ body.fixed-nav.sidebar-toggled #content-wrapper {
   text-align: center;
   color: #fff;
   background: rgba(52, 58, 64, 0.5);
-  line-height: 46px;
+  line-height: 56px;
+  font-size: 2em;
+
+}
+.scroll-to-top a, a:hover {
+    text-decoration: none !important;
 }
 
 .scroll-to-top:focus, .scroll-to-top:hover {
