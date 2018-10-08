@@ -431,5 +431,6 @@ input[type=file] {
   opacity: 0;
   filter: alpha(opacity=0);
 }
+.fileName {font-weight: bold;}
 
 [v-cloak] > * {display: none; }

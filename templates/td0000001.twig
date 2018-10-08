@@ -56,7 +56,7 @@
             <div class="container-fluid">
               <div class="row">
                 <div class="col-sm-6 offset-sm-3">
-                  <form action="/td0000001/rpc/upload" method="POST" enctype="multipart/form-data">
+                  <form action="/td0000001/rpc/upload" method="POST" enctype="multipart/form-data" class="form-group">
                     <button type="button" class="btn btn-info btn-block" onclick="document.getElementById('inputFile').click()">Scegli fattura...</button>
                     <div class="form-group inputDnD">
                     <label class="sr-only" for="inputFile">File Upload</label>
@@ -65,7 +65,6 @@
                     <p style="display: none;" class="fileMsg">È stato selezionato il file: <span class="fileName"></span></p>
                     <input type="submit" name="submit" value="Carica" class="btn btn-primary btn-block" disabled/>
                   </form>
-                  
                 </div>
               </div> <!-- end row -->
             </div> <!-- end container-fluid -->
