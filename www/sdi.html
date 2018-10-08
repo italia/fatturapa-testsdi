@@ -48,7 +48,7 @@
       <div class="container-fluid" id="tables">
         <div class="actions row">
           <div class="col-sm">
-            <button type="button" v-on:click="dispatch();" class="btn btn-info">Invia notifiche</button>
+            <button type="button" v-on:click="dispatch();" class="btn btn-primary">Invia notifiche</button>
           </div>
         </div>
         <div class="row">
@@ -150,7 +150,7 @@
         },
         methods: {
           dispatch: function() {
-            get(this.home + '/rpc/dispatch');
+            post(this.home + '/rpc/dispatch');
           }
         }
       });

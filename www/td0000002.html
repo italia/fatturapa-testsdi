@@ -208,7 +208,7 @@
         },
         methods: {
           dispatch: function() {
-            console.log(this.home + '/rpc/dispatch');
+            post(this.home + '/rpc/dispatch');
           },
           refreshTables: function() {
             EventBus.$emit('refreshTables');
