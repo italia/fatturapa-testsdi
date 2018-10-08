@@ -65,6 +65,7 @@
                     <p style="display: none;" class="fileMsg">È stato selezionato il file: <span class="fileName"></span></p>
                     <input type="submit" name="submit" v-on:click="refreshTables();" value="Carica" class="btn btn-primary btn-block" disabled/>
                   </form>
+                  <progress></progress>
                 </div>
               </div> <!-- end row -->
             </div> <!-- end container-fluid -->
@@ -200,6 +201,39 @@ $(document).ready(
             $('.fileName').html(fileName);
             $('.fileMsg').show();
         });            
+});
+
+
+//** upload asincrono: aspettare la fine del caricamento del file poi fare il refresh delle tabelle
+$(':button').on('click', function() {
+    $.ajax({
+        url: '/td0000001/rpc/upload',
+        type: 'POST',
+
+        // Form data
+        data: new FormData($('form')[0]),
+
+        cache: false,
+        contentType: false,
+        processData: false,
+
+        // Custom XMLHttpRequest
+        xhr: function() {
+            var myXhr = $.ajaxSettings.xhr();
+            if (myXhr.upload) {
+                // For handling the progress of the upload
+                myXhr.upload.addEventListener('progress', function(e) {
+                    if (e.lengthComputable) {
+                        $('progress').attr({
+                            value: e.loaded,
+                            max: e.total,
+                        });
+                    }
+                } , false);
+            }
+            return myXhr;
+        }
+    });
 });
 </script>
   
