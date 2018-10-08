@@ -71,7 +71,7 @@
                     <label class="sr-only" for="inputFile">File Upload</label>
                     <input type="file" name="File" class="form-control-file text-info font-weight-bold" id="inputFile" accept="text/xml" onchange="readUrl(this)" data-title="oppure trascina qui la fattura in formato XML" />
                     </div>
-                    <input type="submit" name="submit" value="Carica" class="btn btn-primary btn-block"/>
+                    <input type="submit" name="submit" value="Carica" class="btn btn-primary btn-block" disabled/>
                   </form>
                 </div>
               </div> <!-- end row -->
@@ -197,26 +197,39 @@
         </div>
     </footer>
     
-    <script type="text/javascript">
-    
-      var app = new Vue({
-        el: '#tables',
-        data: {
-          home: '/td0000001'
-        },
-        methods: {
-          dispatch: function() {
-            post(this.home + '/rpc/dispatch');
-          },
-          refreshTables: function() {
-            EventBus.$emit('refreshTables');
+<script type="text/javascript">
+
+  var app = new Vue({
+    el: '#tables',
+    data: {
+      home: '/td0000001'
+    },
+    methods: {
+      dispatch: function() {
+        post(this.home + '/rpc/dispatch');
+      },
+      refreshTables: function() {
+        EventBus.$emit('refreshTables');
+      }
+    }
+  });
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log("DOM fully loaded and parsed");
+  });
+
+// disable submit button until file selected for upload
+$(document).ready(
+  function(){
+      $('input:file').change(
+          function(){
+              if ($(this).val()) {
+                  $('input:submit').attr('disabled',false); 
+              } 
           }
-        }
-      });
-      document.addEventListener('DOMContentLoaded', function() {
-        console.log("DOM fully loaded and parsed");
-      });
-    </script>  
+          );
+});
+</script>
+  
 
       <script src="js/bootstrap-italia.bundle.min.js"></script>
     <script src="js/bootstrap-italia.min.js"></script>
