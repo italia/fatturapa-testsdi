@@ -75,14 +75,4 @@
 
 {% endblock %}
 
-{% block footer %}
-    {{ parent() }}
-    <script type="text/javascript">
-      var app = new Vue({
-        el: '#tables'
-      });
-      document.addEventListener('DOMContentLoaded', function() {
-        console.log("DOM fully loaded and parsed");
-      });
-    </script>
-{% endblock %}
+{% block footer %}{% endblock %}
