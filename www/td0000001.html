@@ -3,16 +3,11 @@
   <head>
     <meta charset="UTF-8">
     <title>FatturaPA testUI - Trasmittente / destinatario 00000001</title>
-
-    <!-- Bootstrap core CSS 
-    <link href="css/bootstrap.min.css" rel="stylesheet"> -->
-
-    <!-- Custom fonts for this template
-    <link href="css/all.min.css" rel="stylesheet" type="text/css"> -->
-
     <!-- Custom styles for this template-->
-    <link href="css/sb-admin.css" rel="stylesheet">  
-            
+             <link href="css/sb-admin.css" rel="stylesheet">    
+     <link rel="stylesheet" href="css/bootstrap-italia.min.css" />
+     <link rel="stylesheet" href="css/italia-icon-font.css" />     
+    
     <script type="text/javascript" src="js/vue.min.js"></script>
   </head>
   <body id="page-top">
@@ -57,8 +52,7 @@
     </ul>
 
     <div id="content-wrapper">
-      <div class="container-fluid" id="tables">
-      	<div v-cloak> <!-- v-cloak -->
+      <div class="container-fluid" id="tables" v-cloak>
         <div class="actions row">
           <div class="col-sm">
             <button type="button" v-on:click="dispatch();" class="btn mb-1 btn-primary">Invia notifiche</button>
@@ -181,7 +175,6 @@
           </div> <!-- end content tab ricezione -->
         </div> <!-- end tab content -->
       </div>  <!-- /.container-fluid -->
-      </div>  <!-- /v-cloak -->
     </div> <!-- /.content-wrapper -->
 
     </div>
@@ -235,9 +228,6 @@
       });
     </script>  
 
-      <link rel="stylesheet" href="css/bootstrap-italia.min.css" />
-    <link rel="stylesheet" href="css/italia-icon-font.css" />
-  
       <script src="js/bootstrap-italia.bundle.min.js"></script>
     <script src="js/bootstrap-italia.min.js"></script>
       

@@ -35,8 +35,7 @@
     </ul>
 
     <div id="content-wrapper">
-      <div class="container-fluid" id="tables">
-      	<div v-cloak> <!-- v-cloak -->
+      <div class="container-fluid" id="tables" v-cloak>
         <div class="actions row">
           <div class="col-sm">
             <button type="button" v-on:click="dispatch();" class="btn mb-1 btn-primary">Invia notifiche</button>
@@ -159,7 +158,6 @@
           </div> <!-- end content tab ricezione -->
         </div> <!-- end tab content -->
       </div>  <!-- /.container-fluid -->
-      </div>  <!-- /v-cloak -->
     </div> <!-- /.content-wrapper -->
 {% endblock %}
 

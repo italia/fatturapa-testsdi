@@ -3,16 +3,11 @@
   <head>
     <meta charset="UTF-8">
     <title>{{ title }}</title>
-
-    <!-- Bootstrap core CSS 
-    <link href="css/bootstrap.min.css" rel="stylesheet"> -->
-
-    <!-- Custom fonts for this template
-    <link href="css/all.min.css" rel="stylesheet" type="text/css"> -->
-
     <!-- Custom styles for this template-->
-    <link href="css/sb-admin.css" rel="stylesheet">  
     {% block head %}
+     <link href="css/sb-admin.css" rel="stylesheet">    
+     <link rel="stylesheet" href="css/bootstrap-italia.min.css" />
+     <link rel="stylesheet" href="css/italia-icon-font.css" />     
     {% endblock %}
   </head>
   <body id="page-top">
@@ -62,11 +57,6 @@
         </div>
     </footer>
     {% endblock %}
-
-  {% block stylesheets %}
-    <link rel="stylesheet" href="css/bootstrap-italia.min.css" />
-    <link rel="stylesheet" href="css/italia-icon-font.css" />
-  {% endblock %}
 
   {% block javascripts %}
     <script src="js/bootstrap-italia.bundle.min.js"></script>

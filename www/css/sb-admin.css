@@ -428,4 +428,3 @@ input[type=file] {
 }
 
 [v-cloak] > * {display: none; }
-[v-cloak]::before { ontent: "loading..."; }
