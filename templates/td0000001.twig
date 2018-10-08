@@ -62,8 +62,10 @@
                     <label class="sr-only" for="inputFile">File Upload</label>
                     <input type="file" name="File" class="form-control-file text-info font-weight-bold" id="inputFile" accept="text/xml" onchange="readUrl(this)" data-title="oppure trascina qui la fattura in formato XML" />
                     </div>
+                    <p style="display: none;" class="fileMsg">È stato selezionato il file: <span class="fileName"></span></p>
                     <input type="submit" name="submit" value="Carica" class="btn btn-primary btn-block" disabled/>
                   </form>
+                  
                 </div>
               </div> <!-- end row -->
             </div> <!-- end container-fluid -->
@@ -193,6 +195,12 @@ $(document).ready(
               } 
           }
           );
+
+        $('input[type="file"]').change(function(e){
+            var fileName = e.target.files[0].name;
+            $('.fileName').html(fileName);
+            $('.fileMsg').show();
+        });            
 });
 </script>
   
