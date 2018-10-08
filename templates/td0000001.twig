@@ -63,7 +63,7 @@
                     <input type="file" name="File" class="form-control-file text-info font-weight-bold" id="inputFile" accept="text/xml" onchange="readUrl(this)" data-title="oppure trascina qui la fattura in formato XML" />
                     </div>
                     <p style="display: none;" class="fileMsg">È stato selezionato il file: <span class="fileName"></span></p>
-                    <input type="submit" name="submit" value="Carica" class="btn btn-primary btn-block" disabled/>
+                    <input type="submit" name="submit" v-on:click="refreshTables();" value="Carica" class="btn btn-primary btn-block" disabled/>
                   </form>
                 </div>
               </div> <!-- end row -->
