@@ -12,22 +12,12 @@ Vue.component('invoice-table2', {
         };
     },
     mounted: function() {
-        var self = this;
-        var request = new XMLHttpRequest();
-        request.open("GET", self.home + self.endpoint);
-        request.onload = function() {
-            if (request.status == 200) {
-                if (request.responseText) {
-                    var data = JSON.parse(request.responseText);
-                    self.invoices = data.invoices;
-                }
-            }
-        };
-        request.send();
+        this.loadData();
     },
     created: function() {
+        var self = this;
         EventBus.$on('refreshTables', function() {
-            console.log("ciao");
+            self.loadData();
         });
     },
     methods: {
@@ -39,6 +29,20 @@ Vue.component('invoice-table2', {
         },
         refuse: function(id) {
             post(this.home + "/rpc/refuse/" + id);
+        },
+        loadData: function() {
+            var self = this;
+            var request = new XMLHttpRequest();
+            request.open("GET", self.home + self.endpoint);
+            request.onload = function() {
+                if (request.status == 200) {
+                    if (request.responseText) {
+                        var data = JSON.parse(request.responseText);
+                        self.invoices = data.invoices;
+                    }
+                }
+            };
+            request.send();
         }
     },
     template: '\
