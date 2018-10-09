@@ -252,6 +252,7 @@ $(document).ready(function(ev) {
             processData: false,
             success: function(data, status, xhr) {
                 EventBus.$emit('refreshTables');
+                var progress = $('.progress')
                 progress.hide();
                 $('#success').show();
             },
