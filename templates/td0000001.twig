@@ -56,16 +56,32 @@
             <div class="container-fluid">
               <div class="row">
                 <div class="col-sm-6 offset-sm-3">
-                  <form action="/td0000001/rpc/upload" method="POST" enctype="multipart/form-data" class="form-group">
+                  <form enctype="multipart/form-data" class="form-group" id="upload-form">
                     <button type="button" class="btn btn-info btn-block" onclick="document.getElementById('inputFile').click()">Scegli fattura...</button>
                     <div class="form-group inputDnD">
                     <label class="sr-only" for="inputFile">File Upload</label>
-                    <input type="file" name="File" class="form-control-file text-info font-weight-bold" id="inputFile" accept="text/xml" onchange="readUrl(this)" data-title="oppure trascina qui la fattura in formato XML" />
+                    <input type="file" name="File" class="form-control-file text-info font-weight-bold" id="inputFile" accept="text/xml" data-title="oppure trascina qui la fattura in formato XML" />
                     </div>
                     <p style="display: none;" class="fileMsg">È stato selezionato il file: <span class="fileName"></span></p>
                     <input type="submit" name="submit" v-on:click="refreshTables();" value="Carica" class="btn btn-primary btn-block" disabled/>
                   </form>
-                  <progress></progress>
+                  <progress class="progress" value="0" max="100" style="display: none;"></progress>
+                  <!-- upload success alert -->
+                  <div class="alert alert-success alert-dismissible fade show" role="alert" style="display: none;" id="success">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">×</span>
+                    </button>
+                    Il file <span class="fileName"></span> è stato caricato.
+                  </div>
+                  <!-- end success alert -->
+                  <!-- upload error alert -->
+                  <div class="alert alert-warning alert-dismissible fade show" role="alert" style="display: none;" id="warning">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">×</span>
+                    </button>
+                    C'è stato un errore durante il caricamento del file <span class="fileName"></span>, riprova.
+                  </div>
+                  <!-- end success alert -->                  
                 </div>
               </div> <!-- end row -->
             </div> <!-- end container-fluid -->
@@ -204,36 +220,46 @@ $(document).ready(
 });
 
 
-//** upload asincrono: aspettare la fine del caricamento del file poi fare il refresh delle tabelle
-$(':button').on('click', function() {
-    $.ajax({
-        url: '/td0000001/rpc/upload',
-        type: 'POST',
+// upload asincrono: aspettare la fine del caricamento del file poi fare il refresh delle tabelle
+$(document).ready(function(ev) {
+    $("#upload-form").on('submit', (function(ev) {
+        ev.preventDefault();
+        $.ajax({
+            xhr: function() {
+                var progress = $('.progress'),
+                    xhr = $.ajaxSettings.xhr();
 
-        // Form data
-        data: new FormData($('form')[0]),
+                progress.show();
 
-        cache: false,
-        contentType: false,
-        processData: false,
-
-        // Custom XMLHttpRequest
-        xhr: function() {
-            var myXhr = $.ajaxSettings.xhr();
-            if (myXhr.upload) {
-                // For handling the progress of the upload
-                myXhr.upload.addEventListener('progress', function(e) {
-                    if (e.lengthComputable) {
-                        $('progress').attr({
-                            value: e.loaded,
-                            max: e.total,
-                        });
+                xhr.upload.onprogress = function(ev) {
+                    if (ev.lengthComputable) {
+                        var percentComplete = parseInt((ev.loaded / ev.total) * 100);
+                        progress.val(percentComplete);
+                        if (percentComplete === 100) {
+                            // progress.hide().val(0);
+                            progress.show();
+                        }
                     }
-                } , false);
+                };
+
+                return xhr;
+            },
+            url: '/td0000001/rpc/upload',
+            type: 'POST',
+            data: new FormData(this),
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data, status, xhr) {
+                EventBus.$emit('refreshTables');
+                progress.hide();
+                $('#success').show();
+            },
+            error: function(xhr, status, error) {
+                $('#warning').show();
             }
-            return myXhr;
-        }
-    });
+       });
+    }));
 });
 </script>
   
