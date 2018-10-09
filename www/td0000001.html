@@ -72,7 +72,7 @@
                     <input type="file" name="File" class="form-control-file text-info font-weight-bold" id="inputFile" accept="text/xml" data-title="oppure trascina qui la fattura in formato XML" />
                     </div>
                     <p style="display: none;" class="fileMsg">È stato selezionato il file: <span class="fileName"></span></p>
-                    <input type="submit" name="submit" v-on:click="refreshTables();" value="Carica" class="btn btn-primary btn-block" disabled/>
+                    <input type="submit" name="submit" v-on:click="refreshTables();" value="Carica" class="btn btn-primary btn-block"id="submit" disabled/>
                   </form>
                   <progress class="progress" value="0" max="100" style="display: none;"></progress>
                   <!-- upload success alert -->
@@ -270,8 +270,7 @@ $(document).ready(function(ev) {
                         var percentComplete = parseInt((ev.loaded / ev.total) * 100);
                         progress.val(percentComplete);
                         if (percentComplete === 100) {
-                            // progress.hide().val(0);
-                            progress.show();
+                            progress.hide().val(0);
                         }
                     }
                 };
@@ -286,12 +285,14 @@ $(document).ready(function(ev) {
             processData: false,
             success: function(data, status, xhr) {
                 EventBus.$emit('refreshTables');
-                var progress = $('.progress')
-                progress.hide();
+                $('.fileMsg').hide();
+                $('#submit').prop('disabled', true);
                 $('#success').show();
+                $("#upload-form")[0].reset();
             },
             error: function(xhr, status, error) {
                 $('#warning').show();
+                $("#upload-form")[0].reset();
             }
        });
     }));
