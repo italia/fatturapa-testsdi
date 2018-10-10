@@ -209,20 +209,13 @@
     console.log("DOM fully loaded and parsed");
   });
 
-/*
+// test toastifyjs
 $(document).ready(function(){
-    $('#inputFile').on('change', function(ev) {
-        var fileSize = this.files[0].size;
-        var fileType = this.files[0].type;
-        if((fileType != "text/xml") || (fileSize >  5242880)) {
-          $('#submit').prop('disabled', true);
-          $("#upload-form")[0].reset();
-          $('#validation').show();
-        }
-    });
+  Toastify({
+  text: "This is a toast",
+  duration: 5000
+  }).showToast();
 });
-*/
-
 // disable submit button until right file is selected for upload
 $(document).ready(function(){
       $('input:file').change(function(e){
