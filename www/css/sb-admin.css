@@ -438,6 +438,11 @@ progress {
 
 .toastify {
   z-index: 9999;
+  cursor: default !important;
+}
+.toastify .toast-close { 
+  cursor: pointer; 
+  float: right; 
 }
 
 [v-cloak] > * {display: none; }

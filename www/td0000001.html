@@ -238,35 +238,38 @@
   });
 
 // disable submit button until right file is selected for upload
+
 $(document).ready(function(){
-      $('input:file').change(function(e){
-              if ($(this).val()) {
-                  var fileName = this.files[0].name;
-                  var fileSize = this.files[0].size;
-                  var fileType = this.files[0].type; 
-              }
-              if((fileType != "text/xml") || (fileSize >  5242880)) {
-                $('#submit').prop('disabled', true);
-                // $('#validation').show();
-                Toastify({
-                  text: "Il file deve essere in formato XML e non superare i 5 Mb.",
-                  duration: 5000,
-                  close: true,
-                  gravity: "top",
-                  backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",                  
-                }).showToast();
-                $("#upload-form")[0].reset();
-              } else {
-                $('.fileName').html(fileName);
-                $('input:submit').attr('disabled',false);
-                $('.fileMsg').show();
-              }
-          });        
-});
+    $('input:file').change(function(e){
+            if ($(this).val()) {
+                var fileName = this.files[0].name;
+                var fileSize = this.files[0].size;
+                var fileType = this.files[0].type; 
+            }
+            if((fileType != "text/xml") || (fileSize >  5242880)) {
+              $('#submit').prop('disabled', true);
+              // $('#validation').show();
+              Toastify({
+                text: "Il file deve essere in formato XML e non superare i 5 Mb.",
+                duration: 5000,
+                close: true,
+                gravity: "top",
+                backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",                  
+              }).showToast();
+              $("#upload-form")[0].reset();
+            } else {
+              $('.fileName').html(fileName);
+              $('input:submit').attr('disabled',false);
+              $('.fileMsg').show();
+            }
+        });        
+// });
 
 // upload asincrono: aspettare la fine del caricamento del file poi fare il refresh delle tabelle
-$(document).ready(function(ev) {
+// $(document).ready(function(ev) {
+
     $("#upload-form").on('submit', (function(ev) {
+        var fileName = $('input[type=file]').val().replace(/C:\\fakepath\\/i, '');
         ev.preventDefault();
         $.ajax({
             xhr: function() {
@@ -296,10 +299,9 @@ $(document).ready(function(ev) {
             success: function(data, status, xhr) {
                 EventBus.$emit('refreshTables');
                 $('.fileMsg').hide();
-                $('#submit').prop('disabled', true);
                 // $('#success').show();
                 Toastify({
-                  text: "Il file è stato caricato.",
+                  text: "Il file " + fileName + " è stato caricato.",
                   duration: 5000,
                   close: true,
                   gravity: "top",
@@ -312,7 +314,7 @@ $(document).ready(function(ev) {
                 $('.fileMsg').hide();
                 // $('#warning').show();
                 Toastify({
-                  text: "C'è stato un errore durante il caricamento del file, riprova.",
+                  text: "C'è stato un errore durante il caricamento del file " + fileName + ", riprova.",
                   duration: 5000,
                   close: true,
                   gravity: "top",

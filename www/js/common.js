@@ -33,7 +33,7 @@ function post(url, parameter, element) {
             console.error(request.responseText);
             Toastify({
               text: "C'è stato un errore " + request.status + ", riprova.",
-              duration: 5000,
+              duration: 5000000,
               close: true,
               gravity: "top",
               backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",                  
