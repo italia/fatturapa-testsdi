@@ -51,7 +51,7 @@ class Exchange
                     '-' .
                     $xml->FatturaElettronicaHeader->CedentePrestatore->DatiAnagrafici->IdFiscaleIVA->IdCodice;
                 $data = $xml->FatturaElettronicaBody[0]->DatiGenerali->DatiGeneraliDocumento->Data;
-                $anno = substr($data, 0, 4);				
+                $anno = substr($data, 0, 4);
                 $issuer = Channel::find($cedente)->issuer;
                 Invoice::find($Invoice['id'])->update(['cedente' => $cedente ]);
                 Invoice::find($Invoice['id'])->update(['anno' => $anno ]);
@@ -118,14 +118,16 @@ XML;
                 "td$issuer",
                 "TrasmissioneFatture",
                 $notification['type'],
-                $fileSdI);
+                $fileSdI
+            );
             if ($notification['type'] == 'NotificaDecorrenzaTermini') {
                 $sent &= Base::dispatchNotification(
                     $service,
                     "td$recipient",
                     "RicezioneFatture",
                     $notification['type'],
-                    $fileSdI);
+                    $fileSdI
+                );
             }
             if ($sent) {
                 echo "sent !";
@@ -232,6 +234,8 @@ XML;
                             );
                         }
                     } catch (SoapFault $e) {
+                        echo "SOAP Fault: (faultcode: {".$e->faultcode."}, faultstring: {".$e->faultstring."})";
+                        exit;
                     }
                 }
 
@@ -268,9 +272,9 @@ XML;
     }
     public static function accept($invoice_id)
     {
-    	new Database();
+        new Database();
         Invoice::where('id', '=', $invoice_id)->update(array('status' => 'E_ACCEPTED'));
-		$notification = <<<XML
+        $notification = <<<XML
 <?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="EC_v1.0.xsl"?>
 <types:NotificaEsitoCommittente xmlns:types="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="1.0" xsi:schemaLocation="http://www.fatturapa.gov.it/sdi/messaggi/v1.0 MessaggiTypes_v1.0.xsd ">
   <IdentificativoSdI>$invoice_id</IdentificativoSdI>

@@ -1,7 +1,6 @@
 <?php
 
-class TrasmissioneFatture_service extends SoapClientDebug
-// class TrasmissioneFatture_service extends SoapClient
+class TrasmissioneFatture_service extends \SoapClient
 {
 
     /**
@@ -84,13 +83,13 @@ class TrasmissioneFatture_service extends SoapClientDebug
      */
     public function AttestazioneTrasmissioneFattura(fileSdI_Type $attestazioneTrasmissioneFattura)
     {
-    	    	
+                
         /*echo('AttestazioneTrasmissioneFattura------------------:');
-		echo "</br>";
+        echo "</br>";
         echo('attestazioneTrasmissioneFattura->file: '.json_encode($attestazioneTrasmissioneFattura->getFile()));
-		echo "</br>";
+        echo "</br>";
         echo('length(attestazioneTrasmissioneFattura->file) = ' . strlen($attestazioneTrasmissioneFattura->getFile()));
-		echo "</br>";
+        echo "</br>";
         echo('------------------END');*/
         
         return $this->__soapCall('AttestazioneTrasmissioneFattura', array($attestazioneTrasmissioneFattura));

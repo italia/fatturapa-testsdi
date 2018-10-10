@@ -13,9 +13,9 @@ class SdIRiceviNotificaHandler
 
     public function NotificaEsito($parametersIn)
     {
-    	
-        $invoice_id = $parametersIn->IdentificativoSdI;        	
-		Base::receive(
+        
+        $invoice_id = $parametersIn->IdentificativoSdI;
+        Base::receive(
             $notification_blob = $parametersIn->File,
             $filename = $parametersIn->NomeFile,
             $type = 'NotificaEsito',

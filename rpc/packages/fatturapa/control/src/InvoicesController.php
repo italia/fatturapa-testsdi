@@ -15,7 +15,7 @@ class InvoicesController extends Controller
     
     public function index(Request $request)
     {
-        $fields = ['id', 'posizione', 'cedente', 'anno', 'status', 'actor', 'nomefile', 'ctime'];
+        $fields = ['id', 'posizione', 'cedente', 'anno', 'status', 'actor', 'nomefile', 'ctime', 'issuer'];
         $status = $request->input('status');
         if ($status) {
             $invoices = Invoice::select($fields)
@@ -57,9 +57,9 @@ class InvoicesController extends Controller
         exit;
     }
     public function accept(Request $request, $id)
-    {    	
-		Recipient::accept($id);
-		echo "accept";
-    	exit;
+    {
+        Recipient::accept($id);
+        echo "accept";
+        exit;
     }
 }

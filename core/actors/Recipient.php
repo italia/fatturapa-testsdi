@@ -36,7 +36,7 @@ class Recipient
         Invoice::where('id', '=', $id)->update(array('status' => 'R_ACCEPTED'));
         $invoice = Invoice::find($id);
         $remote_id = $invoice->remote_id;
-		$notification = <<<XML
+        $notification = <<<XML
 <?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="EC_v1.0.xsl"?>
 <types:NotificaEsitoCommittente xmlns:types="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="1.0" xsi:schemaLocation="http://www.fatturapa.gov.it/sdi/messaggi/v1.0 MessaggiTypes_v1.0.xsd ">
   <IdentificativoSdI>$remote_id</IdentificativoSdI>
@@ -67,47 +67,46 @@ XML;
     public static function expire($invoices)
     {
     }
-	public static function dispatchi()
+    public static function dispatchi()
     {
         $notifications = Notification::all()
             ->where('status', 'N_PENDING')
             ->where('actor', Base::getActor());
-		$notifications = $notifications->toArray();
+        $notifications = $notifications->toArray();
 
         $service = new \SdIRiceviNotifica_service(array('trace' => 1));
 
-		foreach($notifications as $notification)
-		{
-			$invoice = Invoice::find($notification['invoice_id']);
-			$remote_id = $invoice->remote_id;
-			$fileSdI = new \fileSdI_Type($remote_id, $notification['nomefile'], $notification['blob']);
-			$sent = Base::dispatchNotification($service, "sdi", "SdIRiceviNotifica", "NotificaEsito", $fileSdI);
-			
+        foreach ($notifications as $notification) {
+            $invoice = Invoice::find($notification['invoice_id']);
+            $remote_id = $invoice->remote_id;
+            $fileSdI = new \fileSdI_Type($remote_id, $notification['nomefile'], $notification['blob']);
+            $sent = Base::dispatchNotification($service, "sdi", "SdIRiceviNotifica", "NotificaEsito", $fileSdI);
+            
             if ($sent) {
                 echo "sent !";
                 Notification::find($notification['id'])->update(['status' => 'N_DELIVERED' ]);
-            }			
-		}	
-		
-		//ACCEPT DRAFT
-		/*$notifications = Notification::all()
+            }
+        }
+        
+        //ACCEPT DRAFT
+        /*$notifications = Notification::all()
             ->where('status', 'R_ACCEPTED')
             ->where('actor', Base::getActor());
-		$notifications = $notifications->toArray();
+        $notifications = $notifications->toArray();
 
         $service = new \SdIRiceviNotifica_service(array('trace' => 1));
 
-		foreach($notifications as $notification)
-		{
-			$fileSdI = new \fileSdI_Type($notification['id'], $notification['nomefile'], $notification['blob']);
+        foreach($notifications as $notification)
+        {
+            $fileSdI = new \fileSdI_Type($notification['id'], $notification['nomefile'], $notification['blob']);
             $sent = Base::dispatchNotification($service, "sdi", "SdIRiceviNotifica", "NotificaEsito", $fileSdI);
             if ($sent) {
                 echo "sent !";
                 Notification::find($notification['id'])->update(['status' => 'E_ACCEPTED' ]);
-            }			
-		}*/
-		
-				
-    	 return true;
+            }
+        }*/
+        
+                
+         return true;
     }
 }

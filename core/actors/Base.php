@@ -97,7 +97,8 @@ class Base
             $service->$operation($fileSdI);
             $sent = true;
         } catch (SoapFault $e) {
-            echo "failure !";
+            echo "SOAP Fault: (faultcode: {".$e->faultcode."}, faultstring: {".$e->faultstring."})";
+            exit;
         }
         return $sent;
     }
@@ -132,5 +133,4 @@ class Base
         }
         return $xml;
     }
-	
 }

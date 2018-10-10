@@ -10,4 +10,3 @@ $srv = new SoapServerDebug('TrasmissioneFatture_v1.1.wsdl');
 $srv->setClass("TrasmissioneFattureHandler");
 $srv->handle();
 error_log('==== '. print_r($srv->getAllDebugValues(), true));
-

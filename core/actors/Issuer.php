@@ -56,17 +56,19 @@ class Issuer
                 }
             } catch (SoapFault $e) {
                 Invoice::find($Invoice['id'])->update(['status' => 'I_INVALID' ]);
+                echo "SOAP Fault: (faultcode: {".$e->faultcode."}, faultstring: {".$e->faultstring."})";
+                exit;
                 //print($service->__getLastResponse());
             }
         }
         return true;
     }
-	public static function receive($notification_blob, $filename, $type, $status)
+    public static function receive($notification_blob, $filename, $type, $status)
     {
-    	new Database();
+        new Database();
         error_log("receiving notification $filename");
         $xmlString = base64_decode($notification_blob);
-    	$xml = Base::unpack($xmlString);
+        $xml = Base::unpack($xmlString);
         $invoice_remote_id = $xml->IdentificativoSdI;
         error_log("remote_id = $invoice_remote_id");
         $invoice = Invoice::where('remote_id', $invoice_remote_id)->where('actor', Base::getActor())->first();

@@ -55,7 +55,7 @@ class SoapClientDebug extends SoapClient
         echo('curl http code = ' . $info['http_code']);
 
         if ($output === false) {
-            $err = 'Curl error: ' . curl_error($soap_do);            
+            $err = 'Curl error: ' . curl_error($soap_do);
             print $err;
         } else {
             ///Operation completed successfully
