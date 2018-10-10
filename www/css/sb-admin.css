@@ -436,4 +436,8 @@ progress {
   margin-bottom: 2em;
 }
 
+.toastify {
+  z-index: 9999;
+}
+
 [v-cloak] > * {display: none; }

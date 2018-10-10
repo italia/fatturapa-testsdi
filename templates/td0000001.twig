@@ -66,14 +66,7 @@
                     <input type="submit" name="submit" v-on:click="refreshTables();" value="Carica" class="btn btn-primary btn-block"id="submit" disabled/>
                   </form>
                   <progress class="progress" value="0" max="100" style="display: none;"></progress>
-                  <!-- selected file validation -->
-                  <div class="alert alert-warning alert-dismissible fade show" role="alert" style="display: none;" id="validation">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                      <span aria-hidden="true">×</span>
-                    </button>
-                    Il file deve essere in formato XML e non superare i 5 Mb.
-                  </div>
-                  <!-- end success alert -->                  
+                  
                   <!-- upload success alert -->
                   <div class="alert alert-success alert-dismissible fade show" role="alert" style="display: none;" id="success">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -209,14 +202,6 @@
     console.log("DOM fully loaded and parsed");
   });
 
-// test toastifyjs
-$(document).ready(function(){
-  Toastify({
-  text: "This is a toast",
-  duration: 5000
-  }).showToast();
-});
-
 // disable submit button until right file is selected for upload
 $(document).ready(function(){
       $('input:file').change(function(e){
@@ -227,12 +212,19 @@ $(document).ready(function(){
               }
               if((fileType != "text/xml") || (fileSize >  5242880)) {
                 $('#submit').prop('disabled', true);
-                $('#validation').show();
+                // $('#validation').show();
+                Toastify({
+                  text: "Il file deve essere in formato XML e non superare i 5 Mb.",
+                  duration: 5000,
+                  close: true,
+                  gravity: "top",
+                  backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",                  
+                }).showToast();
                 $("#upload-form")[0].reset();
               } else {
                 $('.fileName').html(fileName);
-                $('.fileMsg').show();
                 $('input:submit').attr('disabled',false);
+                $('.fileMsg').show();
               }
           });        
 });
@@ -270,13 +262,27 @@ $(document).ready(function(ev) {
                 EventBus.$emit('refreshTables');
                 $('.fileMsg').hide();
                 $('#submit').prop('disabled', true);
-                $('#success').show();
+                // $('#success').show();
+                Toastify({
+                  text: "Il file è stato caricato.",
+                  duration: 5000,
+                  close: true,
+                  gravity: "top",
+                  backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",                  
+                }).showToast();                
                 $("#upload-form")[0].reset();
             },
             error: function(xhr, status, error) {
                 $("#upload-form")[0].reset();
                 $('.fileMsg').hide();
-                $('#warning').show();
+                // $('#warning').show();
+                Toastify({
+                  text: "C'è stato un errore durante il caricamento del file, riprova.",
+                  duration: 5000,
+                  close: true,
+                  gravity: "top",
+                  backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",                  
+                }).showToast();                
             }
        });
     }));
