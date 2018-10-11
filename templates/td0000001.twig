@@ -64,25 +64,7 @@
                     </div>
                     <p style="display: none;" class="fileMsg">È stato selezionato il file: <span class="fileName"></span></p>
                     <input type="submit" name="submit" v-on:click="refreshTables();" value="Carica" class="btn btn-primary btn-block"id="submit" disabled/>
-                  </form>
-                  <progress class="progress" value="0" max="100" style="display: none;"></progress>
-                  
-                  <!-- upload success alert -->
-                  <div class="alert alert-success alert-dismissible fade show" role="alert" style="display: none;" id="success">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                      <span aria-hidden="true">×</span>
-                    </button>
-                    Il file <span class="fileName"></span> è stato caricato.
-                  </div>
-                  <!-- end success alert -->
-                  <!-- upload error alert -->
-                  <div class="alert alert-warning alert-dismissible fade show" role="alert" style="display: none;" id="warning">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                      <span aria-hidden="true">×</span>
-                    </button>
-                    C'è stato un errore durante il caricamento del file <span class="fileName"></span>, riprova.
-                  </div>
-                  <!-- end success alert -->                  
+                  </form>                  
                 </div>
               </div> <!-- end row -->
             </div> <!-- end container-fluid -->
@@ -205,7 +187,7 @@
 // disable submit button until right file is selected for upload
 
 $(document).ready(function(){
-    $('input:file').change(function(e){
+    $('#inputFile').change(function(e){
             if ($(this).val()) {
                 var fileName = this.files[0].name;
                 var fileSize = this.files[0].size;
@@ -213,7 +195,6 @@ $(document).ready(function(){
             }
             if((fileType != "text/xml") || (fileSize >  5242880)) {
               $('#submit').prop('disabled', true);
-              // $('#validation').show();
               Toastify({
                 text: "Il file deve essere in formato XML e non superare i 5 Mb.",
                 duration: 5000,
@@ -224,14 +205,12 @@ $(document).ready(function(){
               $("#upload-form")[0].reset();
             } else {
               $('.fileName').html(fileName);
-              $('input:submit').attr('disabled',false);
+              $('#submit').attr('disabled',false);
               $('.fileMsg').show();
             }
         });        
-// });
 
-// upload asincrono: aspettare la fine del caricamento del file poi fare il refresh delle tabelle
-// $(document).ready(function(ev) {
+    // asynchronous file upload and refresh tables
 
     $("#upload-form").on('submit', (function(ev) {
         var fileName = $('input[type=file]').val().replace(/C:\\fakepath\\/i, '');
@@ -240,9 +219,7 @@ $(document).ready(function(){
             xhr: function() {
                 var progress = $('.progress'),
                     xhr = $.ajaxSettings.xhr();
-
                 progress.show();
-
                 xhr.upload.onprogress = function(ev) {
                     if (ev.lengthComputable) {
                         var percentComplete = parseInt((ev.loaded / ev.total) * 100);
@@ -252,7 +229,6 @@ $(document).ready(function(){
                         }
                     }
                 };
-
                 return xhr;
             },
             url: '/td0000001/rpc/upload',
@@ -264,20 +240,20 @@ $(document).ready(function(){
             success: function(data, status, xhr) {
                 EventBus.$emit('refreshTables');
                 $('.fileMsg').hide();
-                // $('#success').show();
                 Toastify({
                   text: "Il file " + fileName + " è stato caricato.",
                   duration: 5000,
                   close: true,
                   gravity: "top",
                   backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",                  
-                }).showToast();                
+                }).showToast();              
+                $('#submit').attr('disabled',true);  
                 $("#upload-form")[0].reset();
             },
             error: function(xhr, status, error) {
                 $("#upload-form")[0].reset();
                 $('.fileMsg').hide();
-                // $('#warning').show();
+                $('#submit').attr('disabled',true);
                 Toastify({
                   text: "C'è stato un errore durante il caricamento del file " + fileName + ", riprova.",
                   duration: 5000,
