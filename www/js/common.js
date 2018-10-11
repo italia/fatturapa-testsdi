@@ -2,8 +2,6 @@
 /* jshint browser: true, devel: true */
 /* global Vue */
 
-"use strict";
-
 var EventBus = new Vue();
 
 // GET url and on success if element id is supplied, show response text inside element
@@ -51,3 +49,17 @@ function post(url, parameter, element) {
         request.send();
     }
 }
+
+
+// get time
+$(document).ready(function(){
+  var url = window.location.protocol + "//" + window.location.host + "/";
+  url = url + "sdi/rpc/datetime";
+    $.ajax({
+        type: "GET",
+        url: url,
+        success: function(data){
+            $('#dateTime').text(data);
+        }
+    });
+});
