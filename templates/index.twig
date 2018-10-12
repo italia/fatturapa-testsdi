@@ -7,71 +7,66 @@
 
 {% block wrapper %}
 
-    <!-- Sidebar -->
-    <ul class="sidebar navbar-nav">
-      <li class="nav-item active">
-        <a class="nav-link" href="index.html">
-          <i class="fas fa-fw fa-tachometer-alt"></i>
-          <span>Dashboard</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="sdi.html">
-          <i class="fas fa-fw fa-exchange-alt"></i>
-          <span>SDI</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="td0000001.html">
-          <i class="fas fa-fw fa-building"></i>
-          <span>TD0000001</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="td0000002.html">
-          <i class="fas fa-fw fa-building"></i>
-          <span>TD0000002</span>
-        </a>
-      </li>
-    </ul>
+<!-- Sidebar -->
+<ul class="sidebar navbar-nav">
+  <li class="nav-item active">
+    <a class="nav-link" href="index.html">
+      <i class="fas fa-fw fa-tachometer-alt"></i>
+      <span>Dashboard</span>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="sdi.html">
+      <i class="fas fa-fw fa-exchange-alt"></i>
+      <span>SDI</span>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="td0000001.html">
+      <i class="fas fa-fw fa-building"></i>
+      <span>TD0000001</span>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="td0000002.html">
+      <i class="fas fa-fw fa-building"></i>
+      <span>TD0000002</span>
+    </a>
+  </li>
+</ul>
 
-    <div id="content-wrapper">
-      <div class="container-fluid">
-        <div class="card mb-3">
-              <div class="card-body">
-                <h5 class="card-title border-bottom border-italia">Actions...</h5>
-                <div class="card-text">
-                  <div class="col-sm-6 input-group pb-3">
-                    <div class="input-group-prepend">
-                      <button type="button" onclick="post('/sdi/rpc/clear');" class="btn mb-1 btn-primary">Clear (resets the state)</button>
-                    </div>
-                  </div>
-                  <div class="col-sm-6 input-group pb-3">                  
-                      <input id="dt" type="datetime-local" class="form-control" aria-label="date" value="2018-06-12T19:30">
-                      <button type="button" onclick="post('/sdi/rpc/timestamp', 'timestamp', 'dt');" class="btn mb-1 btn-primary">Set the simulated date and time</button>
-                  </div>
-                  <div class="col-sm-6 input-group pb-3">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text" id="">Speed</span>
-                    </div>
-                    <input id="speed" type="number" min="1" max="1000000000" class="form-control" aria-label="speed">
-                  </div>
-                  <div class="col-sm-6 input-group pb-3">
-                   <div class="input-group-prepend">  
-                      <button type="button" onclick="post('/sdi/rpc/speed', 'speed', 'speed');" class="btn mb-1 btn-primary">Set factor for simulated time to wallclock time</button>
-                    </div>
-                  </div>
-                  <div class="col-sm-6 input-group pb-3">
-                    <div class="input-group-prepend">
-                      <button type="button" onclick="get('/sdi/rpc/datetime', 'simtime');" class="btn mb-1 btn-primary">Show current simulation time</button>
-                      <span id="simtime"></span>
-                    </div>
-                  </div>
-                </div>  <!-- /.card-text -->
-              </div>  <!-- /.card-body -->
-        </div>  <!-- /.card mb-3 -->
-      </div>  <!-- /.container-fluid -->
-    </div> <!-- /.content-wrapper -->
+<div id="content-wrapper">
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title border-bottom border-italia">Dashboard</h5>
+        <div class="form-group">
+          <p>Do you want to clear (reset) the state?</p>
+          <button type="button" onclick="post('/sdi/rpc/clear');" class="btn mb-1 btn-primary">Reset</button>
+        </div>
+        <div class="form-group">
+          <p>Set the simulated date and time</p>
+          <div class="input-group">
+            <input id="dt" type="datetime-local" class="form-control" aria-label="date" value="2018-06-12T19:30">
+            <button type="button" onclick="post('/sdi/rpc/timestamp', 'timestamp', 'dt');" class="btn mb-1 btn-primary">Save</button>
+          </div>
+        </div>  
+        <div class="form-group">
+          <p>Set factor for simulated time to wallclock time</p>
+          <div class="input-group">
+            <input id="speed" type="number" min="1" max="1000000000" class="form-control" aria-label="speed">
+            <button type="button" onclick="post('/sdi/rpc/speed', 'speed', 'speed');" class="btn mb-1 btn-primary">Save</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <p>Current simulation time </p>
+          <button type="button" onclick="get('/sdi/rpc/datetime', 'simtime');" class="btn mb-1 btn-primary">Show</button>
+          <p><span id="simtime"></span></p>
+        </div>
+      </div>  <!-- /.card-body -->
+    </div>  <!-- /.card mb-3 -->    
+  </div>  <!-- /.container-fluid -->
+</div> <!-- /.content-wrapper -->
 
 {% endblock %}
 {% block footer %}
