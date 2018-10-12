@@ -49,7 +49,7 @@
 
 <div id="content-wrapper">
   <div class="container-fluid">
-    <div class="card">
+    <div class="card col-md-6">
       <div class="card-body">
         <h5 class="card-title border-bottom border-italia">Dashboard</h5>
         <div class="form-group">
@@ -113,19 +113,30 @@
     
 
 <script type="text/javascript">
-
 $(document).ready(function(){
     var url = window.location.protocol + "//" + window.location.host + "/";
     url = url + "sdi/rpc/datetime";
-    $.getJSON(url, function(data) {   
+  $.ajax({
+    url: url,
+    dataType: 'json',
+    success: function( data ) {
         var timestamp = data.timestamp;
         var datetime = data.datetime;
         var speed = data.speed;
         // $('#dt').val(datetime);    
-        $('#speed').val(speed);   
-    });
+        $('#speed').val(speed); 
+    },
+    error: function( data ) {
+            Toastify({
+              text: "Errore caricamento: " + url + ", riprova.",
+              duration: 5000,
+              close: true,
+              gravity: "top",
+              backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",                  
+            }).showToast(); 
+    }
+  });
 });
-
 </script>
 
       <script src="js/bootstrap-italia.bundle.min.js"></script>

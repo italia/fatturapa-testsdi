@@ -73,19 +73,30 @@
 {{ parent() }}
 
 <script type="text/javascript">
-
 $(document).ready(function(){
     var url = window.location.protocol + "//" + window.location.host + "/";
     url = url + "sdi/rpc/datetime";
-    $.getJSON(url, function(data) {   
+  $.ajax({
+    url: url,
+    dataType: 'json',
+    success: function( data ) {
         var timestamp = data.timestamp;
         var datetime = data.datetime;
         var speed = data.speed;
         // $('#dt').val(datetime);    
-        $('#speed').val(speed);   
-    });
+        $('#speed').val(speed); 
+    },
+    error: function( data ) {
+            Toastify({
+              text: "Errore caricamento: " + url + ", riprova.",
+              duration: 5000,
+              close: true,
+              gravity: "top",
+              backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",                  
+            }).showToast(); 
+    }
+  });
 });
-
 </script>
 {% endblock %}
 

@@ -54,11 +54,21 @@ function post(url, parameter, element) {
 $(document).ready(function(){
     var url = window.location.protocol + "//" + window.location.host + "/";
     url = url + "sdi/rpc/datetime";
-    $.getJSON(url, function(data) {   
+  $.ajax({
+    url: url,
+    dataType: 'json',
+    success: function( data ) {
         var text = "Datetime: "+ data.datetime;
-        $("#dateTime").html(text);
-        var timestamp = data.timestamp;
-        var datetime = data.datetime;
-        var speed = data.speed;        
-    });
+        $("#dateTime").html(text); 
+    },
+    error: function( data ) {
+            Toastify({
+              text: "Errore caricamento in: " + url + ", riprova.",
+              duration: 5000,
+              close: true,
+              gravity: "top",
+              backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",                  
+            }).showToast(); 
+    }
+  });
 });
