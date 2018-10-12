@@ -55,7 +55,7 @@ $(document).ready(function(){
     var url = window.location.protocol + "//" + window.location.host + "/";
     url = url + "sdi/rpc/datetime";
     $.getJSON(url, function(data) {   
-        var text = "Timestamp: " + data.timestamp + "<br>Datetime: "+ data.datetime +"<br>Speed: "+ data.speed;
+        var text = "Datetime: "+ data.datetime;
         $("#dateTime").html(text);
         var timestamp = data.timestamp;
         var datetime = data.datetime;
