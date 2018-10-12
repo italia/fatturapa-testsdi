@@ -51,15 +51,14 @@ function post(url, parameter, element) {
 }
 
 
-// get time
 $(document).ready(function(){
-  var url = window.location.protocol + "//" + window.location.host + "/";
-  url = url + "sdi/rpc/datetime";
-    $.ajax({
-        type: "GET",
-        url: url,
-        success: function(data){
-            $('#dateTime').text(data);
-        }
+    var url = window.location.protocol + "//" + window.location.host + "/";
+    url = url + "sdi/rpc/datetime";
+    $.getJSON(url, function(data) {   
+        var text = "Timestamp: " + data.timestamp + "<br>Datetime: "+ data.datetime +"<br>Speed: "+ data.speed;
+        $("#dateTime").html(text);
+        var timestamp = data.timestamp;
+        var datetime = data.datetime;
+        var speed = data.speed;        
     });
 });

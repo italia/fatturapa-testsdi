@@ -47,14 +47,14 @@
                     </div>
                   </div>
                   <div class="col-sm-6 input-group pb-3">                  
-                      <input id="dt" type="datetime-local" class="form-control" aria-label="date">
-                      <button type="button" onclick="post('/sdi/rpc/timestamp', 'timestamp', 'dt');" class="btn mb-1 btn-primary">Set the simulated date & time</button>
+                      <input id="dt" type="datetime-local" class="form-control" aria-label="date" value="2018-06-12T19:30">
+                      <button type="button" onclick="post('/sdi/rpc/timestamp', 'timestamp', 'dt');" class="btn mb-1 btn-primary">Set the simulated date and time</button>
                   </div>
                   <div class="col-sm-6 input-group pb-3">
                     <div class="input-group-prepend">
                       <span class="input-group-text" id="">Speed</span>
                     </div>
-                    <input id="speed" type="number" min="1" max="1000000000" class="form-control" placeholder="10" aria-label="speed">
+                    <input id="speed" type="number" min="1" max="1000000000" class="form-control" aria-label="speed">
                   </div>
                   <div class="col-sm-6 input-group pb-3">
                    <div class="input-group-prepend">  
@@ -74,3 +74,23 @@
     </div> <!-- /.content-wrapper -->
 
 {% endblock %}
+{% block footer %}
+{{ parent() }}
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+    var url = window.location.protocol + "//" + window.location.host + "/";
+    url = url + "sdi/rpc/datetime";
+    $.getJSON(url, function(data) {   
+        var timestamp = data.timestamp;
+        var datetime = data.datetime;
+        var speed = data.speed;
+        // $('#dt').val(datetime);    
+        $('#speed').val(speed);   
+    });
+});
+
+</script>
+{% endblock %}
+
