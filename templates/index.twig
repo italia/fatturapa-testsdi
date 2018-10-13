@@ -71,24 +71,27 @@
 {% endblock %}
 {% block footer %}
 {{ parent() }}
-
 <script type="text/javascript">
+// prefill date time speed form
 $(document).ready(function(){
     var url = window.location.protocol + "//" + window.location.host + "/";
     url = url + "sdi/rpc/datetime";
-  $.ajax({
+    $.ajax({
     url: url,
     dataType: 'json',
     success: function( data ) {
-        var timestamp = data.timestamp;
-        var datetime = data.datetime;
+        var dateTime = data.datetime;
+        var date = dateTime.substr(0, 10); //yyyy-mm-dd        
+        var time = dateTime.substr(11, 5); //00:00
+        var dt = date+"T"+time; //yyyy-mm-ddT00:00
+        $('#dt').val(dt);
+
         var speed = data.speed;
-        // $('#dt').val(datetime);    
-        $('#speed').val(speed); 
+        $('#speed').val(speed);
     },
     error: function( data ) {
             Toastify({
-              text: "Errore caricamento: " + url + ", riprova.",
+              text: "Errore nel prefill form (" + url + "), riprova.",
               duration: 5000,
               close: true,
               gravity: "top",
