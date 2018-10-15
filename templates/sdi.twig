@@ -39,7 +39,8 @@
       <div class="container-fluid" id="tables">
         <div class="actions row">
           <div class="col-sm">
-            <button type="button" v-on:click="dispatch();" class="btn btn-primary">Invia notifiche</button>
+            <button type="button" v-on:click="dispatch();" class="btn mb-1 btn-primary">Invia notifiche</button>
+            <button type="button" onclick="post('/sdi/rpc/clear');" class="btn mb-1 btn-danger">Resetta il database</button>
           </div>
         </div>
         <div class="row">
