@@ -17,9 +17,8 @@ The test environment can be used to:
 At this stage the testsdi in **WIP** and not fully implemented.
 
 Some functionalities are also **excluded** from the initial design:
-- receiving / transmitting ZIP archives
-- receiving / transmitting invoices with multiple `FatturaElettronicaBody` elements ("multi-invoices")
-- signature verification
+- receiving / transmitting ZIP archives (see [issue #25](https://github.com/italia/fatturapa-testsdi/issues/25))
+- receiving / transmitting invoices with multiple `FatturaElettronicaBody` elements ("multi-invoices") (see [issue 22](https://github.com/italia/fatturapa-testsdi/issues/22))
 
 **Index**:
 
@@ -34,6 +33,7 @@ Some functionalities are also **excluded** from the initial design:
   + [Configuring and Installing](#configuring-and-installing)
   + [Demo](#demo)
 * [Testing](#testing)
+  + [Manual testing](#manual-testing)
   + [Unit tests](#unit-tests)
   + [Linting](#linting)
 * [Contributing](#contributing)
@@ -92,7 +92,7 @@ A distinctive design choice has been to use the same database schema, API and st
 
 1. The **SOAP server** component exposes the interfaces required to communicate in accordance with the FatturaPA specification; it uses the _fatturapa-core_ classes
 
-2. The **core** component ([fatturapa-core]((/core/README.md)), has:
+2. The **core** component ([fatturapa-core](/core/README.md)), has:
   - state machine abstraction
   - state persistency to database for each invoice and notification
   - `Base`, `Issuer`, `Exchange` and `Recipient` classes.
@@ -210,7 +210,7 @@ There is a common database for all actors, consisting in three tables:
 
 ### SOAP adaptor
 
-For each of the four SOAP Web Services, we start from the [Web Services Description Language, (**WSDL**)](https://en.wikipedia.org/wiki/Wsdl) and [XML Schema Definition, (**XSD**)](https://en.wikipedia.org/wiki/XML_Schema_(W3C) files from fatturapa.gov.it, feed them to [wsdl2phpgenerator](https://github.com/wsdl2phpgenerator/wsdl2phpgenerator) which generates types and boilerplate for the endpoint in a directory **named as the endpoint**.
+For each of the four SOAP Web Services, we started from the [Web Services Description Language, (**WSDL**)](https://en.wikipedia.org/wiki/Wsdl) and [XML Schema Definition, (**XSD**)](https://en.wikipedia.org/wiki/XML_Schema_(W3C)) files from fatturapa.gov.it, fed them to [wsdl2phpgenerator](https://github.com/wsdl2phpgenerator/wsdl2phpgenerator) which generated types and boilerplate for the endpoint in a directory **named as the endpoint**.
 
 This code generation step has been performed once and for all by the [soap/bin/generate.php](/soap/bin/generate.php) script.
 
@@ -364,50 +364,6 @@ your SOAP endpoints will be at:
   - https://www.example.com/td0000003/soap/RicezioneFatture
   - https://www.example.com/td0000003/soap/TrasmissioneFatture
 
-### Manual testing
-
-You can test manually by [making SOAP requests using Postman](http://blog.getpostman.com/2014/08/22/making-soap-requests-using-postman/).
-
-You can import this collection into Postman, to test the AttestazioneTrasmissioneFattura operation of the TrasmissioneFatture web service (change the url to match that of your test server !):
-```
-{
-  "variables": [],
-  "info": {
-    "name": "SOAP",
-    "_postman_id": "0ee991f3-5203-a8ac-6b38-32c8bfabc05e",
-    "description": "",
-    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
-  },
-  "item": [
-    {
-      "name": "SDICoop Transmit / TrasmissioneFatture service, AttestazioneTrasmissioneFattura operation",
-      "request": {
-        "url": "http://testsdi.simevo.com/td0000001/soap/TrasmissioneFatture/",
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "text/xml;charset=\"utf-8\"",
-            "description": ""
-          },
-          {
-            "key": "SOAPAction",
-            "value": "http://www.fatturapa.it/TrasmissioneFatture/AttestazioneTrasmissioneFattura",
-            "description": ""
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<SOAP-ENV:Envelope\n  xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"\n  xmlns:ns1=\"http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types\">\n\t<SOAP-ENV:Body>\n\t\t<ns1:attestazioneTrasmissioneFattura>\n\t\t\t<IdentificativoSdI>104</IdentificativoSdI>\n\t\t\t<NomeFile>IT01234567890_11111_AT_001.xml</NomeFile>\n\t\t\t<File>UEQ5NGJXd2dkbVZ5YzJsdmJqMGlNUzR3SWlCbGJtTnZaR2x1WnowaVZWUkdMVGdpUHo0S1BEOTRiV3d0YzNSNWJHVnphR1ZsZENCMGVYQmxQU0owWlhoMEwzaHpiQ0lnYUhKbFpqMGlRVlJmZGpFdU1TNTRjMndpUHo0S1BIUjVjR1Z6T2tGMGRHVnpkR0Y2YVc5dVpWUnlZWE50YVhOemFXOXVaVVpoZEhSMWNtRWdlRzFzYm5NNmRIbHdaWE05SW1oMGRIQTZMeTkzZDNjdVptRjBkSFZ5WVhCaExtZHZkaTVwZEM5elpHa3ZiV1Z6YzJGbloya3ZkakV1TUNJZ2VHMXNibk02ZUhOcFBTSm9kSFJ3T2k4dmQzZDNMbmN6TG05eVp5OHlNREF4TDFoTlRGTmphR1Z0WVMxcGJuTjBZVzVqWlNJZ2RtVnljMmx2Ym1VOUlqRXVNQ0lnZUhOcE9uTmphR1Z0WVV4dlkyRjBhVzl1UFNKb2RIUndPaTh2ZDNkM0xtWmhkSFIxY21Gd1lTNW5iM1l1YVhRdmMyUnBMMjFsYzNOaFoyZHBMM1l4TGpBZ1RXVnpjMkZuWjJsVWVYQmxjMTkyTVM0eExuaHpaQ0FpUGdvOFNXUmxiblJwWm1sallYUnBkbTlUWkVrK01qRTBQQzlKWkdWdWRHbG1hV05oZEdsMmIxTmtTVDRLUEU1dmJXVkdhV3hsUGtsVU1ERXlNelExTmpjNE9UQmZNVEV4TVRFdWVHMXNMbkEzYlR3dlRtOXRaVVpwYkdVK0NqeEVZWFJoVDNKaFVtbGpaWHBwYjI1bFBqSXdNVFF0TURRdE1ERlVNVEk2TURBNk1EQThMMFJoZEdGUGNtRlNhV05sZW1sdmJtVStDanhFWlhOMGFXNWhkR0Z5YVc4K0NpQWdJQ0E4UTI5a2FXTmxQa0ZCUVVGQlFUd3ZRMjlrYVdObFBnb2dJQ0FnUEVSbGMyTnlhWHBwYjI1bFBsQjFZbUpzYVdOaElFRnRiV2x1YVhOMGNtRjZhVzl1WlNCa2FTQndjbTkyWVR3dlJHVnpZM0pwZW1sdmJtVStDand2UkdWemRHbHVZWFJoY21sdlBnbzhUV1Z6YzJGblpVbGtQakV5TXpRMU5qd3ZUV1Z6YzJGblpVbGtQZ284VG05MFpUNUJkSFJsYzNSaGVtbHZibVVnVkhKaGMyMXBjM05wYjI1bElFWmhkSFIxY21FZ1pHa2djSEp2ZG1FOEwwNXZkR1UrQ2p4SVlYTm9SbWxzWlU5eWFXZHBibUZzWlQ0eVl6Rm1NMkV5TkRCaE1EVTJaRGsxTXpkaE9EWXdPR1psWkRNeE1EZ3hNbVZtTjJJeFlqZGhOREV3WkRBeE5USm1OV001WXpsbE9UTTBPRFpoWlRRMFBDOUlZWE5vUm1sc1pVOXlhV2RwYm1Gc1pUNEtQQzkwZVhCbGN6cEJkSFJsYzNSaGVtbHZibVZVY21GemJXbHpjMmx2Ym1WR1lYUjBkWEpoUGc9PQ==</File>\n\t\t</ns1:attestazioneTrasmissioneFattura>\n\t</SOAP-ENV:Body>\n</SOAP-ENV:Envelope>"
-        },
-        "description": ""
-      },
-      "response": []
-    }
-  ]
-}
-```
-
 ### Demo
 
 Sample manual session to demonstrate the flow of one invoice from issuer 0000001 to recipient 0000002, and acceptance:
@@ -498,6 +454,50 @@ GET https://www.example.com/td0000002/rpc/invoices?status=I_ACCEPTED
 
 ## Testing
 
+### Manual testing
+
+You can test manually by [making SOAP requests using Postman](http://blog.getpostman.com/2014/08/22/making-soap-requests-using-postman/).
+
+You can import this collection into Postman, to test the `AttestazioneTrasmissioneFattura` operation of the `TrasmissioneFatture` web service (change the url to match that of your test server !):
+```
+{
+  "variables": [],
+  "info": {
+    "name": "SOAP",
+    "_postman_id": "0ee991f3-5203-a8ac-6b38-32c8bfabc05e",
+    "description": "",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "SDICoop Transmit / TrasmissioneFatture service, AttestazioneTrasmissioneFattura operation",
+      "request": {
+        "url": "http://testsdi.simevo.com/td0000001/soap/TrasmissioneFatture/",
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "text/xml;charset=\"utf-8\"",
+            "description": ""
+          },
+          {
+            "key": "SOAPAction",
+            "value": "http://www.fatturapa.it/TrasmissioneFatture/AttestazioneTrasmissioneFattura",
+            "description": ""
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<SOAP-ENV:Envelope\n  xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"\n  xmlns:ns1=\"http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types\">\n\t<SOAP-ENV:Body>\n\t\t<ns1:attestazioneTrasmissioneFattura>\n\t\t\t<IdentificativoSdI>104</IdentificativoSdI>\n\t\t\t<NomeFile>IT01234567890_11111_AT_001.xml</NomeFile>\n\t\t\t<File>UEQ5NGJXd2dkbVZ5YzJsdmJqMGlNUzR3SWlCbGJtTnZaR2x1WnowaVZWUkdMVGdpUHo0S1BEOTRiV3d0YzNSNWJHVnphR1ZsZENCMGVYQmxQU0owWlhoMEwzaHpiQ0lnYUhKbFpqMGlRVlJmZGpFdU1TNTRjMndpUHo0S1BIUjVjR1Z6T2tGMGRHVnpkR0Y2YVc5dVpWUnlZWE50YVhOemFXOXVaVVpoZEhSMWNtRWdlRzFzYm5NNmRIbHdaWE05SW1oMGRIQTZMeTkzZDNjdVptRjBkSFZ5WVhCaExtZHZkaTVwZEM5elpHa3ZiV1Z6YzJGbloya3ZkakV1TUNJZ2VHMXNibk02ZUhOcFBTSm9kSFJ3T2k4dmQzZDNMbmN6TG05eVp5OHlNREF4TDFoTlRGTmphR1Z0WVMxcGJuTjBZVzVqWlNJZ2RtVnljMmx2Ym1VOUlqRXVNQ0lnZUhOcE9uTmphR1Z0WVV4dlkyRjBhVzl1UFNKb2RIUndPaTh2ZDNkM0xtWmhkSFIxY21Gd1lTNW5iM1l1YVhRdmMyUnBMMjFsYzNOaFoyZHBMM1l4TGpBZ1RXVnpjMkZuWjJsVWVYQmxjMTkyTVM0eExuaHpaQ0FpUGdvOFNXUmxiblJwWm1sallYUnBkbTlUWkVrK01qRTBQQzlKWkdWdWRHbG1hV05oZEdsMmIxTmtTVDRLUEU1dmJXVkdhV3hsUGtsVU1ERXlNelExTmpjNE9UQmZNVEV4TVRFdWVHMXNMbkEzYlR3dlRtOXRaVVpwYkdVK0NqeEVZWFJoVDNKaFVtbGpaWHBwYjI1bFBqSXdNVFF0TURRdE1ERlVNVEk2TURBNk1EQThMMFJoZEdGUGNtRlNhV05sZW1sdmJtVStDanhFWlhOMGFXNWhkR0Z5YVc4K0NpQWdJQ0E4UTI5a2FXTmxQa0ZCUVVGQlFUd3ZRMjlrYVdObFBnb2dJQ0FnUEVSbGMyTnlhWHBwYjI1bFBsQjFZbUpzYVdOaElFRnRiV2x1YVhOMGNtRjZhVzl1WlNCa2FTQndjbTkyWVR3dlJHVnpZM0pwZW1sdmJtVStDand2UkdWemRHbHVZWFJoY21sdlBnbzhUV1Z6YzJGblpVbGtQakV5TXpRMU5qd3ZUV1Z6YzJGblpVbGtQZ284VG05MFpUNUJkSFJsYzNSaGVtbHZibVVnVkhKaGMyMXBjM05wYjI1bElFWmhkSFIxY21FZ1pHa2djSEp2ZG1FOEwwNXZkR1UrQ2p4SVlYTm9SbWxzWlU5eWFXZHBibUZzWlQ0eVl6Rm1NMkV5TkRCaE1EVTJaRGsxTXpkaE9EWXdPR1psWkRNeE1EZ3hNbVZtTjJJeFlqZGhOREV3WkRBeE5USm1OV001WXpsbE9UTTBPRFpoWlRRMFBDOUlZWE5vUm1sc1pVOXlhV2RwYm1Gc1pUNEtQQzkwZVhCbGN6cEJkSFJsYzNSaGVtbHZibVZVY21GemJXbHpjMmx2Ym1WR1lYUjBkWEpoUGc9PQ==</File>\n\t\t</ns1:attestazioneTrasmissioneFattura>\n\t</SOAP-ENV:Body>\n</SOAP-ENV:Envelope>"
+        },
+        "description": ""
+      },
+      "response": []
+    }
+  ]
+}
+```
+
 ### Unit tests
 
 Test the PHP classes with:
@@ -520,10 +520,10 @@ For your contributions please use the [git-flow workflow](https://danielkummer.g
 
 ## Authors
 
-TODO
+Emanuele Aina, Marco Peca and Paolo Greppi.
 
 ## License
 
-Copyright (c) 2018, Marco Peca and Paolo Greppi, simevo s.r.l.
+Copyright (c) 2018, simevo s.r.l.
 
 License: AGPL 3, see [LICENSE](LICENSE) file.
