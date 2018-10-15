@@ -1,5 +1,5 @@
 // configuration for jshint
-/* jshint browser: true, devel: true */
+/* jshint browser: true, devel: true, multistr:true */
 /* global Vue, get, post, $, EventBus */
 
 "use strict";
