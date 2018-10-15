@@ -55,20 +55,20 @@ $(document).ready(function(){
     var url = window.location.protocol + "//" + window.location.host + "/";
     url = url + "sdi/rpc/datetime";
     $.ajax({
-    url: url,
-    dataType: 'json',
-    success: function( data ) {
-        var date = data.datetime;
-        $("#dateTime").html("Date time: "+date); 
-    },
-    error: function( data ) {
+        url: url,
+        dataType: 'json',
+        success: function( data ) {
+            var date = data.datetime;
+            $("#dateTime").html("Date time: " + date); 
+        },
+        error: function( data ) {
             Toastify({
-              text: "Errore caricamento in: " + url + ", riprova.",
-              duration: 5000,
-              close: true,
-              gravity: "top",
-              backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",                  
+                text: "Errore caricamento in: " + url + ", riprova.",
+                duration: 5000,
+                close: true,
+                gravity: "top",
+                backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",                  
             }).showToast(); 
-    }
-  });
+        }
+    });
 });
