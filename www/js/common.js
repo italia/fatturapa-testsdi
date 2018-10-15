@@ -50,7 +50,7 @@ function post(url, parameter, element) {
     }
 }
 
-// datetime on footer
+// datetime on footer 
 $(document).ready(function(){
     var url = window.location.protocol + "//" + window.location.host + "/";
     url = url + "sdi/rpc/datetime";
