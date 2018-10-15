@@ -34,7 +34,7 @@ function post(url, parameter, element) {
                 duration: 5000,
                 close: true,
                 gravity: "top",
-                backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+                backgroundColor: "#f73e5a",
             }).showToast();
         } else {
             Toastify({
@@ -42,7 +42,7 @@ function post(url, parameter, element) {
                 duration: 5000,
                 close: true,
                 gravity: "top",
-                backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+                backgroundColor: "#00cc85",
             }).showToast();
             EventBus.$emit('refreshTables');
         }
@@ -92,7 +92,7 @@ function refreshClock() {
                 duration: 5000,
                 close: true,
                 gravity: "top",
-                backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+                backgroundColor: "#f73e5a",
             }).showToast();
         }
     });
