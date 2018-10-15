@@ -62,4 +62,10 @@ class InvoicesController extends Controller
         echo "accept";
         exit;
     }
+    public function refuse(Request $request, $id)
+    {
+        Recipient::refuse($id);
+        echo "refuse";
+        exit;
+    }
 }

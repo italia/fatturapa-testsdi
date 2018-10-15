@@ -29,10 +29,12 @@ class Issuer
     }
     public static function transmit()
     {
+    	
         $Invoice = Invoice::all()->where('status', 'I_UPLOADED')->where('actor', Base::getActor());
         $Invoices = $Invoice->toArray();
-            
-        foreach ($Invoices as $Invoice) {
+		
+
+       	foreach ($Invoices as $Invoice) {
             $service = new \SdIRiceviFile_service(array('trace' => 1));
             $service->__setLocation(HOSTMAIN.'sdi/soap/SdIRiceviFile/');
                             
@@ -47,18 +49,26 @@ class Issuer
                                     
             try {
                 $response = $service->RiceviFile($fileSdIBase);
-                if ($response->getErrore()) {
-                    Invoice::find($Invoice['id'])->update(['status' => 'I_INVALID' ]);
-                } else {
-                    $invoice_id = $response->getIdentificativoSdI();
-                    Invoice::find($Invoice['id'])->update(['status' => 'I_TRANSMITTED' ]);
-                    Invoice::find($Invoice['id'])->update(['remote_id' => (int) $invoice_id ]);
-                }
-            } catch (SoapFault $e) {
+								
+				if(is_object($response))
+				{
+					if ($response->getErrore()) {
+	                    Invoice::find($Invoice['id'])->update(['status' => 'I_INVALID' ]);
+	                } else {
+	                    $invoice_id = $response->getIdentificativoSdI();
+	                    Invoice::find($Invoice['id'])->update(['status' => 'I_TRANSMITTED' ]);
+	                    Invoice::find($Invoice['id'])->update(['remote_id' => (int) $invoice_id ]);
+	                }	
+				}
+				else {					
+					Invoice::find($Invoice['id'])->update(['status' => 'I_INVALID' ]);
+					echo "SOAP Fault: (faultstring: {".$response."})";exit;
+				}                
+            } catch (Exception $e) {
+            	        	
                 Invoice::find($Invoice['id'])->update(['status' => 'I_INVALID' ]);
                 echo "SOAP Fault: (faultcode: {".$e->faultcode."}, faultstring: {".$e->faultstring."})";
-                exit;
-                //print($service->__getLastResponse());
+                
             }
         }
         return true;

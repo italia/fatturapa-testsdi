@@ -10,7 +10,7 @@ final class BaseTest extends PHPUnit\Framework\TestCase
 {
     public function testSpeedZero()
     {
-        Base::clear();
+        Base::resetTime();
         Base::setSpeed(0);
         $datetime1 = Base::getDateTime();
         sleep(5);
@@ -19,7 +19,7 @@ final class BaseTest extends PHPUnit\Framework\TestCase
     }
     public function testSpeedOne()
     {
-        Base::clear();
+        Base::resetTime();
         $datetime1 = Base::getDateTime();
         sleep(5);
         $datetime2 = Base::getDateTime();
@@ -27,7 +27,7 @@ final class BaseTest extends PHPUnit\Framework\TestCase
     }
     public function testSpeedOneThousand()
     {
-        Base::clear();
+        Base::resetTime();
         Base::setSpeed(1000);
         $datetime1 = Base::getDateTime();
         sleep(5);

@@ -27,7 +27,7 @@ class TrasmissioneFatture_service extends \SoapClient
         'features' => 1,
         ), $options);
         if (!$wsdl) {
-            $wsdl = ROOT . 'TrasmissioneFatture/TrasmissioneFatture_v1.1.wsdl';
+            $wsdl = dirname(__FILE__) . '/TrasmissioneFatture_v1.1.wsdl';
         }
         parent::__construct($wsdl, $options);
     }

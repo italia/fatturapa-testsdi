@@ -14,9 +14,12 @@ class BaseController extends Controller
     public function index(Request $request)
     {
     }
+    public function resetTime()
+    {
+        Base::resetTime();
+    }
     public function clear()
     {
-        Base::clear();
         Notification::where('actor', '=', Base::getActor())->delete();
         Invoice::where('actor', '=', Base::getActor())->delete();
         echo "clear";
@@ -51,10 +54,14 @@ class BaseController extends Controller
     }
     public function getdatetime()
     {
-        
         $dateTime=Base::getDateTime();
-        
-        echo "timestamp: " . $dateTime->date;
-        exit;
+		$data = Base::retrieve();
+			
+		 return response()->json(array(
+            'timestamp' => strtotime($dateTime->date),
+            'datetime' => $dateTime->date,
+            'speed' => $data['speed']
+			)
+		 );
     }
 }

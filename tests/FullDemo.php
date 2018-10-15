@@ -91,14 +91,18 @@ final class FullDemo extends PHPUnit\Framework\TestCase
     private function advanceActors($timeDelta)
     {
         $response = $this->client->get('/sdi/rpc/datetime');
+		
+		
+		
         $this->assertEquals(200, $response->getStatusCode());
         $body = $response->getBody();
-        $timeStampString = substr($response->getBody()->getContents(), 12);
-
-        $timestamp = strtotime("+$timeDelta", strtotime($timeStampString));
+        $timeStampString = $response->getBody()->getContents();
+		$timeStampString=json_decode($timeStampString);
+							
+        $timestamp = strtotime("+$timeDelta", $timeStampString->timestamp);			
         $datetime = new DateTime();
         $datetime->setTimestamp($timestamp);
-        $timestamp = $datetime->format(\DateTime::ATOM);
+        $timestamp = $datetime->format(\DateTime::ATOM);		
         foreach (self::$actors as $actor) {
             echo "advance actor $actor by $timeDelta to $timestamp" . PHP_EOL;
             $response = $this->client->post(
@@ -151,6 +155,7 @@ final class FullDemo extends PHPUnit\Framework\TestCase
     // while all other queues will be empty
     public function testTransmit()
     {
+    	
         $xml = $this->getValidInvoice();
         foreach (self::$tds as $issuer) {
             $this->clearActors();
@@ -164,9 +169,11 @@ final class FullDemo extends PHPUnit\Framework\TestCase
                 ]
             ]);
             $this->assertEquals(200, $response->getStatusCode());
-
+			//echo ">>"."td$issuer/rpc/transmit";
             $response = $this->client->post("td$issuer/rpc/transmit");
-            echo $response->getBody();
+			
+		
+            //echo $response->getBody();
             $this->assertEquals(200, $response->getStatusCode());
 
             $this->expectedInvoices("td$issuer", 1, 'I_TRANSMITTED');
@@ -272,11 +279,11 @@ final class FullDemo extends PHPUnit\Framework\TestCase
         $this->assertEquals(200, $response->getStatusCode());
         $response = $this->client->post("td$issuer/rpc/transmit");
         $this->assertEquals(200, $response->getStatusCode());
-        $response = $this->client->post("sdi/rpc/checkValidity");
+        $response = $this->client->post("sdi/rpc/checkValidity");		
         $this->assertEquals(200, $response->getStatusCode());
-
+               	
         $this->advanceActors($timeDelta);
-        $this->advanceActors('1 hour');
+        //$this->advanceActors('1 hour');
         $response = $this->client->post("sdi/rpc/deliver" . ($dummy ? '?dummy=true' : ''));
         $this->assertEquals(200, $response->getStatusCode());
     }
@@ -296,8 +303,9 @@ final class FullDemo extends PHPUnit\Framework\TestCase
                     $timeDelta = '48 hours';
                     $this->deliver($xml, $issuer, $recipient, $timeDelta, true);
 
-                    $this->expectedInvoices("td$issuer", 1, 'I_TRANSMITTED');
-                    $this->expectedInvoices("sdi", 1, 'E_FAILED_DELIVERY');
+                    $this->expectedInvoices("td$issuer", 1, 'I_TRANSMITTED');					
+                    $this->expectedInvoices("sdi", 1, 'E_FAILED_DELIVERY');					
+										
                     foreach (self::$actors as $actor) {
                         $this->expectedInvoices($actor, $actor == "td$issuer" || $actor == 'sdi' ? 1 : 0);
                         // sdi has a N_PENDING NotificaMancataConsegna notification for issuer
@@ -306,7 +314,7 @@ final class FullDemo extends PHPUnit\Framework\TestCase
 
                     $timeDelta = '10 days';
                     $this->advanceActors($timeDelta);
-                    $this->advanceActors('1 hour');
+                    //$this->advanceActors('1 hour');
                     $response = $this->client->post("sdi/rpc/deliver?dummy");
                     $this->assertEquals(200, $response->getStatusCode());
 
@@ -400,7 +408,7 @@ final class FullDemo extends PHPUnit\Framework\TestCase
 
                     $timeDelta = '9 days';
                     $this->advanceActors($timeDelta);
-                    $this->advanceActors('1 hour');
+                    //$this->advanceActors('1 hour');
                     $response = $this->client->post("sdi/rpc/deliver");
                     $this->assertEquals(200, $response->getStatusCode());
             
@@ -539,7 +547,6 @@ final class FullDemo extends PHPUnit\Framework\TestCase
 
                     $response = $this->client->post("td$recipient/rpc/dispatch");
                     $this->assertEquals(200, $response->getStatusCode());
-
                     $response = $this->client->post("sdi/rpc/dispatch");
                     $this->assertEquals(200, $response->getStatusCode());
 
@@ -660,8 +667,8 @@ final class FullDemo extends PHPUnit\Framework\TestCase
 
                     usleep(100000);
                     $this->expectedInvoices("td$issuer", 1, 'I_REFUSED');
-                    $this->expectedInvoices("sdi", 1, 'I_REFUSED');
-                    $this->expectedInvoices("td$recipient", 1, 'E_REFUSED');
+                    $this->expectedInvoices("sdi", 1, 'E_REFUSED');
+                    $this->expectedInvoices("td$recipient", 1, 'R_REFUSED');
                     foreach (self::$actors as $actor) {
                         $this->expectedInvoices($actor, $actor == "td$issuer" || $actor == 'sdi' || $actor == "td$recipient" ? 1 : 0);
                         // sdi has a AttestazioneTrasmissioneFattura notification N_DELIVERED to issuer

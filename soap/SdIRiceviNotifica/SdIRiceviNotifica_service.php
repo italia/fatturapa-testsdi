@@ -29,7 +29,7 @@ class SdIRiceviNotifica_service extends \SoapClient
             'features' => 1,
         ), $options);
         if (!$wsdl) {
-            $wsdl = ROOT . 'SdIRiceviNotifica/SdIRiceviNotifica_v1.0.wsdl';
+            $wsdl = dirname(__FILE__) . '/SdIRiceviNotifica_v1.0.wsdl';
         }
         parent::__construct($wsdl, $options);
     }

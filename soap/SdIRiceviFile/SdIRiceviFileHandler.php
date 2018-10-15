@@ -1,8 +1,9 @@
 <?php
 
 require_once("autoload.php");
-require '../../core/config.php';
-require '../../core/vendor/autoload.php';
+require dirname(__FILE__) . '/../../core/config.php';
+require dirname(__FILE__) .'/../../core/vendor/autoload.php';
+require dirname(__FILE__) . '/rispostaSdIRiceviFile_Type.php';
 
 use FatturaPa\Core\Actors\Exchange;
 
@@ -10,11 +11,11 @@ class SdIRiceviFileHandler
 {
 
     public function RiceviFile($parametersIn)
-    {
-        error_log('START------------------:');
+    {    	
+        error_log('HSTART------------------:');
         error_log('parametersIn: '.json_encode($parametersIn));
         error_log('------------------END');
-
+					
         // ADD TO DB
         $Invoice = Exchange::receive($parametersIn->File, $parametersIn->NomeFile, 1);
         // Get current timestamp

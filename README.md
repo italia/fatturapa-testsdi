@@ -216,9 +216,7 @@ This code generation step has been performed once and for all by the [soap/bin/g
 
 In each of the four resulting directory matching the endpoints, we place a `index.php` file similar to (this one is for the `SdIRiceviFile` endpoint):
 ```php
-require_once("../config.php");
 require_once("SdIRiceviFileHandler.php");
-require_once("../SoapServerDebug.php");
 
 $srv = new \SoapServer('SdIRiceviFile_v1.0.wsdl');
 $srv->setClass("SdIRiceviFileHandler");
@@ -227,11 +225,11 @@ $srv->handle();
 
 which leverages the PHP [SoapServer class](http://php.net/manual/en/class.soapserver.php) and delegates the implementation to a handler class `SdIRiceviFileHandler`.
 
-The handler class is implemented in [a file with the same name `SdIRiceviFileHandler.php` in the endpoint directory](/SdIRiceviFile/SdIRiceviFileHandler.php), and uses robust type cheching thanks to **type hinting** and the [type declarations](http://php.net/manual/en/functions.arguments.php#functions.arguments.type-declaration) obtained from wsdl2phpgenerator.
+The handler class is implemented in [a file with the same name `SdIRiceviFileHandler.php` in the endpoint directory](/soap/SdIRiceviFile/SdIRiceviFileHandler.php), and uses robust type cheching thanks to **type hinting** and the [type declarations](http://php.net/manual/en/functions.arguments.php#functions.arguments.type-declaration) obtained from wsdl2phpgenerator.
 
 ## Getting Started
 
-Tested on: amd64 Debian 9.5 (stretch, current stable) with PHP 7.0 and Laravel 5.1.46.
+Tested on: amd64 Debian 9.5 (stretch, current stable) with PHP 7.0 and Laravel 5.5.44.
 
 ### Prerequisites
 
@@ -242,52 +240,17 @@ sudo apt install php-cli php-fpm nginx php-soap php-mbstring php-dom php-zip com
 
 ### Configuring and Installing
 
-**TODO**: In a future release you'll be able to configure the number of simulated issuer/receiver (TD = trasmittente / destinatario) actors in `config.php` and dynamic routing will make sure that the actors will be reachable at `/sdi` (there's only one exchange system), `/td0000001`, `/td0000002`  ... (td stands for trasmittente/destinatario, Italian for issuer/receiver).
+Clone the repo into the `/var/www/html` directory on your webserver. 
 
-For example if you configure with three I/R actors, your SOAP endpoints will be at:
-- exchange
-  - https://www.example.com/sdi/soap/SdIRiceviFile
-  - https://www.example.com/sdi/soap/SdIRiceviNotifica
-- issuer / recipient 1:
-  - https://www.example.com/td0000001/soap/RicezioneFatture
-  - https://www.example.com/td0000001/soap/TrasmissioneFatture
-- issuer / recipient 2:
-  - https://www.example.com/td0000002/soap/RicezioneFatture
-  - https://www.example.com/td0000002/soap/TrasmissioneFatture
-- issuer / recipient 3:
-  - https://www.example.com/td000003/soap/RicezioneFatture
-  - https://www.example.com/td000003/soap/TrasmissioneFatture
-
-For the moment being **only three actors** are supported (sdi, td0000001 and td0000002), so clone the repo to the `/var/www/html/sdi` directory on your webserver then manually create symlinks and storage dirs as in:
 ```sh
 cd /var/www/html
-mkdir td0000001
-mkdir td0000002
-cd td0000001
-ln -s ../sdi/soap/ soap
-mkdir core rpc
-cd core
-ln -s ../../sdi/core/app app
-ln -s ../../sdi/core/config.php config.php
-ln -s ../../sdi/core/storage storage
-ln -s ../../sdi/core/vendor vendor
-cd ../rpc
-ln -s ../../sdi/rpc/app app
-ln -s ../../sdi/rpc/bootstrap bootstrap
-ln -s ../../sdi/rpc/config config
-ln -s ../../sdi/rpc/database database
-ln -s ../../sdi/rpc/index.php index.php
-ln -s ../../sdi/rpc/packages packages
-ln -s ../../sdi/rpc/resources resources
-ln -s ../../sdi/rpc/vendor vendor
-cd ../../td0000002
-...
+git clone https://github.com/italia/fatturapa-testsdi .
 ```
 
 Install prerequisites with composer:
 
 ```sh
-cd /var/www/html/sdi
+cd /var/www/html
 composer install
 cd core
 composer install
@@ -336,8 +299,9 @@ Configure `HOSTNAME` in `soap/config.php` and in `core/config.php`.
 
 Set up Laravel:
 ```sh
-sudo chown www-data storage/time_travel.json
-cd ../rpc
+cd /var/www/html
+sudo chown www-data core/storage/time_travel.json
+cd rpc
 touch storage/logs/laravel.log
 sudo chown -R www-data storage/logs
 sudo chmod g+w storage/logs/laravel.log
@@ -350,12 +314,6 @@ php artisan migrate
 ^d
 ```
 
-Fill in channels table so that invoices can be sent (needed for the tests):
-```sql
-INSERT INTO channels(cedente, issuer) VALUES ('IT-01234567890', '0000001');
-INSERT INTO channels(cedente, issuer) VALUES ('IT-12345678901', '0000002');
-```
-
 Configure nginx:
 ```
 sudo rm /etc/nginx/sites-enabled/*
@@ -366,23 +324,88 @@ server {
   server_name testsdi.simevo.com;
   root /var/www/html;
   index index.html index.htm index.php;
-  location /sdi/rpc {
-    try_files $uri $uri/ /sdi/rpc/index.php$is_args$args;
-  }
-  location /td0000001/rpc {
-    try_files $uri $uri/ /td0000001/rpc/index.php$is_args$args;
-  }
-  location /td0000002/rpc {
-    try_files $uri $uri/ /td0000002/rpc/index.php$is_args$args;
-  }
   location ~ \.php$ {
     include snippets/fastcgi-php.conf;
     fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
     fastcgi_read_timeout 300;
   }
+  location ~ /.*/rpc {
+    try_files $uri $uri/ /rpc/index.php?$query_string;
+  }
+  location ~ /.*/soap {
+    try_files $uri $uri/ /soap/index.php;
+  }
 }
 sudo nginx -t
 sudo systemctl restart nginx
+```
+
+Dynamic routing makes sure that the actors will be reachable at `/sdi` (there's only one exchange system), `/tdxxxxxxx`, `/tdyyyyyyy`  ... (td stands for trasmittente/destinatario, Italian for issuer/receiver).
+
+The number of simulated issuer/receiver (TD = trasmittente / destinatario) actors are autoconfigured based on the actors that appear in the `channels` table.
+
+For example if you set the channels table like this so that invoices can be sent (needed for the tests):
+```sql
+INSERT INTO channels(cedente, issuer) VALUES ('IT-01234567890', '0000001');
+INSERT INTO channels(cedente, issuer) VALUES ('IT-12345678901', '0000002');
+INSERT INTO channels(cedente, issuer) VALUES ('IT-23456789012', '0000003');
+```
+your SOAP endpoints will be at:
+- exchange
+  - https://www.example.com/sdi/soap/SdIRiceviFile
+  - https://www.example.com/sdi/soap/SdIRiceviNotifica
+- issuer / recipient 0000001:
+  - https://www.example.com/td0000001/soap/RicezioneFatture
+  - https://www.example.com/td0000001/soap/TrasmissioneFatture
+- issuer / recipient 0000002:
+  - https://www.example.com/td0000002/soap/RicezioneFatture
+  - https://www.example.com/td0000002/soap/TrasmissioneFatture
+- issuer / recipient 0000003:
+  - https://www.example.com/td0000003/soap/RicezioneFatture
+  - https://www.example.com/td0000003/soap/TrasmissioneFatture
+
+### Manual testing
+
+You can test manually by [making SOAP requests using Postman](http://blog.getpostman.com/2014/08/22/making-soap-requests-using-postman/).
+
+You can import this collection into Postman, to test the AttestazioneTrasmissioneFattura operation of the TrasmissioneFatture web service (change the url to match that of your test server !):
+```
+{
+  "variables": [],
+  "info": {
+    "name": "SOAP",
+    "_postman_id": "0ee991f3-5203-a8ac-6b38-32c8bfabc05e",
+    "description": "",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "SDICoop Transmit / TrasmissioneFatture service, AttestazioneTrasmissioneFattura operation",
+      "request": {
+        "url": "http://testsdi.simevo.com/td0000001/soap/TrasmissioneFatture/",
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "text/xml;charset=\"utf-8\"",
+            "description": ""
+          },
+          {
+            "key": "SOAPAction",
+            "value": "http://www.fatturapa.it/TrasmissioneFatture/AttestazioneTrasmissioneFattura",
+            "description": ""
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<SOAP-ENV:Envelope\n  xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"\n  xmlns:ns1=\"http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types\">\n\t<SOAP-ENV:Body>\n\t\t<ns1:attestazioneTrasmissioneFattura>\n\t\t\t<IdentificativoSdI>104</IdentificativoSdI>\n\t\t\t<NomeFile>IT01234567890_11111_AT_001.xml</NomeFile>\n\t\t\t<File>UEQ5NGJXd2dkbVZ5YzJsdmJqMGlNUzR3SWlCbGJtTnZaR2x1WnowaVZWUkdMVGdpUHo0S1BEOTRiV3d0YzNSNWJHVnphR1ZsZENCMGVYQmxQU0owWlhoMEwzaHpiQ0lnYUhKbFpqMGlRVlJmZGpFdU1TNTRjMndpUHo0S1BIUjVjR1Z6T2tGMGRHVnpkR0Y2YVc5dVpWUnlZWE50YVhOemFXOXVaVVpoZEhSMWNtRWdlRzFzYm5NNmRIbHdaWE05SW1oMGRIQTZMeTkzZDNjdVptRjBkSFZ5WVhCaExtZHZkaTVwZEM5elpHa3ZiV1Z6YzJGbloya3ZkakV1TUNJZ2VHMXNibk02ZUhOcFBTSm9kSFJ3T2k4dmQzZDNMbmN6TG05eVp5OHlNREF4TDFoTlRGTmphR1Z0WVMxcGJuTjBZVzVqWlNJZ2RtVnljMmx2Ym1VOUlqRXVNQ0lnZUhOcE9uTmphR1Z0WVV4dlkyRjBhVzl1UFNKb2RIUndPaTh2ZDNkM0xtWmhkSFIxY21Gd1lTNW5iM1l1YVhRdmMyUnBMMjFsYzNOaFoyZHBMM1l4TGpBZ1RXVnpjMkZuWjJsVWVYQmxjMTkyTVM0eExuaHpaQ0FpUGdvOFNXUmxiblJwWm1sallYUnBkbTlUWkVrK01qRTBQQzlKWkdWdWRHbG1hV05oZEdsMmIxTmtTVDRLUEU1dmJXVkdhV3hsUGtsVU1ERXlNelExTmpjNE9UQmZNVEV4TVRFdWVHMXNMbkEzYlR3dlRtOXRaVVpwYkdVK0NqeEVZWFJoVDNKaFVtbGpaWHBwYjI1bFBqSXdNVFF0TURRdE1ERlVNVEk2TURBNk1EQThMMFJoZEdGUGNtRlNhV05sZW1sdmJtVStDanhFWlhOMGFXNWhkR0Z5YVc4K0NpQWdJQ0E4UTI5a2FXTmxQa0ZCUVVGQlFUd3ZRMjlrYVdObFBnb2dJQ0FnUEVSbGMyTnlhWHBwYjI1bFBsQjFZbUpzYVdOaElFRnRiV2x1YVhOMGNtRjZhVzl1WlNCa2FTQndjbTkyWVR3dlJHVnpZM0pwZW1sdmJtVStDand2UkdWemRHbHVZWFJoY21sdlBnbzhUV1Z6YzJGblpVbGtQakV5TXpRMU5qd3ZUV1Z6YzJGblpVbGtQZ284VG05MFpUNUJkSFJsYzNSaGVtbHZibVVnVkhKaGMyMXBjM05wYjI1bElFWmhkSFIxY21FZ1pHa2djSEp2ZG1FOEwwNXZkR1UrQ2p4SVlYTm9SbWxzWlU5eWFXZHBibUZzWlQ0eVl6Rm1NMkV5TkRCaE1EVTJaRGsxTXpkaE9EWXdPR1psWkRNeE1EZ3hNbVZtTjJJeFlqZGhOREV3WkRBeE5USm1OV001WXpsbE9UTTBPRFpoWlRRMFBDOUlZWE5vUm1sc1pVOXlhV2RwYm1Gc1pUNEtQQzkwZVhCbGN6cEJkSFJsYzNSaGVtbHZibVZVY21GemJXbHpjMmx2Ym1WR1lYUjBkWEpoUGc9PQ==</File>\n\t\t</ns1:attestazioneTrasmissioneFattura>\n\t</SOAP-ENV:Body>\n</SOAP-ENV:Envelope>"
+        },
+        "description": ""
+      },
+      "response": []
+    }
+  ]
+}
 ```
 
 ### Demo
@@ -391,86 +414,86 @@ Sample manual session to demonstrate the flow of one invoice from issuer 0000001
 
 1. clear status
 ```
-POST https://test.example.com/sdi/rpc/clear
-POST https://test.example.com/td0000001/rpc/clear
-POST https://test.example.com/td0000002/rpc/clear
+POST https://www.example.com/sdi/rpc/clear
+POST https://www.example.com/td0000001/rpc/clear
+POST https://www.example.com/td0000002/rpc/clear
 ```
 
 2. create a valid sample invoice for TD 0000002 (`FatturaElettronica.FatturaElettronicaHeader.DatiTrasmissione.CodiceDestinatario` should be set to `0000002`) and upload it to TD 0000001, then check it is in the right queue
 
 ```
-POST https://test.example.com/td0000001/rpc/upload {file XML}
-GET https://test.example.com/td0000001/rpc/invoices?status=I_UPLOADED
+POST https://www.example.com/td0000001/rpc/upload {file XML}
+GET https://www.example.com/td0000001/rpc/invoices?status=I_UPLOADED
 ```
 
 3. force transmission to ES and check status:
 ```
-POST https://test.example.com/td0000001/rpc/transmit
+POST https://www.example.com/td0000001/rpc/transmit
 ```
 
 4. Check status with ES (the invoice should be in the E_RECEIVED queue):
 ```
-GET https://test.example.com/sdi/rpc/invoices?status=E_RECEIVED
+GET https://www.example.com/sdi/rpc/invoices?status=E_RECEIVED
 ```
 
 5. Check status with TD 0000001 (the invoice should be in the I_TRANSMITTED queue):
 ```
-GET https://test.example.com/td0000001/rpc/invoices?status=I_TRANSMITTED
+GET https://www.example.com/td0000001/rpc/invoices?status=I_TRANSMITTED
 ```
 
 6. force validation by ES and check status:
 ```
-POST https://test.example.com/sdi/rpc/checkValidity
-GET https://test.example.com/sdi/rpc/invoices?status=E_VALID
+POST https://www.example.com/sdi/rpc/checkValidity
+GET https://www.example.com/sdi/rpc/invoices?status=E_VALID
 ```
 
 7. force transmission from ES to recipient and check status:
 ```
-POST https://test.example.com/sdi/rpc/deliver
-GET https://test.example.com/sdi/rpc/invoices?status=E_DELIVERED
-GET https://test.example.com/sdi/td0000002/invoices?status=R_RECEIVED
-GET https://test.example.com/td0000001/rpc/invoices?status=I_DELIVERED (no response yet because ES has not notified to issuer)
+POST https://www.example.com/sdi/rpc/deliver
+GET https://www.example.com/sdi/rpc/invoices?status=E_DELIVERED
+GET https://www.example.com/sdi/td0000002/invoices?status=R_RECEIVED
+GET https://www.example.com/td0000001/rpc/invoices?status=I_DELIVERED (no response yet because ES has not notified to issuer)
 ```
 
 8. force ES to dispatch back the notification to the issuer:
 ```
-POST https://test.example.com/sdi/rpc/dispatch
+POST https://www.example.com/sdi/rpc/dispatch
 ```
 
 9. check notification and status, now for the issuer TD 0000001 the invoice should be in the I_DELIVERED queue:
 ```
-GET https://test.example.com/td0000001/rpc/notifications/id
-GET https://test.example.com/td0000001/rpc/invoices?status=I_DELIVERED
+GET https://www.example.com/td0000001/rpc/notifications/id
+GET https://www.example.com/td0000001/rpc/invoices?status=I_DELIVERED
 ```
 
 10. make recipient accept invoice and check status:
 ```
-POST https://test.example.com/td0000002/rpc/accept/id
-GET https://test.example.com/td0000002/rpc/invoices?status=R_ACCEPTED
-GET https://test.example.com/sdi/rpc/invoices?status=E_ACCEPTED (no response yet)
+POST https://www.example.com/td0000002/rpc/accept/id
+GET https://www.example.com/td0000002/rpc/invoices?status=R_ACCEPTED
+GET https://www.example.com/sdi/rpc/invoices?status=E_ACCEPTED (no response yet)
 ```
 
 11. force receiver to dispatch back the notification to the ES:
 ```
-POST https://test.example.com/td0000002/rpc/dispatch
+POST https://www.example.com/td0000002/rpc/dispatch
 ```
 
 12. check notification and status:
 ```
-GET https://test.example.com/sdi/rpc/notifications/id
-GET https://test.example.com/sdi/rpc/invoices?status=E_ACCEPTED
-GET https://test.example.com/td0000002/rpc/invoices?status=I_ACCEPTED (no response yet)
+GET https://www.example.com/sdi/rpc/notifications/id
+GET https://www.example.com/sdi/rpc/invoices?status=E_ACCEPTED
+GET https://www.example.com/td0000002/rpc/invoices?status=I_ACCEPTED (no response yet)
 ```
 
 13. force ES to dispatch back the acceptance notification to the issuer:
 ```
-POST https://test.example.com/sdi/rpc/dispatch
+POST https://www.example.com/sdi/rpc/dispatch
 ```
 
 14. check notification and status:
 ```
-GET https://test.example.com/td0000001/rpc/notifications/id
-GET https://test.example.com/td0000002/rpc/invoices?status=I_ACCEPTED
+GET https://www.example.com/td0000001/rpc/notifications/id
+GET https://www.example.com/td0000002/rpc/invoices?status=I_ACCEPTED
 ```
 
 ## Testing

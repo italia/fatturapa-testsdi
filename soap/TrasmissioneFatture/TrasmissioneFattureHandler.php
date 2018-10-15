@@ -1,10 +1,11 @@
 <?php
 
 require_once("autoload.php");
-require '../../core/config.php';
-require '../../core/vendor/autoload.php';
+require dirname(__FILE__) . '/../../core/config.php';
+require dirname(__FILE__) . '/../../core/vendor/autoload.php';
 
 use FatturaPa\Core\Actors\Issuer;
+use FatturaPa\Core\Actors\Base;
 
 class TrasmissioneFattureHandler
 {
@@ -15,7 +16,7 @@ class TrasmissioneFattureHandler
             $notification_blob = $parametersIn->File,
             $filename = $parametersIn->NomeFile,
             $type = 'RicevutaConsegna',
-            $status = 'I_ACCEPTED'
+            $status = 'I_DELIVERED'
         );
     }
 
@@ -25,7 +26,7 @@ class TrasmissioneFattureHandler
             $notification_blob = $parametersIn->File,
             $filename = $parametersIn->NomeFile,
             $type = 'NotificaMancataConsegna',
-            $status = 'I_DELIVERED'
+            $status = 'I_FAILED_DELIVERY'
         );
     }
 
@@ -41,11 +42,20 @@ class TrasmissioneFattureHandler
 
     public function NotificaEsito($parametersIn)
     {
-        // TODO: set the status to I_ACCEPTED or I_REFUSED
-        // depending on the content of the Esito field in the notification blob:
-        // Esito == EC01 => I_ACCEPTED
-        // Esito == EC02 => I_REFUSED
-        $status = 'I_ACCEPTED';
+        error_log('======== NotificaEsito');
+        aaa;
+        $xmlString = base64_decode($parametersIn->File);
+        $xml = Base::unpack($xmlString);
+        error_log('======== ' . $xml);
+        $invoice_id = $xml->IdentificativoSdI;
+        $esito = $xml->Esito;
+        if ($esito == 'EC01') {
+            $status = 'I_ACCEPTED';
+        } else if ($esito == 'EC02') {
+            $status = 'I_REFUSED';
+        } else {
+            throw new \RuntimeException("Invalid Esito $esito");
+        }
         Issuer::receive(
             $notification_blob = $parametersIn->File,
             $filename = $parametersIn->NomeFile,
@@ -66,11 +76,12 @@ class TrasmissioneFattureHandler
 
     public function AttestazioneTrasmissioneFattura($parametersIn)
     {
+        error_log('==== AttestazioneTrasmissioneFattura');
         Issuer::receive(
             $notification_blob = $parametersIn->File,
             $filename = $parametersIn->NomeFile,
             $type = 'AttestazioneTrasmissioneFattura',
-            $status = 'I_DELIVERED'
+            $status = 'I_IMPOSSIBLE_DELIVERY'
         );
     }
 }

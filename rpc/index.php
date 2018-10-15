@@ -1,4 +1,15 @@
 <?php
+//echo "<pre>";
+//print_r($_REQUEST);exit;
+$url = $_SERVER['REQUEST_URI'];
+$urlData = explode("/", $url);
+$actor = $urlData[1];
+
+$_SERVER["SCRIPT_NAME"] = "/$actor/rpc/index.php";
+$_SERVER["PHP_SELF"] = "/$actor/rpc/index.php";
+
+#var_dump($_SERVER);
+#die;
 
 /**
  * Laravel - A PHP Framework For Web Artisans

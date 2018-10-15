@@ -19,7 +19,7 @@ final class TimeTravel extends PHPUnit\Framework\TestCase
     public function testTimeTravel()
     {
         // can clear sdi
-        $response = $this->client->post('/sdi/rpc/clear');
+        $response = $this->client->post('/sdi/rpc/resetTime');
         $this->assertEquals(200, $response->getStatusCode());
 
         // can not set a negative speed
@@ -37,7 +37,8 @@ final class TimeTravel extends PHPUnit\Framework\TestCase
         $response = $this->client->get('/sdi/rpc/datetime');
         $this->assertEquals(200, $response->getStatusCode());
         $body = $response->getBody();
-        $this->assertEquals('timestamp: 2019-01-01 12:00:00.000000', $response->getBody()->getContents());
+        $data = json_decode($response->getBody()->getContents(), true);
+        $this->assertEquals('2019-01-01 12:00:00.000000', $data['datetime']);
     }
 
     public function tearDown()

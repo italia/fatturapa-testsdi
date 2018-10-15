@@ -49,6 +49,7 @@ final class RpcRoutes extends PHPUnit\Framework\TestCase
     // make sure that the supplied actor has all the non-actor-specific endpoint
     private function hasCommon($actor)
     {
+        $this->onlyPost("/$actor/rpc/resetTime");
         $this->onlyPost("/$actor/rpc/clear");
         $this->onlyGet("/$actor/rpc/datetime");
         $this->onlyPost("/$actor/rpc/timestamp");
@@ -95,11 +96,11 @@ final class RpcRoutes extends PHPUnit\Framework\TestCase
     // make sure recipient-specific methods respond only to POST
     public function testRecipientHasAccept()
     {
-        $this->onlyPost('/td0000001/rpc/accept');
+        $this->onlyPost('/td0000001/rpc/accept/1');
     }
     public function testRecipientHasRefuse()
     {
-        $this->onlyPost('/td0000001/rpc/refuse');
+        $this->onlyPost('/td0000001/rpc/refuse/1');
     }
 
     // we don't have endpoints we should not have

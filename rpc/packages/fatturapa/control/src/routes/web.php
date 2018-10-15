@@ -18,11 +18,13 @@ if (Base::getActor() == 'sdi') {
     Route::post('transmit', 'fatturapa\control\InvoicesController@transmit');
     // recipient-specific
     Route::post('accept/{udid}', 'fatturapa\control\InvoicesController@accept');
+    Route::post('refuse/{udid}', 'fatturapa\control\InvoicesController@refuse');
     // TODO: refuse
 }
 // common routes
 
 // general simulation control
+Route::post('resetTime', 'fatturapa\control\BaseController@resetTime');
 Route::post('clear', 'fatturapa\control\BaseController@clear');
 Route::get('datetime', 'fatturapa\control\BaseController@getdatetime');
 Route::post('timestamp', 'fatturapa\control\BaseController@setdatetime');

@@ -27,8 +27,9 @@ class SdIRiceviFile_service extends \SoapClient
         'features' => 1,
         ), $options);
         if (!$wsdl) {
-            $wsdl = ROOT . 'SdIRiceviFile/SdIRiceviFile_v1.0.wsdl';
-        }
+            $wsdl = dirname(__FILE__) . '/SdIRiceviFile_v1.0.wsdl';
+        }	
+		
         parent::__construct($wsdl, $options);
     }
 
@@ -37,7 +38,18 @@ class SdIRiceviFile_service extends \SoapClient
      * @return rispostaSdIRiceviFile_Type
      */
     public function RiceviFile(fileSdIBase_Type $parametersIn)
-    {
-        return $this->__soapCall('RiceviFile', array($parametersIn));
+    {    	
+    	try
+		{
+			$result=$this->__soapCall('RiceviFile', array($parametersIn));				
+			return $result;			
+		}
+		catch(Exception $e)
+		{
+			$response=$this->__getLastResponse();			
+			$message=$e->getMessage();			
+			return $message.":".$response;			
+			 	
+		}    	                		       		
     }
 }

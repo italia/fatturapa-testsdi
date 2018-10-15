@@ -8,7 +8,7 @@ use FatturaPa\Core\Models\Invoice;
 use FatturaPa\Core\Models\Notification;
 use Illuminate\Support\Facades\URL;
 
-define('TIME_TRAVEL_DB', BASEROOT.'core/storage/time_travel.json');
+define('TIME_TRAVEL_DB', $_SERVER['DOCUMENT_ROOT'] . '/core/storage/time_travel.json');
 
 class Base
 {
@@ -17,14 +17,14 @@ class Base
     {
         file_put_contents(TIME_TRAVEL_DB, json_encode($data));
     }
-    private static function retrieve()
+    public static function retrieve()
     {
         $data = json_decode(file_get_contents(TIME_TRAVEL_DB), true);
         $data['real_time'] = \DateTime::__set_state($data['real_time']);
         $data['simulated_time'] = \DateTime::__set_state($data['simulated_time']);
         return $data;
     }
-    public static function clear()
+    public static function resetTime()
     {
         $data = array(
             'real_time' => new \DateTime(),
@@ -90,7 +90,7 @@ class Base
     }
     public static function dispatchNotification($service, $addressee, $endpoint, $operation, $fileSdI)
     {
-        echo('dispatchNotification to: ' . $addressee . PHP_EOL);
+        echo 'dispatchNotification to: ' . $addressee  . '<br/>';
         $service->__setLocation(HOSTMAIN.$addressee."/soap/$endpoint/");
         $sent = false;
         try {

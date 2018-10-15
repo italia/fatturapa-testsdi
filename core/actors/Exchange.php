@@ -37,13 +37,14 @@ class Exchange
     }
     public static function checkValidity()
     {
-        
+       
         Exchange::Exchange();
         $Invoice = Invoice::all()->where('status', 'E_RECEIVED');
         $Invoices = $Invoice->toArray();
+						
         foreach ($Invoices as $Invoice) {
             $xmlString = base64_decode($Invoice['blob']);
-            $valid = Exchange::validateInvoice($xmlString);
+            $valid = Exchange::validateInvoice($xmlString);			
             if ($valid === true) {
                 Invoice::find($Invoice['id'])->update(['status' => 'E_VALID' ]);
                 $xml = Base::unpack($xmlString);
@@ -82,7 +83,7 @@ class Exchange
 XML;
                 // TODO: sign notification (on hold)
                 $File = base64_encode($notification);
-                $NomeFile = 'IT01234567890_11111_NS_001.xml';
+                $NomeFile = 'IT01234567890_11111_NS_123456.xml';
                 Base::enqueue(
                     $notification_blob = $File,
                     $filename = $NomeFile,
@@ -96,7 +97,8 @@ XML;
 
     public static function dispatchi()
     {
-        $service = new \TrasmissioneFatture_service(array('trace' => 1));
+        $service1 = new \TrasmissioneFatture_service(array('trace' => 1));
+        $service2 = new \RicezioneFatture_service(array('trace' => 1));
 
         $notifications = Notification::all()
             ->where('status', 'N_PENDING')
@@ -104,25 +106,24 @@ XML;
         $notifications = $notifications->toArray();
         
         foreach ($notifications as $notification) {
-            echo 'looking at notification  ' . json_encode($notification);
-            $invoice = Invoice::find($notification['invoice_id']);
-            $issuer = $invoice->issuer;
-
-            $xmlString = base64_decode($invoice['blob']);
-            $xml = Base::unpack($xmlString);
-            $recipient = $xml->FatturaElettronicaHeader->DatiTrasmissione->CodiceDestinatario;
+            echo 'looking at notification  ' . json_encode($notification) . '<br/>';
 
             $fileSdI = new \fileSdI_Type($notification['id'], $notification['nomefile'], $notification['blob']);
+            $invoice = Invoice::find($notification['invoice_id']);
+            $issuer = $invoice->issuer;
             $sent = Base::dispatchNotification(
-                $service,
+                $service1,
                 "td$issuer",
                 "TrasmissioneFatture",
                 $notification['type'],
                 $fileSdI
             );
             if ($notification['type'] == 'NotificaDecorrenzaTermini') {
+                $xmlString = base64_decode($invoice['blob']);
+                $xml = Base::unpack($xmlString);
+                $recipient = $xml->FatturaElettronicaHeader->DatiTrasmissione->CodiceDestinatario;
                 $sent &= Base::dispatchNotification(
-                    $service,
+                    $service2,
                     "td$recipient",
                     "RicezioneFatture",
                     $notification['type'],
@@ -130,7 +131,7 @@ XML;
                 );
             }
             if ($sent) {
-                echo "sent !";
+                echo "sent !" . '<br/>';
                 Notification::find($notification['id'])->update(['status' => 'N_DELIVERED' ]);
             }
         }
@@ -144,32 +145,42 @@ XML;
             ->orWhere('status', 'E_FAILED_DELIVERY')
             ->where('actor', Base::getActor());
         $Invoices = $Invoice->get()->toArray();
+		
+		
                     
         foreach ($Invoices as $Invoice) {
-            $timeAfter48Hour=\strtotime($Invoice['ctime'] . " + 48 hours");
-            $timeAfter12Days=\strtotime($Invoice['ctime'] . " + 12 days");
-            $currentTime=\strtotime($dateTime->date);
+            $invoice_id = $Invoice['id'];
+            $invoice_filename = $Invoice['nomefile'];
+            $invoice_ctime = $Invoice['ctime'];
+            $timeAfter48Hour = \strtotime($invoice_ctime . " + 48 hours");
+            $timeAfter12Days = \strtotime($invoice_ctime . " + 12 days");
+            $currentTime = \strtotime($dateTime->date);
             if ($currentTime >= $timeAfter12Days) {
                 $Invoice['status'] = 'E_IMPOSSIBLE_DELIVERY';
-                Invoice::find($Invoice['id'])->update(['status' => 'E_IMPOSSIBLE_DELIVERY' ]);
-                // TODO: fill data in notification
+                Invoice::find($invoice_id)->update(['status' => 'E_IMPOSSIBLE_DELIVERY' ]);
+                // Attestazione di avvenuta trasmissione della fattura con impossibilità di recapito
                 $notification = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/xsl" href="DT_v1.0.xsl"?>
-<types:NotificaDecorrenzaTermini xmlns:types="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" IntermediarioConDupliceRuolo="Si" versione="1.0" xsi:schemaLocation="http://www.fatturapa.gov.it/sdi/messaggi/v1.0 MessaggiTypes_v1.0.xsd http://www.w3.org/2000/09/xmldsig# xmldsig-core-schema.xsd">
-  <IdentificativoSdI>111</IdentificativoSdI>
-  <NomeFile>IT01234567890_11111.xml.p7m</NomeFile>
-  <Descrizione>Notifica di esempio</Descrizione>
-  <MessageId>123456</MessageId>
-  <Note>Esempio</Note>
-</types:NotificaDecorrenzaTermini>
+<?xml-stylesheet type="text/xsl" href="AT_v1.1.xsl"?>
+<types:AttestazioneTrasmissioneFattura xmlns:types="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="1.0" xsi:schemaLocation="http://www.fatturapa.gov.it/sdi/messaggi/v1.0 MessaggiTypes_v1.1.xsd ">
+<IdentificativoSdI>$invoice_id</IdentificativoSdI>
+<NomeFile>$invoice_filename</NomeFile>
+<DataOraRicezione>2014-04-01T12:00:00</DataOraRicezione>
+<Destinatario>
+    <Codice>AAAAAA</Codice>
+    <Descrizione>Pubblica Amministrazione di prova</Descrizione>
+</Destinatario>
+<MessageId>123456</MessageId>
+<Note>Attestazione Trasmissione Fattura di prova</Note>
+<HashFileOriginale>2c1f3a240a056d9537a8608fed310812ef7b1b7a410d0152f5c9c9e93486ae44</HashFileOriginale>
+</types:AttestazioneTrasmissioneFattura>
 XML;
                 // TODO: sign notification (on hold)
                 Base::enqueue(
                     $notification_blob = base64_encode($notification),
-                    $filename = 'IT01234567890_11111_DT_001.xml',
-                    $type = 'NotificaDecorrenzaTermini',
-                    $invoice_id = $Invoice['id']
+                    $filename = 'IT01234567890_11111_AT_123456.xml',
+                    $type = 'AttestazioneTrasmissioneFattura',
+                    $invoice_id = $invoice_id
                 );
             } else {
                 if (!$dummy) {
@@ -181,9 +192,9 @@ XML;
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="MT_v1.0.xsl"?>
 <types:MetadatiInvioFile xmlns:types="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="1.0" xsi:schemaLocation="http://www.fatturapa.gov.it/sdi/messaggi/v1.0 MessaggiTypes_v1.0.xsd ">
-    <IdentificativoSdI>111</IdentificativoSdI>
-    <NomeFile>IT01234567890_11111.xml.p7m</NomeFile>
-    <CodiceDestinatario>AAA111</CodiceDestinatario>
+    <IdentificativoSdI>$invoice_id</IdentificativoSdI>
+    <NomeFile>$invoice_filename</NomeFile>
+    <CodiceDestinatario>$recipient</CodiceDestinatario>
     <Formato>SDI10</Formato>
     <TentativiInvio>1</TentativiInvio>
     <MessageId>123456</MessageId>
@@ -195,8 +206,8 @@ XML;
                     $service = new \RicezioneFatture_service(array('trace' => 1));
                     $service->__setLocation(HOSTMAIN.$addressee.'/soap/RicezioneFatture/');
                     $fileSdIConMetadati = new \fileSdIConMetadati_Type(
-                        $Invoice['id'],
-                        $Invoice['nomefile'],
+                        $invoice_id,
+                        $invoice_filename,
                         $Invoice['blob'],
                         $nomeFileMetadati,
                         base64_encode($metadati)
@@ -206,31 +217,30 @@ XML;
                         $response = $service->RiceviFatture($fileSdIConMetadati);
                         if ($response) {
                             $Invoice['status'] = 'E_DELIVERED';
-                            Invoice::find($Invoice['id'])->update(['status' => 'E_DELIVERED' ]);
+                            Invoice::find($invoice_id)->update(['status' => 'E_DELIVERED' ]);
                             // TODO: fill data in notification
-                            $invoice_id = $Invoice['id'];
                             $notification = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/xsl" href="AT_v1.1.xsl"?>
-<types:AttestazioneTrasmissioneFattura xmlns:types="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="1.0" xsi:schemaLocation="http://www.fatturapa.gov.it/sdi/messaggi/v1.0 MessaggiTypes_v1.1.xsd ">
-<IdentificativoSdI>$invoice_id</IdentificativoSdI>
-<NomeFile>IT01234567890_11111.xml.p7m</NomeFile>
-<DataOraRicezione>2014-04-01T12:00:00</DataOraRicezione>
-<Destinatario>
-    <Codice>AAAAAA</Codice>
-    <Descrizione>Pubblica Amministrazione di prova</Descrizione>
-</Destinatario>
-<MessageId>123456</MessageId>
-<Note>Attestazione Trasmissione Fattura di prova</Note>
-<HashFileOriginale>2c1f3a240a056d9537a8608fed310812ef7b1b7a410d0152f5c9c9e93486ae44</HashFileOriginale>
-</types:AttestazioneTrasmissioneFattura>
+<?xml-stylesheet type="text/xsl" href="RC_v1.0.xsl"?>
+<types:RicevutaConsegna xmlns:types="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" IntermediarioConDupliceRuolo="Si" versione="1.0" xsi:schemaLocation="http://www.fatturapa.gov.it/sdi/messaggi/v1.0 MessaggiTypes_v1.0.xsd ">
+  <IdentificativoSdI>$invoice_id</IdentificativoSdI>
+  <NomeFile>$invoice_filename</NomeFile>
+  <DataOraRicezione>$invoice_ctime</DataOraRicezione>
+  <DataOraConsegna>$currentTime</DataOraConsegna>
+  <Destinatario>
+    <Codice>$recipient</Codice>
+    <Descrizione>NO PA</Descrizione>
+  </Destinatario>
+  <MessageId>123456</MessageId>
+</types:RicevutaConsegna>
 XML;
+                            echo $notification . PHP_EOL;
                             // TODO: sign notification (on hold)
                             Base::enqueue(
                                 $notification_blob = base64_encode($notification),
-                                $filename = 'IT01234567890_11111_AT_001.xml',
-                                $type = 'AttestazioneTrasmissioneFattura',
-                                $invoice_id = $Invoice['id']
+                                $filename = 'IT01234567890_11111_RC_123456.xml',
+                                $type = 'RicevutaConsegna',
+                                $invoice_id = $invoice_id
                             );
                         }
                     } catch (SoapFault $e) {
@@ -240,14 +250,14 @@ XML;
                 }
 
                 if (($currentTime >= $timeAfter48Hour) && $Invoice['status']=='E_VALID') {
-                    Invoice::find($Invoice['id'])->update(['status' => 'E_FAILED_DELIVERY' ]);
+                    Invoice::find($invoice_id)->update(['status' => 'E_FAILED_DELIVERY' ]);
                     // TODO: fill data in notification
                     $notification = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="MC_v1.0.xsl"?>
 <types:NotificaMancataConsegna xmlns:types="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="1.0" xsi:schemaLocation="http://www.fatturapa.gov.it/sdi/messaggi/v1.0 MessaggiTypes_v1.0.xsd ">
-    <IdentificativoSdI>111</IdentificativoSdI>
-    <NomeFile>IT01234567890_11111.xml.p7m</NomeFile>
+    <IdentificativoSdI>$invoice_id</IdentificativoSdI>
+    <NomeFile>$invoice_filename</NomeFile>
     <DataOraRicezione>2013-06-06T12:00:00</DataOraRicezione>
     <Descrizione>Notifica di esempio</Descrizione>
     <MessageId>123456</MessageId>
@@ -257,9 +267,9 @@ XML;
                     // TODO: sign notification (on hold)
                     Base::enqueue(
                         $notification_blob = base64_encode($notification),
-                        $filename = 'IT01234567890_11111_MC_001.xml',
+                        $filename = 'IT01234567890_11111_MC_123456.xml',
                         $type = 'NotificaMancataConsegna',
-                        $invoice_id = $Invoice['id']
+                        $invoice_id = $invoice_id
                     );
                 }
             }
@@ -269,11 +279,12 @@ XML;
     }
     public static function checkExpiration()
     {
+        // TODO for #18
     }
-    public static function accept($invoice_id)
+    public static function accept_refuse($invoice_id, $status, $esito)
     {
         new Database();
-        Invoice::where('id', '=', $invoice_id)->update(array('status' => 'E_ACCEPTED'));
+        Invoice::where('id', '=', $invoice_id)->update(array('status' => $status));
         $notification = <<<XML
 <?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="EC_v1.0.xsl"?>
 <types:NotificaEsitoCommittente xmlns:types="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="1.0" xsi:schemaLocation="http://www.fatturapa.gov.it/sdi/messaggi/v1.0 MessaggiTypes_v1.0.xsd ">
@@ -283,15 +294,14 @@ XML;
     <AnnoFattura>2013</AnnoFattura>
     <PosizioneFattura>2</PosizioneFattura>
   </RiferimentoFattura>
-  <Esito>EC01</Esito>
+  <Esito>$esito</Esito>
   <Descrizione>Esempio</Descrizione>
   <MessageIdCommittente>123456</MessageIdCommittente>
 </types:NotificaEsitoCommittente>
 XML;
-    
         // TODO: sign notification (on hold)
         $File = base64_encode($notification);
-        $NomeFile = 'IT01234567890_11111_EC_001.xml';
+        $NomeFile = 'IT01234567890_11111_EC_123456.xml';
         Base::enqueue(
             $notification_blob = $File,
             $filename = $NomeFile,
@@ -299,15 +309,12 @@ XML;
             $invoice_id = $invoice_id
         );
     }
-    public static function refuse($invoices)
-    {
-    }
     private static function validateInvoice($xmlString)
     {
         $xml = new \DOMDocument();
         $xml->loadXML($xmlString, LIBXML_NOBLANKS);
-        try {
-            $schema = BASEROOT.'core/schemas/Schema_del_file_xml_FatturaPA_versione_1.2_cleanup.xsd';
+        try {        
+            $schema = SAFEROOT.'core/schemas/Schema_del_file_xml_FatturaPA_versione_1.2_cleanup.xsd';
             $valid = $xml->schemaValidate($schema);
         } catch (\Exception $e) {
             $valid = false;

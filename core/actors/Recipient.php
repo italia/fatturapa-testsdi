@@ -61,8 +61,34 @@ XML;
             $invoice_id = $id
         );
     }
-    public static function refuse($invoices)
+    public static function refuse($id)
     {
+        Invoice::where('id', '=', $id)->update(array('status' => 'R_REFUSED'));
+        $invoice = Invoice::find($id);
+        $remote_id = $invoice->remote_id;
+        $notification = <<<XML
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="EC_v1.0.xsl"?>
+<types:NotificaEsitoCommittente xmlns:types="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="1.0" xsi:schemaLocation="http://www.fatturapa.gov.it/sdi/messaggi/v1.0 MessaggiTypes_v1.0.xsd ">
+    <IdentificativoSdI>$remote_id</IdentificativoSdI>
+    <RiferimentoFattura>
+    <NumeroFattura>1111</NumeroFattura>
+    <AnnoFattura>2013</AnnoFattura>
+    <PosizioneFattura>2</PosizioneFattura>
+    </RiferimentoFattura>
+    <Esito>EC02</Esito>
+    <Descrizione>Esempio</Descrizione>
+    <MessageIdCommittente>123456</MessageIdCommittente>
+</types:NotificaEsitoCommittente>
+XML;
+        // TODO: sign notification (on hold)
+        $File = base64_encode($notification);
+        $NomeFile = 'IT01234567890_11111_EC_001.xml';
+        Base::enqueue(
+            $notification_blob = $File,
+            $filename = $NomeFile,
+            $type = 'NotificaEsito',
+            $invoice_id = $id
+        );
     }
     public static function expire($invoices)
     {
