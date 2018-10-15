@@ -30,13 +30,20 @@ function post(url, parameter, element) {
         if ((request.status != 200) && (request.status != 201)) {
             console.error(request.responseText);
             Toastify({
-              text: "C'è stato un errore " + request.status + ", riprova.",
-              duration: 5000,
-              close: true,
-              gravity: "top",
-              backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",                  
-            }).showToast();            
+                text: "C'è stato un errore " + request.status + ", riprova.",
+                duration: 5000,
+                close: true,
+                gravity: "top",
+                backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+            }).showToast();
         } else {
+            Toastify({
+                text: "Chiamata a " + url + ' completata',
+                duration: 5000,
+                close: true,
+                gravity: "top",
+                backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+            }).showToast();
             EventBus.$emit('refreshTables');
         }
     };
@@ -79,14 +86,14 @@ function refreshClock() {
                 }, 1000); // refresh rate in milliseconds
             }
         },
-        error: function( data ) {
+        error: function(data) {
             Toastify({
                 text: "Errore caricamento in: " + url + ", riprova.",
                 duration: 5000,
                 close: true,
                 gravity: "top",
-                backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",                  
-            }).showToast(); 
+                backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+            }).showToast();
         }
     });
 }
