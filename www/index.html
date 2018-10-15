@@ -2,6 +2,7 @@
 <html lang="it">
   <head>
     <meta charset="UTF-8">
+    <meta name="format-detection" content="telephone=no">
     <title>FatturaPA testUI - Dashboard</title>
     <!-- Custom styles for this template-->
              <link href="css/sb-admin.css" rel="stylesheet">    
@@ -14,7 +15,7 @@
   <body id="page-top">
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <h1 class="navbar-brand">FatturaPA TestUI</h1>
+      <h1 class="navbar-brand">FatturaPA testUI - Dashboard</h1>
       <span id="dateTime"></span>
     </nav>
 
@@ -52,7 +53,6 @@
   <div class="container-fluid">
     <div class="card col-md-6">
       <div class="card-body">
-        <h5 class="card-title border-bottom border-italia">Dashboard</h5>
         <div class="form-group">
           <p>Vuoi resettare le impostazioni di data e ora?</p>
           <button type="button" onclick="post('/sdi/rpc/resetTime');" class="btn mb-1 btn-primary">Ok, resetta data e ora</button>
