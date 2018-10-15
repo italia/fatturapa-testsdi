@@ -445,4 +445,9 @@ progress {
   float: right; 
 }
 
+#dateTime {    
+  right: 15px;
+  position: absolute;
+}
+
 [v-cloak] > * {display: none; }
