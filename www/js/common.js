@@ -51,16 +51,33 @@ function post(url, parameter, element) {
 }
 
 // show datetime in UI
-$(document).ready(function(){
+var clock;
+
+function refreshClock() {
     var url = window.location.protocol + "//" + window.location.host + "/";
     url = url + "sdi/rpc/datetime";
     $.ajax({
         url: url,
         dataType: 'json',
         success: function(data) {
+            if (clock) {
+                window.clearInterval(clock);
+            }
+            var wallclock = new Date().getTime();
             var timestamp = data.timestamp;
+            var speed = data.speed;
             var date = new Date(timestamp * 1000);
             $("#dateTime").html(date.toLocaleString());
+            if (speed > 0) {
+                clock = window.setInterval(function() {
+                    var new_wallclock = new Date().getTime();
+                    var new_timestamp = timestamp + (new_wallclock - wallclock) * speed / 1000.0;
+                    date = new Date(new_timestamp * 1000);
+                    $("#dateTime").html(date.toLocaleString());
+                    wallclock = new_wallclock;
+                    timestamp = new_timestamp;
+                }, 1000); // refresh rate in milliseconds
+            }
         },
         error: function( data ) {
             Toastify({
@@ -72,4 +89,12 @@ $(document).ready(function(){
             }).showToast(); 
         }
     });
-});
+}
+
+$(document).ready(refreshClock);
+
+window.onunload = function() {
+    if (clock) {
+        window.clearInterval(clock);
+    }
+};
