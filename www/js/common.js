@@ -50,16 +50,17 @@ function post(url, parameter, element) {
     }
 }
 
-// datetime on footer 
+// show datetime in UI
 $(document).ready(function(){
     var url = window.location.protocol + "//" + window.location.host + "/";
     url = url + "sdi/rpc/datetime";
     $.ajax({
         url: url,
         dataType: 'json',
-        success: function( data ) {
-            var date = data.datetime;
-            $("#dateTime").html("Date time: " + date); 
+        success: function(data) {
+            var timestamp = data.timestamp;
+            var date = new Date(timestamp * 1000);
+            $("#dateTime").html(date.toLocaleString());
         },
         error: function( data ) {
             Toastify({
