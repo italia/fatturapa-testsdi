@@ -54,30 +54,25 @@
       <div class="card-body">
         <h5 class="card-title border-bottom border-italia">Dashboard</h5>
         <div class="form-group">
-          <p>Do you want to clear (reset) the state?</p>
-          <button type="button" onclick="post('/sdi/rpc/clear');" class="btn mb-1 btn-primary">Reset</button>
+          <p>Vuoi resettare le impostazioni di data e ora?</p>
+          <button type="button" onclick="post('/sdi/rpc/resetTime');" class="btn mb-1 btn-primary">Ok, resetta data e ora</button>
         </div>
         <div class="form-group">
-          <p>Set the simulated date and time</p>
+          <p>Simula data e ora:</p>
           <div>
             <input id="date" type="date" class="form-control" aria-label="date">
             <input id="time" type="time" class="form-control" aria-label="time">
             <input id="dt" type="datetime-local" hidden>
-            <button type="button" class="btn mb-1 btn-primary" id="saveDatetime">Save</button>
+            <button type="button" class="btn mb-1 btn-primary" id="saveDatetime">Salva</button>
             <!-- <button type="button" onclick="post('/sdi/rpc/timestamp', 'timestamp', 'dt');" class="btn mb-1 btn-primary">Save</button> -->
           </div>
         </div>  
         <div class="form-group">
-          <p>Set factor for simulated time to wallclock time</p>
+          <p>Imposta fattore per il tempo simulato (da 1 a 1000000000):</p>
           <div class="input-group">
             <input id="speed" type="number" min="1" max="1000000000" class="form-control" aria-label="speed">
-            <button type="button" onclick="post('/sdi/rpc/speed', 'speed', 'speed');" class="btn mb-1 btn-primary">Save</button>
+            <button type="button" onclick="post('/sdi/rpc/speed', 'speed', 'speed');" class="btn mb-1 btn-primary">Salva</button>
           </div>
-        </div>
-        <div class="form-group">
-          <p>Current simulation time </p>
-          <p><span id="simtime"></span></p>
-          <button type="button" onclick="get('/sdi/rpc/datetime', 'simtime');" class="btn mb-1 btn-primary">Show</button>
         </div>
       </div>  <!-- /.card-body -->
     </div>  <!-- /.card mb-3 -->    
@@ -149,6 +144,7 @@ $(document).ready(function(){
     var dt = date+"T"+time;
     $("#dt").val(dt);
     post('/sdi/rpc/timestamp', 'timestamp', 'dt');
+    refreshClock();
   });
 });
 </script>

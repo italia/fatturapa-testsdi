@@ -92,9 +92,8 @@ function refreshClock() {
 }
 
 $(document).ready(refreshClock);
-
 window.onunload = function() {
-    if (clock) {
-        window.clearInterval(clock);
-    }
+        if (clock) {
+            window.clearInterval(clock);
+        }
 };
