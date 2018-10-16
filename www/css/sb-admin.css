@@ -430,6 +430,11 @@ input[type=file] {
   cursor: pointer;
   filter: alpha(opacity=0);
 }
+
+input[type] {
+margin-bottom: 15px;
+}
+
 .fileName {font-weight: bold;}
 progress {
   width: 100%;
