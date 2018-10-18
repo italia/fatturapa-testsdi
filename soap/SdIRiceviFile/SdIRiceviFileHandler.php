@@ -11,11 +11,11 @@ class SdIRiceviFileHandler
 {
 
     public function RiceviFile($parametersIn)
-    {    	
+    {
         error_log('HSTART------------------:');
         error_log('parametersIn: '.json_encode($parametersIn));
         error_log('------------------END');
-					
+                    
         // ADD TO DB
         $Invoice = Exchange::receive($parametersIn->File, $parametersIn->NomeFile, 1);
         // Get current timestamp

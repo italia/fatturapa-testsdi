@@ -55,13 +55,27 @@ class BaseController extends Controller
     public function getdatetime()
     {
         $dateTime=Base::getDateTime();
-		$data = Base::retrieve();
-			
-		 return response()->json(array(
+        $data = Base::retrieve();
+            
+         return response()->json(array(
             'timestamp' => strtotime($dateTime->date),
             'datetime' => $dateTime->date,
             'speed' => $data['speed']
-			)
-		 );
+            ));
+    }
+    public function getActors()
+    {
+        $actors = Base::getActors();
+        return response()->json(array('actors' => $actors));
+    }
+    public function getIssuers()
+    {
+        $issuers = Base::getIssuers();
+        return response()->json(array('issuers' => $issuers));
+    }
+    public function getChannels()
+    {
+        $channels = Base::getChannels();
+        return response()->json(array('channels' => $channels));
     }
 }

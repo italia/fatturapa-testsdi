@@ -18,9 +18,9 @@ class SdIRiceviNotificaHandler
         $invoice_id = $xml->IdentificativoSdI;
         $esito = $xml->Esito;
         if ($esito == 'EC01') {
-            Exchange::accept_refuse($invoice_id, 'E_ACCEPTED', $esito);
-        } else if ($esito == 'EC02') {
-            Exchange::accept_refuse($invoice_id, 'E_REFUSED', $esito);
+            Exchange::acceptRefuse($invoice_id, 'E_ACCEPTED', $esito);
+        } elseif ($esito == 'EC02') {
+            Exchange::acceptRefuse($invoice_id, 'E_REFUSED', $esito);
         } else {
             throw new \RuntimeException("Invalid Esito $esito");
         }

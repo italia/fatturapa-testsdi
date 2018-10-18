@@ -90,8 +90,9 @@ XML;
             $invoice_id = $id
         );
     }
-    public static function expire($invoices)
+    public static function expire($invoice_id)
     {
+        Invoice::find($invoice_id)->update(['status' => 'R_EXPIRED' ]);
     }
     public static function dispatchi()
     {

@@ -8,5 +8,17 @@
         "phpunit/phpunit": "^6.5",
         "guzzlehttp/guzzle": "^6.3",
         "squizlabs/php_codesniffer": "^3.3"
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "cd core && composer install",
+            "cd soap && composer install",
+            "cd rpc && composer install"
+        ],
+        "post-update-cmd": [
+            "cd core && composer update",
+            "cd soap && composer update",
+            "cd rpc && composer update"
+        ]
     }
 }

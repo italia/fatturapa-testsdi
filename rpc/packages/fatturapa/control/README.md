@@ -35,6 +35,8 @@ For more details, refer to [fatturapa-testsdi](https://github.com/italia/fattura
   - `POST /checkValidity`: call `Exchange::checkValidity`
   - `POST /deliver`: call `Exchange::deliver`
   - `POST /checkExpiration`: call `Exchange::checkExpiration`
+  - `GET /actors`: calls `Base::getActors`
+  - `GET /issuers`: calls `Base::getIssuers`
 
 - recipient-specific
   - `POST /accept {invoices}`: call `Recipient::accept(invoices)`
@@ -43,6 +45,9 @@ For more details, refer to [fatturapa-testsdi](https://github.com/italia/fattura
 ## Example
 
 ```
+// get list of actors
+GET sdi/rpc/actors
+
 // reset state for all actors
 POST sdi/rpc/clear
 POST td0000001/rpc/clear

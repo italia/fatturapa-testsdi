@@ -9,6 +9,7 @@ use FatturaPa\Core\Actors\Exchange;
 use FatturaPa\Core\Actors\Issuer;
 use FatturaPa\Core\Actors\Base;
 use FatturaPa\Core\Actors\Recipient;
+use Illuminate\Support\Facades\Validator;
 
 class InvoicesController extends Controller
 {
@@ -36,6 +37,20 @@ class InvoicesController extends Controller
     }
     public function upload(Request $request)
     {
+                
+        $validator = Validator::make($request->all(), [
+            'File' =>  'required|mimes:xml|max:5000',
+        ]);
+                
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            foreach ($errors->all() as $message) {
+                echo $message;
+            }
+            abort(400);
+            exit;
+        }
+                
         $file = $request->file('File');
         $NomeFile = $file->getClientOriginalName();
         $XML = base64_encode(file_get_contents($file->getRealPath()));
@@ -66,6 +81,12 @@ class InvoicesController extends Controller
     {
         Recipient::refuse($id);
         echo "refuse";
+        exit;
+    }
+    public function checkExpiration(Request $request)
+    {
+        Exchange::checkExpiration();
+        echo "Check Expiration";
         exit;
     }
 }

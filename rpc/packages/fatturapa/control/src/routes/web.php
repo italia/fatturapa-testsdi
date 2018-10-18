@@ -11,6 +11,9 @@ if (Base::getActor() == 'sdi') {
     // exchange-specific
     Route::post('checkValidity', 'fatturapa\control\InvoicesController@checkValidity');
     Route::post('deliver', 'fatturapa\control\InvoicesController@deliver');
+    Route::post('checkExpiration', 'fatturapa\control\InvoicesController@checkExpiration');
+    Route::get('actors', 'fatturapa\control\BaseController@getActors');
+    Route::get('issuers', 'fatturapa\control\BaseController@getIssuers');
     // TODO: checkExpiration
 } else {
     // issuer-specific
@@ -37,3 +40,5 @@ Route::post('dispatch', 'fatturapa\control\NotificationsController@dispatchi');
 
 // invoices-related
 Route::get('invoices', 'fatturapa\control\InvoicesController@index');
+
+Route::get('channels', 'fatturapa\control\BaseController@getChannels');

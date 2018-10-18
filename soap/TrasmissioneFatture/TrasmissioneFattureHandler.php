@@ -51,7 +51,7 @@ class TrasmissioneFattureHandler
         $esito = $xml->Esito;
         if ($esito == 'EC01') {
             $status = 'I_ACCEPTED';
-        } else if ($esito == 'EC02') {
+        } elseif ($esito == 'EC02') {
             $status = 'I_REFUSED';
         } else {
             throw new \RuntimeException("Invalid Esito $esito");

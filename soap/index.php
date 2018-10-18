@@ -20,7 +20,7 @@ if ($soap != 'soap') {
 }
 
 if (($actor != 'sdi') && !((substr($actor, 0, 2) == 'td') && strlen($actor) == 9)) {
-    echo "404 wrong actor $actor";	
+    echo "404 wrong actor $actor";
     die;
 }
 
@@ -36,9 +36,10 @@ switch ($actor) {
                 require './SdIRiceviNotifica/index.php';
                 break;
             default:
-                echo "404 soap endpoint not found for actor $actor";
+                echo "404 soap endpoint $endpoint not found for actor $actor";
                 break;
         }
+        break;
     default:
         switch ($endpoint) {
             case 'RicezioneFatture':
@@ -48,7 +49,7 @@ switch ($actor) {
                 require './TrasmissioneFatture/index.php';
                 break;
             default:
-                echo "404 soap endpoint not found for actor $actor";
+                echo "404 soap endpoint not $endpoint found for actor $actor";
                 break;
         }
 }

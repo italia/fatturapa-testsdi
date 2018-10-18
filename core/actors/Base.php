@@ -6,6 +6,7 @@ namespace FatturaPa\Core\Actors;
 use FatturaPa\Core\Models\Database;
 use FatturaPa\Core\Models\Invoice;
 use FatturaPa\Core\Models\Notification;
+use FatturaPa\Core\Models\Channel;
 use Illuminate\Support\Facades\URL;
 
 define('TIME_TRAVEL_DB', $_SERVER['DOCUMENT_ROOT'] . '/core/storage/time_travel.json');
@@ -104,6 +105,7 @@ class Base
     }
     public static function getActor()
     {
+        new Database();
         if (class_exists('\URL')) {
             // we're inside Laravel: URL is defined in rpc/config/app.php
             $url = \URL::current();
@@ -114,7 +116,41 @@ class Base
             $urlData = explode("/", $url);
             $actor = $urlData[1];
         }
+        
+        $issuers=self::getActors();
+        if (!in_array($actor, $issuers)) {
+            abort(404);
+        }
+                
         return $actor;
+    }
+    public static function getIssuers()
+    {
+        $channels = Channel::select(['issuer'])->distinct()->get();
+        $issuers = [];
+        foreach ($channels->toArray() as $channel) {
+            $issuers[] = $channel['issuer'];
+        }
+        return $issuers;
+    }
+    public static function getActors()
+    {
+        $channels = Channel::select(['issuer'])->distinct()->get();
+        $actors = array('sdi');
+        foreach ($channels->toArray() as $channel) {
+            $actors[] = "td" . $channel['issuer'];
+        }
+        return $actors;
+    }
+    public static function getChannels()
+    {
+        $Channelslist = Channel::all();
+                
+        $channels = array();
+        foreach ($Channelslist as $k => $channel) {
+            $channels[$channel['cedente']]=$channel['issuer'];
+        }
+        return $channels;
     }
     public static function unpack($xmlString)
     {

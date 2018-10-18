@@ -13,7 +13,12 @@ class RicezioneFattureHandler
     public function RiceviFatture($parametersIn)
     {
         // TODO get the remote_id from metadata ?
-        $Invoice = Recipient::receive($parametersIn->File, $parametersIn->NomeFile, 1, $parametersIn->IdentificativoSdI);
+        $Invoice = Recipient::receive(
+            $parametersIn->File,
+            $parametersIn->NomeFile,
+            1,
+            $parametersIn->IdentificativoSdI
+        );
         $rispostaRiceviFatture = new rispostaRiceviFatture_Type(\esitoRicezione_Type::ER01);
         return $rispostaRiceviFatture;
     }
@@ -21,5 +26,6 @@ class RicezioneFattureHandler
     public function NotificaDecorrenzaTermini($parametersIn)
     {
         // TODO
+        Recipient::expire($parametersIn->IdentificativoSdI);
     }
 }

@@ -41,10 +41,10 @@ class Exchange
         Exchange::Exchange();
         $Invoice = Invoice::all()->where('status', 'E_RECEIVED');
         $Invoices = $Invoice->toArray();
-						
+                        
         foreach ($Invoices as $Invoice) {
             $xmlString = base64_decode($Invoice['blob']);
-            $valid = Exchange::validateInvoice($xmlString);			
+            $valid = Exchange::validateInvoice($xmlString);
             if ($valid === true) {
                 Invoice::find($Invoice['id'])->update(['status' => 'E_VALID' ]);
                 $xml = Base::unpack($xmlString);
@@ -145,8 +145,8 @@ XML;
             ->orWhere('status', 'E_FAILED_DELIVERY')
             ->where('actor', Base::getActor());
         $Invoices = $Invoice->get()->toArray();
-		
-		
+        
+        
                     
         foreach ($Invoices as $Invoice) {
             $invoice_id = $Invoice['id'];
@@ -279,9 +279,43 @@ XML;
     }
     public static function checkExpiration()
     {
-        // TODO for #18
+        $dateTime=Base::getDateTime();
+        $Invoice = Invoice::where('status', 'E_DELIVERED')->where('actor', Base::getActor());
+        $Invoices = $Invoice->get()->toArray();
+        
+        foreach ($Invoices as $Invoice) {
+            $invoice_id = $Invoice['id'];
+            $invoice_filename = $Invoice['nomefile'];
+            $invoice_ctime = $Invoice['ctime'];
+            $timeAfter15Days = \strtotime($invoice_ctime . " + 15 days");
+            $currentTime = \strtotime($dateTime->date);
+            if ($currentTime >= $timeAfter15Days) {
+                Invoice::find($invoice_id)->update(['status' => 'E_EXPIRED' ]);
+                    
+                    $notification = <<<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="MC_v1.0.xsl"?>
+<types:NotificaMancataConsegna xmlns:types="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="1.0" xsi:schemaLocation="http://www.fatturapa.gov.it/sdi/messaggi/v1.0 MessaggiTypes_v1.0.xsd ">
+    <IdentificativoSdI>$invoice_id</IdentificativoSdI>
+    <NomeFile>$invoice_filename</NomeFile>
+    <DataOraRicezione>2013-06-06T12:00:00</DataOraRicezione>
+    <Descrizione>Notifica di esempio</Descrizione>
+    <MessageId>123456</MessageId>
+    <Note>Esempio</Note>
+</types:NotificaMancataConsegna>
+XML;
+                    // TODO: sign notification (on hold)
+                                        
+                    Base::enqueue(
+                        $notification_blob = base64_encode($notification),
+                        $filename = 'IT01234567890_11111_MC_123456.xml',
+                        $type = 'NotificaDecorrenzaTermini',
+                        $invoice_id = $invoice_id
+                    );
+            }
+        }
     }
-    public static function accept_refuse($invoice_id, $status, $esito)
+    public static function acceptRefuse($invoice_id, $status, $esito)
     {
         new Database();
         Invoice::where('id', '=', $invoice_id)->update(array('status' => $status));
@@ -313,7 +347,7 @@ XML;
     {
         $xml = new \DOMDocument();
         $xml->loadXML($xmlString, LIBXML_NOBLANKS);
-        try {        
+        try {
             $schema = SAFEROOT.'core/schemas/Schema_del_file_xml_FatturaPA_versione_1.2_cleanup.xsd';
             $valid = $xml->schemaValidate($schema);
         } catch (\Exception $e) {

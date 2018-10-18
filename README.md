@@ -252,16 +252,6 @@ Install prerequisites with composer:
 ```sh
 cd /var/www/html
 composer install
-cd core
-composer install
-composer dumpautoload
-composer dumpautoload -o
-cd ../soap
-composer install
-cd ../rpc
-composer install
-composer dumpautoload
-composer dumpautoload -o
 ```
 
 Configure the database:

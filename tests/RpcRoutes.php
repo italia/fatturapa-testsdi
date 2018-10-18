@@ -79,7 +79,8 @@ final class RpcRoutes extends PHPUnit\Framework\TestCase
         $this->onlyPost('/td0000001/rpc/transmit');
     }
 
-    // test that exchanger-specific methods respond to GET with 405 but do not respond to POST with 404 or 405
+    // test that exchanger-specific methods respond to the wrong verb with 405
+    // but do not respond to the right verb with 404 or 405
     public function testExchangerHasCheckValidity()
     {
         $this->onlyPost('/sdi/rpc/checkValidity');
@@ -91,6 +92,14 @@ final class RpcRoutes extends PHPUnit\Framework\TestCase
     public function testExchangerHasCheckExpiration()
     {
         $this->onlyPost('/sdi/rpc/checkExpiration');
+    }
+    public function testExchangerHasActors()
+    {
+        $this->onlyGet('/sdi/rpc/actors');
+    }
+    public function testExchangerHasIssuers()
+    {
+        $this->onlyGet('/sdi/rpc/issuers');
     }
 
     // make sure recipient-specific methods respond only to POST
@@ -126,7 +135,7 @@ final class RpcRoutes extends PHPUnit\Framework\TestCase
     }
 
     // exchanger-specific routes should fail against td*
-    public function testTdHasNoValidity()
+    public function testTdHasNoCheckValidity()
     {
         $this->noGetNoPost('/td0000001/rpc/checkValidity');
     }
@@ -137,6 +146,14 @@ final class RpcRoutes extends PHPUnit\Framework\TestCase
     public function testTdHasNoCheckExpiration()
     {
         $this->noGetNoPost('/td0000001/rpc/checkExpiration');
+    }
+    public function testTdHasNoActors()
+    {
+        $this->noGetNoPost('/td0000001/rpc/actors');
+    }
+    public function testTdHasNoIssuers()
+    {
+        $this->noGetNoPost('/td0000001/rpc/issuers');
     }
 
     public function tearDown()
