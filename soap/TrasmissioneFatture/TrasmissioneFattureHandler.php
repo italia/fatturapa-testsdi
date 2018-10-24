@@ -66,6 +66,7 @@ class TrasmissioneFattureHandler
 
     public function NotificaDecorrenzaTermini($parametersIn)
     {
+        error_log("==== TrasmissioneFattureHandler::NotificaDecorrenzaTermini");
         Issuer::receive(
             $notification_blob = $parametersIn->File,
             $filename = $parametersIn->NomeFile,

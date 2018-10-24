@@ -1,6 +1,5 @@
 <?php
 require_once("config.php");
-require_once("SoapServerDebug.php");
 
 # echo $_SERVER['REQUEST_URI'] . '<br/>' . PHP_EOL;
 $request_uri = explode('/', $_SERVER['REQUEST_URI']);

@@ -91,7 +91,7 @@ class Base
     }
     public static function dispatchNotification($service, $addressee, $endpoint, $operation, $fileSdI)
     {
-        echo 'dispatchNotification to: ' . $addressee  . '<br/>';
+        echo 'dispatchNotification to: ' . $addressee  . '<br/>' . PHP_EOL;
         $service->__setLocation(HOSTMAIN.$addressee."/soap/$endpoint/");
         $sent = false;
         try {

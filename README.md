@@ -36,6 +36,7 @@ Some functionalities are also **excluded** from the initial design:
   + [Manual testing](#manual-testing)
   + [Unit tests](#unit-tests)
   + [Linting](#linting)
+* [Troubleshooting](#troubleshooting)  
 * [Contributing](#contributing)
 * [Authors](#authors)
 * [License](#license)
@@ -503,6 +504,69 @@ Lint the code with:
 ```
 ./vendor/bin/phpcs --standard=PSR2 xxx.php
 ```
+
+## Troubleshooting
+
+SOAP client/server interactions can be tricky to debug.
+
+The issue is even more complicated when you perform a RPC calls (such as `POST /sdi/rpc/transmit`) which has to perform internally a SOAP call.
+
+You'll then have: client -> 1st level server (RPC) | SOAP client -> SOAP server | 2nd level server.
+
+It is easy to trace and debug the 1st level server:
+- PHP `echo` is sent back to client
+- PHP `error_log` statements get written to `/var/log/nginx/error.log`.
+
+For the 2nd level server it's more complicated:
+- you cannot use PHP `echo` because the body is used to return XML payloads
+- PHP `error_log` statements get lost.
+
+To make sure you get to see all messages written to log at the 2nd level server (SOAP server) edit `/etc/php/7.0/fpm/pool.d/www.conf` adding these lines at the end:
+```
+catch_workers_output = yes
+php_flag[display_errors] = on
+php_admin_value[error_log] = /var/log/fpm-php.www.log
+php_admin_flag[log_errors] = on
+```
+then create the new log file and make sure it can be written by the webserver:
+```sh
+sudo touch /var/log/fpm-php.www.log
+sudo chown www-data:www-data /var/log/fpm-php.www.log
+```
+and finally restart the servers:
+```sh
+systemctl restart nginx && systemctl restart php7.0-fpm
+```
+
+Another option you have is to use instrumented versions of the PHP `SoapClient` and `SoapServer` builtins.
+
+To instrument a SOAP client, use `SoapClientDebug` instead of `SoapClient`, for example for `TrasmissioneFatture` add this to `soap/TrasmissioneFatture/autoload.php`:
+```php
+'SoapClientDebug' => __DIR__ .'/../SoapClientDebug.php',
+```
+then modify `TrasmissioneFatture/TrasmissioneFatture_service.php` like this:
+```diff
+- class TrasmissioneFatture_service extends \SoapClient
++ class TrasmissioneFatture_service extends \SoapClientDebug
+```
+
+To instrument a SOAP server, use `SoapServerDebug` instead of `SoapServer`, for example for `TrasmissioneFatture` make sure `soap/index.php` has:
+```php
+require_once("SoapServerDebug.php");
+```
+then modify `TrasmissioneFatture/index.php` like this:
+```diff
+-$srv = new \SoapServer(dirname(__FILE__) . '/TrasmissioneFatture_v1.1.wsdl');
++$srv = new SoapServerDebug(dirname(__FILE__) . '/TrasmissioneFatture_v1.1.wsdl');
+ $srv->setClass("TrasmissioneFattureHandler");
+ $srv->handle();
++foreach ($srv->getAllDebugValues() as $value) {
++    error_log('==== '. print_r($value, true));
++}
+```
+
+
+
 
 ## Contributing
 

@@ -48,7 +48,7 @@ class RicezioneFatture_service extends \SoapClient
      * @return void
      */
     public function NotificaDecorrenzaTermini(fileSdI_Type $parametersNotifica)
-    {
+    {    	
         return $this->__soapCall('NotificaDecorrenzaTermini', array($parametersNotifica));
     }
 }

@@ -857,7 +857,7 @@ final class FullDemo extends PHPUnit\Framework\TestCase
                     $this->assertEquals(200, $response->getStatusCode());
                     $response = $this->client->post("sdi/rpc/dispatch");
                     $this->assertEquals(200, $response->getStatusCode());
-                    echo $response->getBody();
+                    //echo $response->getBody();
 
                     usleep(100000);
                     $this->expectedInvoices("td$issuer", 1, 'I_EXPIRED');
@@ -866,7 +866,7 @@ final class FullDemo extends PHPUnit\Framework\TestCase
                     foreach ($this->actors as $actor) {
                         $this->expectedInvoices(
                             $actor,
-                            $actor == "td$issuer" || $actor == 'sdi' || $actor == "td$recipient" ? 2 : 0
+                            $actor == "td$issuer" || $actor == 'sdi' || $actor == "td$recipient" ? 1 : 0
                         );
                         // sdi has an N_OBSOLETE AttestazioneTrasmissioneFattura notification
                         // and an N_DELIVERED NotificaDecorrenzaTermini notification

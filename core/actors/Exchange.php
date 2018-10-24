@@ -106,7 +106,7 @@ XML;
         $notifications = $notifications->toArray();
         
         foreach ($notifications as $notification) {
-            echo 'looking at notification  ' . json_encode($notification) . '<br/>';
+            echo 'looking at notification  ' . json_encode($notification) . '<br/>' . PHP_EOL;
 
             $fileSdI = new \fileSdI_Type($notification['id'], $notification['nomefile'], $notification['blob']);
             $invoice = Invoice::find($notification['invoice_id']);
@@ -122,6 +122,7 @@ XML;
                 $xmlString = base64_decode($invoice['blob']);
                 $xml = Base::unpack($xmlString);
                 $recipient = $xml->FatturaElettronicaHeader->DatiTrasmissione->CodiceDestinatario;
+                echo "sending NotificaDecorrenzaTermini notification to $recipient" . '<br/>' . PHP_EOL;
                 $sent &= Base::dispatchNotification(
                     $service2,
                     "td$recipient",
@@ -129,7 +130,7 @@ XML;
                     $notification['type'],
                     $fileSdI
                 );
-            }
+            } 
             if ($sent) {
                 echo "sent !" . '<br/>';
                 Notification::find($notification['id'])->update(['status' => 'N_DELIVERED' ]);
