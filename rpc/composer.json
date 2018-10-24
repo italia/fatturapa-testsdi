@@ -4,13 +4,22 @@
     "keywords": ["framework", "laravel"],
     "license": "MIT",
     "type": "project",
-    "repositories": [{
-        "type": "path",
-        "url": "packages/fatturapa/control",
-        "options": {
-            "symlink": true
-        }
-    }],
+    "repositories": [
+	    {
+	        "type": "path",
+	        "url": "packages/fatturapa/control",
+	        "options": {
+	            "symlink": true
+	        }
+	    },
+	    {
+	        "type": "path",
+	        "url": "packages/fatturapa/ui",
+	        "options": {
+	            "symlink": true
+	        }
+	    }
+    ],
     "require": {
         "php": ">=7.0.0",
         "fideloper/proxy": "~3.3",
@@ -23,7 +32,8 @@
         "mockery/mockery": "~1.0",
         "phpunit/phpunit": "~6.0",
         "symfony/thanks": "^1.0",
-        "fatturapa/control": "dev-master"
+        "fatturapa/control": "dev-master",
+        "fatturapa/ui": "dev-master"
     },
     "autoload": {
         "classmap": [
@@ -32,7 +42,8 @@
         ],
         "psr-4": {
             "App\\": "app/",
-            "FatturaPa\\Control\\": "packages/fatturapa/control/src/"
+            "FatturaPa\\Control\\": "packages/fatturapa/control/src/",
+            "FatturaPa\\Ui\\": "packages/fatturapa/ui/src/"
         }
     },
     "autoload-dev": {

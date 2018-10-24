@@ -75,7 +75,7 @@ For your contributions please use the [git-flow workflow](https://danielkummer.g
 
 ## Authors
 
-Paolo Greppi
+Emanuele Aina, Paolo Greppi
 
 ## License
 

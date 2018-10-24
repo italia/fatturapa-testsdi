@@ -18,7 +18,7 @@ At this stage the testsdi in **WIP** and not fully implemented.
 
 Some functionalities are also **excluded** from the initial design:
 - receiving / transmitting ZIP archives (see [issue #25](https://github.com/italia/fatturapa-testsdi/issues/25))
-- receiving / transmitting invoices with multiple `FatturaElettronicaBody` elements ("multi-invoices") (see [issue 22](https://github.com/italia/fatturapa-testsdi/issues/22))
+- receiving / transmitting invoices with multiple `FatturaElettronicaBody` elements ("multi-invoices") (see [issue #22](https://github.com/italia/fatturapa-testsdi/issues/22))
 
 **Index**:
 
@@ -102,9 +102,15 @@ A distinctive design choice has been to use the same database schema, API and st
 3. The **control** component ([fatturapa-control](/rpc/packages/fatturapa/control/README.md)), 
 also uses _fatturapa-core_, and exposes a Remote Procedure Calls (RPC) API over the HTTP protocol. This API can be used to control the simulation / tests or to show status information in user interfaces.
 
-4. The _fatturapa-control_ is used by the basic **User Interface** [fatturapa-testui](https://github.com/simevo/fatturapa-testui).
+4. The **ui** component [fatturapa-ui](/rpc/packages/fatturapa/ui/README.md) provides a basic **User Interface** to interact with the test environment.
+
+This picture shows how the 4 layers stack up:
 
 ![Architecture](/images/architecture.png)
+
+This screencast demonstrates the complete workflow (see [Demo](#demo) section below) as seen through the UI, i.e. how you can send an invoice from I/R 0000001 to I/R 0000002, and make sure that the various notifications are sent back and forth between the three involved actors until the invoice acceptance is confirmed for all the parties:
+
+![img](images/screencast.gif)
 
 ## Implementation
 
@@ -306,9 +312,13 @@ php artisan migrate
 ```
 
 Configure nginx:
-```
+```sh
 sudo rm /etc/nginx/sites-enabled/*
 sudo vi /etc/nginx/sites-enabled/fatturapa
+```
+
+Set the contents of the `/etc/nginx/sites-enabled/fatturapa` file to something like:
+```
 server {
   listen 80 default_server;
   listen [::]:80 default_server;
@@ -320,6 +330,12 @@ server {
     fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
     fastcgi_read_timeout 300;
   }
+  location ^~ /sdi/rpc/js/ {
+    alias /var/www/html/rpc/packages/fatturapa/ui/src/public/js/;
+  }
+  location ^~ /sdi/rpc/css/ {
+    alias /var/www/html/rpc/packages/fatturapa/ui/src/public/css/;
+  }
   location ~ /.*/rpc {
     try_files $uri $uri/ /rpc/index.php?$query_string;
   }
@@ -327,13 +343,21 @@ server {
     try_files $uri $uri/ /soap/index.php;
   }
 }
+```
+
+Finally check the configuration and restart nginx:
+```sh
 sudo nginx -t
 sudo systemctl restart nginx
 ```
 
-Dynamic routing makes sure that the actors will be reachable at `/sdi` (there's only one exchange system), `/tdxxxxxxx`, `/tdyyyyyyy`  ... (td stands for trasmittente/destinatario, Italian for issuer/receiver).
+At this point you should be able to access the UI at: https://testsdi.example.com/sdi/rpc/dashboard
 
-The number of simulated issuer/receiver (TD = trasmittente / destinatario) actors are autoconfigured based on the actors that appear in the `channels` table.
+Dynamic routing makes sure that the RPC endpoints for the actors will be reachable at:
+- `/sdi` - the Exchange System (there's only one)
+- `/tdxxxxxxx`, `/tdyyyyyyy`, ... - where td stands for trasmittente/destinatario (T/D), Italian for issuer/receiver (I/R) and `xxxxxxx`, `yyyyyyy` are the 7-characters I/R identification codes.
+
+The number of simulated I/R (T/D) actors are autoconfigured based on the actors that appear in the `channels` table.
 
 For example if you set the channels table like this so that invoices can be sent (needed for the tests):
 ```sql
@@ -565,16 +589,13 @@ then modify `TrasmissioneFatture/index.php` like this:
 +}
 ```
 
-
-
-
 ## Contributing
 
 For your contributions please use the [git-flow workflow](https://danielkummer.github.io/git-flow-cheatsheet/).
 
 ## Authors
 
-Emanuele Aina, Marco Peca and Paolo Greppi.
+Emanuele Aina, Riccardo Mariani, Marco Peca and Paolo Greppi.
 
 ## License
 

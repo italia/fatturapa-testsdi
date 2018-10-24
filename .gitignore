@@ -1,4 +1,5 @@
 .directory
+.DS_Store
 core/config.php
 rpc/config/database.php
 soap/config.php

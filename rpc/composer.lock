@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e2dae33fe5b38b790ce9239abbed2236",
-    "content-hash": "310390e31d001a4cd0f9934a80190ec2",
+    "hash": "54be16e8a4f0cde332bfbca6c1a8681a",
+    "content-hash": "5c6739b17f65f521d74c047cd2cc8ceb",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -2388,17 +2388,47 @@
             }
         },
         {
+            "name": "fatturapa/ui",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "packages/fatturapa/ui",
+                "reference": "abdcb525155107eabad2ece224eef4d93eb1cb1e",
+                "shasum": null
+            },
+            "require": {
+                "illuminate/support": "~5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "FatturaPa\\Ui\\UiServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "FatturaPa\\Ui\\": "src/"
+                }
+            },
+            "description": "Control HTML to interact with testsdi",
+            "transport-options": {
+                "symlink": true
+            }
+        },
+        {
             "name": "filp/whoops",
-            "version": "2.2.1",
+            "version": "2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filp/whoops.git",
-                "reference": "e79cd403fb77fc8963a99ecc30e80ddd885b3311"
+                "reference": "a9f129b99df316f847584d482c89c14a9f796e2b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filp/whoops/zipball/e79cd403fb77fc8963a99ecc30e80ddd885b3311",
-                "reference": "e79cd403fb77fc8963a99ecc30e80ddd885b3311",
+                "url": "https://api.github.com/repos/filp/whoops/zipball/a9f129b99df316f847584d482c89c14a9f796e2b",
+                "reference": "a9f129b99df316f847584d482c89c14a9f796e2b",
                 "shasum": ""
             },
             "require": {
@@ -2446,7 +2476,7 @@
                 "throwable",
                 "whoops"
             ],
-            "time": "2018-06-30 13:14:06"
+            "time": "2018-10-20 09:00:00"
         },
         {
             "name": "fzaninotto/faker",
@@ -4061,7 +4091,8 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "fatturapa/control": 20
+        "fatturapa/control": 20,
+        "fatturapa/ui": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
