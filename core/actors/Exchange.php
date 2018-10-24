@@ -346,8 +346,8 @@ XML;
     private static function validateInvoice($xmlString)
     {
         $xml = new \DOMDocument();
-        $xml->loadXML($xmlString, LIBXML_NOBLANKS);
         try {
+            $xml->loadXML($xmlString, LIBXML_NOBLANKS);
             $schema = SAFEROOT.'core/schemas/Schema_del_file_xml_FatturaPA_versione_1.2_cleanup.xsd';
             $valid = $xml->schemaValidate($schema);
         } catch (\Exception $e) {
