@@ -1,0 +1,10 @@
+{
+    "name": "italia/fatturapa-testui",
+    "description": "Testing UI for fatturapa-testsdi",
+    "type": "project",
+    "license": "AGPL-3.0",
+    "authors": [],
+    "require": {
+        "twig/twig": "^2.5"
+    }
+}
