@@ -329,6 +329,11 @@ server {
     include snippets/fastcgi-php.conf;
     fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
     fastcgi_read_timeout 300;
+    fastcgi_param SDI_DB_HOST localhost;
+    fastcgi_param SDI_DB_NAME testsdi;
+    fastcgi_param SDI_DB_USER www-data;
+    fastcgi_param SDI_DB_PASS www-data;
+    fastcgi_param SDI_HOST_MAIN https://teamdigitale3.simevo.com/;
   }
   location ^~ /sdi/rpc/js/ {
     alias /var/www/html/rpc/packages/fatturapa/ui/src/public/js/;
