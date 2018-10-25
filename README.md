@@ -299,14 +299,7 @@ Configure `HOSTNAME` in `soap/config.php` and in `core/config.php`.
 Set up Laravel:
 ```sh
 cd /var/www/html
-sudo chown www-data core/storage/time_travel.json
-cd rpc
-touch storage/logs/laravel.log
-sudo chown -R www-data storage/logs
-sudo chmod g+w storage/logs/laravel.log
-sudo chown -R www-data storage/framework
-sudo chown -R www-data bootstrap/cache
-cp .env.example .env
+make
 php artisan key:generate
 ^d
 ```
