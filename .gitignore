@@ -6,5 +6,4 @@ soap/config.php
 rpc/php_errorlog
 soap/test.json
 vendor
-rpc/bootstrap/cache
 rpc/bootstrap/cache__
