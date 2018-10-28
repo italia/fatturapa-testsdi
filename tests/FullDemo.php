@@ -2,7 +2,6 @@
 declare(strict_types=1);
 
 require_once("MyTest.php");
-
 require_once(__DIR__ . "/../core/config.php");
 
 final class FullDemo extends MyTest
@@ -39,45 +38,6 @@ final class FullDemo extends MyTest
     {
         $notifications = $this->getTable($actor, 'notifications');
         $this->assertEquals($count, sizeof($notifications));
-    }
-
-    private function getInvoice($filename)
-    {
-        if (!file_exists($filename)) {
-            throw new \InvalidArgumentException('File not found');
-        }
-        return file_get_contents($filename);
-    }
-
-    private function getValidInvoice($issuer, $recipient)
-    {
-        $filename = 'tests/samples/invoices/IT01234567890_FPR01.xml';
-        $baseInvoice = $this->getInvoice($filename);
-        $invoice = str_replace(
-            "<CodiceDestinatario>ABC1234</CodiceDestinatario>",
-            "<CodiceDestinatario>$recipient</CodiceDestinatario>",
-            $baseInvoice
-        );
-        $cedente = $this->getCedente($issuer);
-        $paese = substr($cedente, 0, 2);
-        $invoice = str_replace(
-            "          <IdPaese>IT</IdPaese>",
-            "          <IdPaese>$paese</IdPaese>",
-            $invoice
-        );
-        $codice = substr($cedente, 3);
-        $invoice = str_replace(
-            "          <IdCodice>01234567890</IdCodice>",
-            "          <IdCodice>$codice</IdCodice>",
-            $invoice
-        );
-        return $invoice;
-    }
-
-    private function getInvalidInvoice()
-    {
-        $filename = 'tests/samples/invoices/missing_CedentePrestatore.xml';
-        return $this->getInvoice($filename);
     }
 
     private function clearActors()

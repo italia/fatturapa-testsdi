@@ -21,16 +21,20 @@ class RicezioneFattureHandler
         $xml = Base::unpack($xmlString);
         error_log("metadati = $xml");
         $invoice_remote_id = $xml->IdentificativoSdI;
-        $invoice_filename = $xml->NomeFile;
-        // $recipient = $xml->CodiceDestinatario;
-        // TODO check that we are the right recipient
-        // TODO check that we are in charge of receiving invoices for the Destinatario in the invoice
-        $Invoice = Recipient::receive(
-            $parametersIn->File, // $invoice_blob
-            $invoice_filename,   // $filename
-            1,                   // $position is always 1 until we implement multi-invoices (#22)
-            $invoice_remote_id   // $remote_id
-        );
+        // make this endpoint testable: if the IdentificativoSdI is missing, skip
+        if (!empty($invoice_remote_id)) {
+            error_log("remote_id = " . print_r($invoice_remote_id, true));
+            $invoice_filename = $xml->NomeFile;
+            // $recipient = $xml->CodiceDestinatario;
+            // TODO check that we are the right recipient
+            // TODO check that we are in charge of receiving invoices for the Destinatario in the invoice
+            $Invoice = Recipient::receive(
+                $parametersIn->File, // $invoice_blob
+                $invoice_filename,   // $filename
+                1,                   // $position is always 1 until we implement multi-invoices (#22)
+                $invoice_remote_id   // $remote_id
+            );    
+        }
         $rispostaRiceviFatture = new rispostaRiceviFatture_Type(\esitoRicezione_Type::ER01);
         error_log('RicezioneFattureHandler::RiceviFile end ---------------------------------------');
         return $rispostaRiceviFatture;

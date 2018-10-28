@@ -80,8 +80,11 @@ class Issuer
         error_log("remote_id = $invoice_remote_id");
         $invoice = Invoice::where('remote_id', $invoice_remote_id)->where('actor', Base::getActor())->first();
         $invoice_id = $invoice['id'];
-        error_log("id = $invoice_id");
-        Base::receive($notification_blob, $filename, $type, $invoice_id);
-        Invoice::find($invoice_id)->update(['status' => $status ]);
+        // make this endpoint testable: if there is no invoice_id we can act upon, skip
+        if (!is_null($invoice_id)) {
+            error_log("id = $invoice_id");
+            Base::receive($notification_blob, $filename, $type, $invoice_id);
+            Invoice::find($invoice_id)->update(['status' => $status ]);    
+        }
     }
 }
