@@ -13,9 +13,6 @@ if (sizeof($request_uri) < 4) {
 $actor = $request_uri[1];
 $soap = $request_uri[2];
 $endpoint = explode('?', $request_uri[3])[0];
-$_SERVER['REQUEST_URI'] = '/soap/' . $request_uri[3];
-$_SERVER['QUERY_STRING'] = '?' . explode('?', $request_uri[3])[1];
-
 // echo 'endpoint = ' . $endpoint . '<br/>' . PHP_EOL;
 
 if ($soap != 'soap') {
