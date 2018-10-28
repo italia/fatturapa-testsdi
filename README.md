@@ -14,7 +14,9 @@ The test environment can be used to:
 
 4. develop higher-level applications that interact with a SDICoop compliant service, i.e. user interfaces, invoice/notification archiving ...
 
-At this stage the testsdi is **WIP** and not fully implemented.
+At this stage the testsdi is **WIP** and not fully implemented, most importantly these features are missing:
+- message signing and signature verification (see [issue#21](https://github.com/italia/fatturapa-testsdi/issues/21))
+- MTOM SOAP (see [issue #43](https://github.com/italia/fatturapa-testsdi/issues/43))
 
 Some functionalities are also **excluded** from the initial design:
 - receiving / transmitting ZIP archives (see [issue #25](https://github.com/italia/fatturapa-testsdi/issues/25))
@@ -25,9 +27,9 @@ Some functionalities are also **excluded** from the initial design:
 * [Introduction](#introduction)
 * [Architecture](#architecture)
 * [Implementation](#implementation)
-  + [State machines](#state-machines)
+  + [State diagrams](#state-diagrams)
   + [Database schema](#database-schema)
-  + [APIs](#apis)
+  + [SOAP adaptor](#soap-adaptor)
 * [Getting Started](#getting-started)
   + [Prerequisites](#prerequisites)
   + [Configuring and Installing](#configuring-and-installing)
@@ -158,7 +160,7 @@ Legend for all state diagrams:
 
 ![exchange system finite state machine](/images/exchange.png)
 
-#### Recipent, Italian: destinatario
+#### Recipient, Italian: destinatario
 
 | Status | Description |
 | ------------- | ------------- |
