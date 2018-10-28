@@ -14,7 +14,7 @@ The test environment can be used to:
 
 4. develop higher-level applications that interact with a SDICoop compliant service, i.e. user interfaces, invoice/notification archiving ...
 
-At this stage the testsdi in **WIP** and not fully implemented.
+At this stage the testsdi is **WIP** and not fully implemented.
 
 Some functionalities are also **excluded** from the initial design:
 - receiving / transmitting ZIP archives (see [issue #25](https://github.com/italia/fatturapa-testsdi/issues/25))
@@ -335,6 +335,12 @@ server {
   }
   location ^~ /sdi/rpc/css/ {
     alias /var/www/html/rpc/packages/fatturapa/ui/src/public/css/;
+  }
+  location ^~ /sdi/rpc/webfonts/ {
+    alias /var/www/html/rpc/packages/fatturapa/ui/src/public/webfonts/;
+  }
+  location ^~ /sdi/rpc/font/ {
+    alias /var/www/html/rpc/packages/fatturapa/ui/src/public/font/;
   }
   location ~ /.*/rpc {
     try_files $uri $uri/ /rpc/index.php?$query_string;

@@ -9,7 +9,9 @@ all:
 	cp node_modules/bootstrap/dist/js/bootstrap.bundle.min.js.map src/public/js/.
 
 	cp node_modules/bootstrap-italia/dist/js/bootstrap-italia.bundle.min.js src/public/js/.
+	cp node_modules/bootstrap-italia/dist/js/bootstrap-italia.bundle.min.js.map src/public/js/.
 	cp node_modules/bootstrap-italia/dist/js/bootstrap-italia.min.js src/public/js/.
+	cp node_modules/bootstrap-italia/dist/font/* src/public/font/.
 
 	cp node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2 src/public/webfonts/.
 	cp node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff src/public/webfonts/.
