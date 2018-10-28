@@ -13,7 +13,10 @@ use FatturaPa\Core\Actors\Base;
 class RicezioneFattureHandler
 {
     public function RiceviFatture($parametersIn)
-    {    	
+    {
+        error_log('RicezioneFattureHandler::RiceviFile start -------------------------------------');
+        error_log('parametersIn: '.json_encode($parametersIn));
+        error_log('-------------------------------------------------------------------------------');
         $xmlString = base64_decode($parametersIn->Metadati);
         $xml = Base::unpack($xmlString);
         error_log("metadati = $xml");
@@ -29,18 +32,21 @@ class RicezioneFattureHandler
             $invoice_remote_id   // $remote_id
         );
         $rispostaRiceviFatture = new rispostaRiceviFatture_Type(\esitoRicezione_Type::ER01);
+        error_log('RicezioneFattureHandler::RiceviFile end ---------------------------------------');
         return $rispostaRiceviFatture;
     }
 
     public function NotificaDecorrenzaTermini($parametersIn)
     {
-        error_log("==== RicezioneFattureHandler::NotificaDecorrenzaTermini enter");
+        error_log('RicezioneFattureHandler::NotificaDecorrenzaTermini start-----------------------');
+        error_log('parametersIn: '.json_encode($parametersIn));
+        error_log('-------------------------------------------------------------------------------');
         Issuer::receive(
             $notification_blob = $parametersIn->File,
             $filename = $parametersIn->NomeFile,
             $type = 'NotificaDecorrenzaTermini',
             $status = 'R_EXPIRED'
         );
-        error_log("==== RicezioneFattureHandler::NotificaDecorrenzaTermini exit");
+        error_log("==== RicezioneFattureHandler::NotificaDecorrenzaTermini end -------------------");
     }
 }

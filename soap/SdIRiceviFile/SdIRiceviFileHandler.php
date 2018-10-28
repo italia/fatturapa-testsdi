@@ -12,10 +12,10 @@ class SdIRiceviFileHandler
 
     public function RiceviFile($parametersIn)
     {
-        error_log('HSTART------------------:');
+        error_log('SdIRiceviFileHandler::RiceviFile start ----------------------------------------');
         error_log('parametersIn: '.json_encode($parametersIn));
-        error_log('------------------END');
-                    
+        error_log('-------------------------------------------------------------------------------');
+ 
         // ADD TO DB
         $Invoice = Exchange::receive($parametersIn->File, $parametersIn->NomeFile, 1);
         // Get current timestamp
@@ -25,7 +25,7 @@ class SdIRiceviFileHandler
         $rispostaSdIRiceviFile = new \rispostaSdIRiceviFile_Type($IdentificativoSdI, $DataOraRicezione);
         // $errore = "EI01";
         // $rispostaSdIRiceviFile->setErrore($errore);
-
+        error_log('SdIRiceviFileHandler::RiceviFile end ------------------------------------------');
         return $rispostaSdIRiceviFile;
     }
 }
