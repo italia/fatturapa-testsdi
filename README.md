@@ -31,6 +31,7 @@ Some functionalities are also **excluded** from the initial design:
   + [Database schema](#database-schema)
   + [SOAP adaptor](#soap-adaptor)
 * [Getting Started](#getting-started)
+  + [Docker Compose](#docker-compose)
   + [Prerequisites](#prerequisites)
   + [Configuring and Installing](#configuring-and-installing)
   + [Demo](#demo)
@@ -239,6 +240,37 @@ The handler class is implemented in [a file with the same name `SdIRiceviFileHan
 ## Getting Started
 
 Tested on: amd64 Debian 9.5 (stretch, current stable) with PHP 7.0 and Laravel 5.5.44.
+
+### Docker compose
+
+The quickest way to start an instance of the testsdi is using [Docker Compose](https://docs.docker.com/compose/overview/).
+
+The supplied [docker-compose.yml](/docker-compose.yml) file, loosely based on [ineat/docker-php-nginx-postgres-composer](https://github.com/ineat/docker-php-nginx-postgres-composer), defines and runs a three-container Docker application that comprises:
+- PHP 7.2 with PHP-FPM
+- Nginx
+- PostgreSQL 10.5
+
+You will need:
+* [Docker CE](https://docs.docker.com/engine/installation/)
+* [Docker Compose](https://docs.docker.com/compose/install)
+
+To start the application, run `docker-compose up` from the root of the project.
+
+Nginx will serve on `http://localhost:8080` and PostgreSQL will be available on `localhost:5433`.
+
+Useful commands:
+
+`docker-compose run composer <cmd>`
+
+Where `cmd` is any of the available composer command.
+
+Default connection to PostgreSQL:
+
+`docker-compose exec db psql -U www-data testsdi`
+
+Execute commands on the `php` container with:
+
+`docker-compose exec php php -v`
 
 ### Prerequisites
 
