@@ -1,18 +1,17 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
 
-class CreateInvoicesTable extends Migration
+use FatturaPa\Core\Models\MigrationManager;
+use Illuminate\Database\Connection as DB;
+
+class CreateInvoicesTable extends MigrationManager
 {
     /**
-     * Run the migrations.
-     *
-     * @return void
+     * Migrate Up.
      */
     public function up()
     {
-        Schema::create('invoices', function (Blueprint $table) {
+        $this->schema->create('invoices', function (Illuminate\Database\Schema\Blueprint $table) {
             $table->increments('id');
             $table->integer('remote_id')->nullable();
             $table->text('nomefile');
@@ -28,12 +27,10 @@ class CreateInvoicesTable extends Migration
     }
 
     /**
-     * Reverse the migrations.
-     *
-     * @return void
+     * Migrate Down.
      */
     public function down()
     {
-        Schema::drop('invoices');
+        $this->schema->drop('invoices');
     }
 }

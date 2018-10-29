@@ -1,18 +1,17 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
 
-class CreateNotificationsTable extends Migration
+use FatturaPa\Core\Models\MigrationManager;
+use Illuminate\Database\Connection as DB;
+
+class CreateNotificationsTable extends MigrationManager
 {
     /**
-     * Run the migrations.
-     *
-     * @return void
+     * Migrate Up.
      */
     public function up()
     {
-        Schema::create('notifications', function (Blueprint $table) {
+        $this->schema->create('notifications', function (Illuminate\Database\Schema\Blueprint $table) {
             $table->increments('id');
             $table->integer('invoice_id');
             $table->foreign('invoice_id')->references('id')->on('invoices')->change();
@@ -26,12 +25,10 @@ class CreateNotificationsTable extends Migration
     }
 
     /**
-     * Reverse the migrations.
-     *
-     * @return void
+     * Migrate Down.
      */
     public function down()
     {
-        Schema::drop('notifications');
+        $this->schema->drop('notifications');
     }
 }
