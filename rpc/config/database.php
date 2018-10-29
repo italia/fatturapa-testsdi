@@ -57,6 +57,7 @@ return [
         'pgsql' => [
             'driver'   => 'pgsql',
             'host'     => env('DB_HOST', getenv('SDI_DB_HOST')),
+            'port'     => env('DB_PORT', '5432'),
             'database' => env('DB_DATABASE', getenv('SDI_DB_NAME')),
             'username' => env('DB_USERNAME', getenv('SDI_DB_USER')),
             'password' => env('DB_PASSWORD', getenv('SDI_DB_PASS')),
