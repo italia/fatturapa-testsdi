@@ -11,11 +11,13 @@ class CreateChannelsTable extends MigrationManager
      */
     public function up()
     {
-        $this->schema->create('channels', function (Illuminate\Database\Schema\Blueprint $table) {
-            $table->text('cedente');
-            $table->text('issuer');
-            $table->primary('cedente');
-        });
+        if (!$this->schema->hasTable('channels')) {
+            $this->schema->create('channels', function (Illuminate\Database\Schema\Blueprint $table) {
+                $table->text('cedente');
+                $table->text('issuer');
+                $table->primary('cedente');
+            });
+        }
     }
 
     /**
