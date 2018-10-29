@@ -308,8 +308,6 @@ sudo chown -R www-data storage/framework
 sudo chown -R www-data bootstrap/cache
 cp .env.example .env
 php artisan key:generate
-sudo su -s /bin/bash www-data
-php artisan migrate
 ^d
 ```
 
