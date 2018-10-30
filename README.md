@@ -32,8 +32,8 @@ Some functionalities are also **excluded** from the initial design:
   + [SOAP adaptor](#soap-adaptor)
 * [Getting Started](#getting-started)
   + [Docker Compose](#docker-compose)
-  + [Prerequisites](#prerequisites)
-  + [Configuring and Installing](#configuring-and-installing)
+  + [Manual setup](#manual-setup)
+  + [Channels and actors](#channels-and-actors)
   + [Demo](#demo)
 * [Testing](#testing)
   + [Manual testing](#manual-testing)
@@ -245,24 +245,24 @@ Tested on: amd64 Debian 9.5 (stretch, current stable) with PHP 7.0 and Laravel 5
 
 The quickest way to start an instance of the testsdi is using [Docker Compose](https://docs.docker.com/compose/overview/).
 
-The supplied [docker-compose.yml](/docker-compose.yml) file, loosely based on [ineat/docker-php-nginx-postgres-composer](https://github.com/ineat/docker-php-nginx-postgres-composer), defines and runs a three-container Docker application that comprises:
-- PHP 7.2 with PHP-FPM
+The supplied [docker-compose.yml](/docker-compose.yml) file defines and runs a four-container Docker application that comprises:
+- PHP 7.2 with PHP-FPM and the required modules
 - Nginx
 - PostgreSQL 10.5
+- [Adminer](https://www.adminer.org/)
 
 You will need:
 * [Docker CE](https://docs.docker.com/engine/installation/)
 * [Docker Compose](https://docs.docker.com/compose/install)
 
-To start the application, run `docker-compose up` from the root of the project.
+To start the application, run `docker-compose up --build` from the root of the project.
 
-Nginx will serve on `http://localhost:8080` and PostgreSQL will be available on `localhost:5433`.
+To install prerequisites, create tables with composer and set-up Laravel, issue the `make` command in the php container:
+```sh
+docker-compose exec php make
+```
 
-Useful commands:
-
-`docker-compose run composer <cmd>`
-
-Where `cmd` is any of the available composer command.
+Nginx will serve on `http://localhost:8081` and [Adminer] will be available on `http://localhost:8082`.
 
 Default connection to PostgreSQL:
 
@@ -272,27 +272,18 @@ Execute commands on the `php` container with:
 
 `docker-compose exec php php -v`
 
-### Prerequisites
+### Manual setup
 
 Install prerequisites:
 ```sh
 sudo apt install php-cli php-fpm nginx php-soap php-mbstring php-dom php-zip composer nginx postgresql php-pgsql php-curl php-xml
 ```
 
-### Configuring and Installing
-
 Clone the repo into the `/var/www/html` directory on your webserver. 
 
 ```sh
 cd /var/www/html
 git clone https://github.com/italia/fatturapa-testsdi .
-```
-
-Install prerequisites with composer:
-
-```sh
-cd /var/www/html
-composer install
 ```
 
 Configure the database:
@@ -324,17 +315,7 @@ You'll be able to access the database with:
 PGPASSWORD="www-data" psql -U www-data testsdi
 ```
 
-Configure database credentials in `core/config.php` and in `rpc/config/database.php`.
-
-Configure `HOSTNAME` in `soap/config.php` and in `core/config.php`.
-
-Set up Laravel:
-```sh
-cd /var/www/html
-make
-php artisan key:generate
-^d
-```
+Configure database credentials, HOSTNAME and paths in `core/config.php` and in `soap/config.php`.
 
 Configure nginx:
 ```sh
@@ -387,11 +368,18 @@ sudo nginx -t
 sudo systemctl restart nginx
 ```
 
+Install prerequisites and create tables with composer, and set-up Laravel with:
+```sh
+make
+```
+
 At this point you should be able to access the UI at: https://testsdi.example.com/sdi/rpc/dashboard
 
 Dynamic routing makes sure that the RPC endpoints for the actors will be reachable at:
 - `/sdi` - the Exchange System (there's only one)
 - `/tdxxxxxxx`, `/tdyyyyyyy`, ... - where td stands for trasmittente/destinatario (T/D), Italian for issuer/receiver (I/R) and `xxxxxxx`, `yyyyyyy` are the 7-characters I/R identification codes.
+
+### Channels and actors
 
 The number of simulated I/R (T/D) actors are autoconfigured based on the actors that appear in the `channels` table.
 
