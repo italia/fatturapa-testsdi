@@ -3,12 +3,18 @@
     "description": "Core classes required to interact with the Italian B2B invoice system",
     "type": "project",
     "require": {
-        "illuminate/database": "5.1.8"
+        "illuminate/database": "5.2.*",
+        "robmorgan/phinx": "^0.10.6"
     },
     "autoload": {
         "psr-4": {
             "FatturaPa\\Core\\Actors\\": "actors/",
             "FatturaPa\\Core\\Models\\": "models/"
         }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "php vendor/bin/phinx migrate -c config-phinx.php"
+        ]
     }
 }
