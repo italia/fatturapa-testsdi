@@ -23,4 +23,8 @@ class IndexController extends Controller
     {    	    
 		return view('ui::td', ['actor' => $id,'actors' => Base::getActors()]);	
     }
+	public function channels(Request $request)
+    {    	    
+		return view('ui::channels',['actors' => Base::getActors()]);	
+    }
 }

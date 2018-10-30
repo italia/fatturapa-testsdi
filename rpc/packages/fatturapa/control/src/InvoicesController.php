@@ -29,6 +29,21 @@ class InvoicesController extends Controller
         return response()->json(array(
             'invoices' => $invoices->get()->toArray()));
     }
+	public function actorsGroup(Request $request)
+    {
+        $fields = ['id', 'posizione', 'cedente', 'anno', 'status', 'actor', 'nomefile', 'ctime', 'issuer'];
+        $status = $request->input('status');
+        if ($status) {
+            $invoices = Invoice::select($fields)
+                ->where('status', $status)
+                ->where('actor', Base::getActor());
+        } else {
+            $invoices = Invoice::select($fields)
+            ->where('actor', Base::getActor());
+        }
+        return response()->json(array(
+            'invoices' => $invoices->get()->toArray()));
+    }
     public function checkValidity()
     {
         Exchange::checkValidity();

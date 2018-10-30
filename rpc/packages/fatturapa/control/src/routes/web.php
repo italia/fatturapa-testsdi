@@ -38,5 +38,9 @@ Route::post('dispatch', 'fatturapa\control\NotificationsController@dispatchi');
 
 // invoices-related
 Route::get('invoices', 'fatturapa\control\InvoicesController@index');
+Route::get('actorsgroup', 'fatturapa\control\BaseController@actorsGroup');
 
-Route::get('channels', 'fatturapa\control\BaseController@getChannels');
+// channels-related
+Route::resource('channels', 'fatturapa\control\ChannelsController');
+// actors-related
+Route::resource('actors', 'fatturapa\control\ActorsController');

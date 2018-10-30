@@ -57,6 +57,69 @@ function post(url, parameter, element) {
     }
 }
 
+function sendReceiveData(dataTo, verb, url, callback) {
+    // sends the dataTo to the url with the supplied verb
+    // on success executes the callback passing the received data (if any)
+    // on error executes the error callback
+    // input:
+    //     - dataTo, JSON data to send (only POST & PUT)
+    //     - verb, string: one of GET, POST, DELETE or PUT
+    //     - url, string: the API endpoint
+    //     - callback, function: the function to execute on success; the JSON data returned (if any) is forwarded
+    // output: on success, whatever the callback returns; on error, nothing
+    console.log('sendReceiveData ' + verb + ' ' + url);
+    var request = new XMLHttpRequest();
+    console.log(verb + ' ' + url);
+    request.onload = function() {
+        if (request.status >= 200 && request.status < 400) {
+            if (request.responseText) {
+                console.log('sendReceiveData request success: ' + request.responseText.substring(0, 100) + '...');
+                var dataFrom = JSON.parse(request.responseText);
+                Toastify({
+                    text: "Chiamata a " + url + ' completata',
+                    duration: 5000,
+                    close: true,
+                    gravity: "top",
+                    backgroundColor: "#00cc85",
+                }).showToast();
+                return callback(dataFrom);
+            } else {
+                return callback();
+            }
+        } else if (request.status === 401) {
+            // if authorization fails on the API backend, reload the entire page
+            window.location.reload(true);
+        } else {
+            Toastify({
+                text: "C'è stato un errore " + request.status + ", riprova.",
+                duration: 5000,
+                close: true,
+                gravity: "top",
+                backgroundColor: "#f73e5a",
+            }).showToast();
+        }
+    }; // onload
+    request.onerror = function(e) {
+        Toastify({
+            text: 'Errore di connessione, riprova.',
+            duration: 5000,
+            close: true,
+            gravity: "top",
+            backgroundColor: "#f73e5a",
+        }).showToast();
+    };
+    request.open(verb, url);
+    request.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    request.setRequestHeader("accept", "application/json");
+    if (verb == 'POST' || verb == 'PUT') {
+        var formData = JSON.stringify(dataTo);
+        request.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+        request.send(formData);
+    } else {
+        request.send();
+    }
+} // sendReceiveData
+
 // show datetime in UI
 var clock;
 

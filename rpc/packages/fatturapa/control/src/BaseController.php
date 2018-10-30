@@ -73,7 +73,7 @@ class BaseController extends Controller
         $issuers = Base::getIssuers();
         return response()->json(array('issuers' => $issuers));
     }
-    public function getChannels()
+	public function actorsGroup()
     {
         $channels = Base::getChannels();
         return response()->json(array('channels' => $channels));

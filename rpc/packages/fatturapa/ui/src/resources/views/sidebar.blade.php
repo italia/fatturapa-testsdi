@@ -5,6 +5,12 @@
       <span>Dashboard</span>
     </a>
   </li>  
+  <li class="nav-item <?php if(Request::is('mchannels')) { ?> active <?php } ?>">
+    <a class="nav-link" href="mchannels">
+      <i class="fas fa-fw fa-tachometer-alt"></i>
+      <span>Channels</span>
+    </a>
+  </li>    
   <?php  	  	
   	asort($actors);
   	foreach($actors as $actor)
