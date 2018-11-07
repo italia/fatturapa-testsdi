@@ -104,16 +104,16 @@ XML;
             ->where('status', 'N_PENDING')
             ->where('actor', Base::getActor());
         $notifications = $notifications->toArray();
-        
+
         foreach ($notifications as $notification) {
             echo 'looking at notification  ' . json_encode($notification) . '<br/>' . PHP_EOL;
 
             $fileSdI = new \fileSdI_Type($notification['id'], $notification['nomefile'], $notification['blob']);
             $invoice = Invoice::find($notification['invoice_id']);
             $issuer = $invoice->issuer;
-            $sent = Base::dispatchNotification(
+            $sent = Base::dispatchNotificationToChannel(
                 $service1,
-                "td$issuer",
+                $issuer,
                 "TrasmissioneFatture",
                 $notification['type'],
                 $fileSdI
@@ -123,9 +123,9 @@ XML;
                 $xml = Base::unpack($xmlString);
                 $recipient = $xml->FatturaElettronicaHeader->DatiTrasmissione->CodiceDestinatario;
                 echo "sending NotificaDecorrenzaTermini notification to $recipient" . '<br/>' . PHP_EOL;
-                $sent &= Base::dispatchNotification(
+                $sent &= Base::dispatchNotificationToChannel(
                     $service2,
-                    "td$recipient",
+                    $recipient,
                     "RicezioneFatture",
                     $notification['type'],
                     $fileSdI

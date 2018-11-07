@@ -90,10 +90,23 @@ class Base
             ->update(array('status' => 'N_OBSOLETE'));
         self::notification($notification_blob, $filename, $type, $invoice_id, 'N_PENDING');
     }
+    public static function dispatchNotificationToChannel($service, $channelIssuer, $endpoint, $operation, $fileSdI)
+    {
+        $channel = Channel::all()->where('issuer', $channelIssuer)->first();
+        $addressee = !is_null($channel) && !is_null($channel->url)
+            ? $channel->url
+            : HOSTMAIN."td$channelIssuer/soap/$endpoint/";
+
+        return Base::baseDispatchNotification($service, $addressee, $operation, $fileSdI);
+    }
     public static function dispatchNotification($service, $addressee, $endpoint, $operation, $fileSdI)
     {
+        return Base::baseDispatchNotification($service, HOSTMAIN.$addressee."/soap/$endpoint/", $operation, $fileSdI);
+    }
+    private static function baseDispatchNotification($service, $addressee, $operation, $fileSdI)
+    {
         echo 'dispatchNotification to: ' . $addressee  . '<br/>' . PHP_EOL;
-        $service->__setLocation(HOSTMAIN.$addressee."/soap/$endpoint/");
+        $service->__setLocation($addressee);
         $sent = false;
         try {
             $service->$operation($fileSdI);
