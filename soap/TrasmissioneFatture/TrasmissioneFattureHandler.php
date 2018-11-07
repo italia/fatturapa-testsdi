@@ -43,7 +43,6 @@ class TrasmissioneFattureHandler
     public function NotificaEsito($parametersIn)
     {
         error_log('======== NotificaEsito');
-        aaa;
         $xmlString = base64_decode($parametersIn->File);
         $xml = Base::unpack($xmlString);
         error_log('======== ' . $xml);
