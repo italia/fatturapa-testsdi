@@ -11,7 +11,7 @@ class CreateActorsTable extends MigrationManager
     public function up()
     {
         if (!$this->schema->hasTable('actors')) {
->           $this->schema->create('actors', function (Illuminate\Database\Schema\Blueprint $table) {
+            $this->schema->create('actors', function (Illuminate\Database\Schema\Blueprint $table) {
                 $table->text('id');
                 $table->text('code');
                 $table->text('key');
