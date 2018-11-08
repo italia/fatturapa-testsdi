@@ -2,39 +2,26 @@ version: '3'
 services:
   php:
     container_name: sdi_php
+    build: .docker/php
     volumes:
-    - ".:/app"
-    build:
-      dockerfile: .docker/php/Dockerfile
-      context: .
-    restart: always
+    - .:/app/
 
   db:
     container_name: sdi_db
-    image: postgres:10.5
+    build: .docker/db
     restart: always
-    environment:
-      - POSTGRES_DB=${SDI_DB_NAME}
-      - POSTGRES_USER=${SDI_DB_USER}
-      - POSTGRES_PASSWORD=${SDI_DB_PASS}
-    ports:
-      - 5433:5432
 
   adminer:
     container_name: sdi_adminer
     image: adminer
     restart: always
     ports:
-      - 8082:8080
+    - 8082:8080
 
   sdi:
-    image: nginx
-    ports:
-      - 8081:80
+    container_name: sdi_ui
+    build: .docker/sdi
     volumes:
-      - ./.docker/sdi:/etc/nginx/conf.d
-      - .:/www
-    restart: always
-    depends_on:
-      - php
-      - db
+    - .:/app/
+    ports:
+    - 8081:80
