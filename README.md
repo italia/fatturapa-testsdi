@@ -246,9 +246,9 @@ Tested on: amd64 Debian 9.5 (stretch, current stable) with PHP 7.0 and Laravel 5
 The quickest way to start an instance of the testsdi is using [Docker Compose](https://docs.docker.com/compose/overview/).
 
 The supplied [docker-compose.yml](/docker-compose.yml) file defines and runs a four-container Docker application that comprises:
-- PHP 7.2 with PHP-FPM and the required modules
+- PHP 7.1.22 with PHP-FPM and the required modules
 - Nginx
-- PostgreSQL 10.5
+- PostgreSQL 11
 - [Adminer](https://www.adminer.org/)
 
 You will need:
@@ -262,7 +262,7 @@ To install prerequisites, create tables with composer and set-up Laravel, issue 
 docker-compose exec php make
 ```
 
-Nginx will serve on `http://localhost:8081` and [Adminer] will be available on `http://localhost:8082`.
+Nginx will serve on `http://localhost:8080`, SDI UI will be available on `http://localhost:8081` and [Adminer] will be available on `http://localhost:8082`.
 
 Default connection to PostgreSQL:
 
