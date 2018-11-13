@@ -31,8 +31,9 @@ Some functionalities are also **excluded** from the initial design:
   + [Database schema](#database-schema)
   + [SOAP adaptor](#soap-adaptor)
 * [Getting Started](#getting-started)
-  + [Prerequisites](#prerequisites)
-  + [Configuring and Installing](#configuring-and-installing)
+  + [Docker Compose](#docker-compose)
+  + [Manual setup](#manual-setup)
+  + [Channels and actors](#channels-and-actors)
   + [Demo](#demo)
 * [Testing](#testing)
   + [Manual testing](#manual-testing)
@@ -240,27 +241,49 @@ The handler class is implemented in [a file with the same name `SdIRiceviFileHan
 
 Tested on: amd64 Debian 9.5 (stretch, current stable) with PHP 7.0 and Laravel 5.5.44.
 
-### Prerequisites
+### Docker compose
+
+The quickest way to start an instance of the testsdi is using [Docker Compose](https://docs.docker.com/compose/overview/).
+
+The supplied [docker-compose.yml](/docker-compose.yml) file defines and runs a four-container Docker application that comprises:
+- PHP 7.1.22 with PHP-FPM and the required modules
+- Nginx
+- PostgreSQL 11
+- [Adminer](https://www.adminer.org/)
+
+You will need:
+* [Docker CE](https://docs.docker.com/engine/installation/)
+* [Docker Compose](https://docs.docker.com/compose/install)
+
+To start the application, run `docker-compose up --build` from the root of the project.
+
+To install prerequisites, create tables with composer and set-up Laravel, issue the `make` command in the php container:
+```sh
+docker-compose exec php make
+```
+
+Nginx will serve on `http://localhost:8080`, SDI UI will be available on `http://localhost:8081` and [Adminer] will be available on `http://localhost:8082`.
+
+Default connection to PostgreSQL:
+
+`docker-compose exec db psql -U www-data testsdi`
+
+Execute commands on the `php` container with:
+
+`docker-compose exec php php -v`
+
+### Manual setup
 
 Install prerequisites:
 ```sh
 sudo apt install php-cli php-fpm nginx php-soap php-mbstring php-dom php-zip composer nginx postgresql php-pgsql php-curl php-xml
 ```
 
-### Configuring and Installing
-
 Clone the repo into the `/var/www/html` directory on your webserver. 
 
 ```sh
 cd /var/www/html
 git clone https://github.com/italia/fatturapa-testsdi .
-```
-
-Install prerequisites with composer:
-
-```sh
-cd /var/www/html
-composer install
 ```
 
 Configure the database:
@@ -292,24 +315,7 @@ You'll be able to access the database with:
 PGPASSWORD="www-data" psql -U www-data testsdi
 ```
 
-Configure database credentials in `core/config.php` and in `rpc/config/database.php`.
-
-Configure `HOSTNAME` in `soap/config.php` and in `core/config.php`.
-
-Set up Laravel:
-```sh
-cd /var/www/html
-sudo chown www-data core/storage/time_travel.json
-cd rpc
-touch storage/logs/laravel.log
-sudo chown -R www-data storage/logs
-sudo chmod g+w storage/logs/laravel.log
-sudo chown -R www-data storage/framework
-sudo chown -R www-data bootstrap/cache
-cp .env.example .env
-php artisan key:generate
-^d
-```
+Configure database credentials, HOSTNAME and paths in `core/config.php` and in `soap/config.php`.
 
 Configure nginx:
 ```sh
@@ -329,6 +335,11 @@ server {
     include snippets/fastcgi-php.conf;
     fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
     fastcgi_read_timeout 300;
+    fastcgi_param SDI_DB_HOST localhost;
+    fastcgi_param SDI_DB_NAME testsdi;
+    fastcgi_param SDI_DB_USER www-data;
+    fastcgi_param SDI_DB_PASS www-data;
+    fastcgi_param SDI_HOST_MAIN https://teamdigitale3.simevo.com/;
   }
   location ^~ /sdi/rpc/js/ {
     alias /var/www/html/rpc/packages/fatturapa/ui/src/public/js/;
@@ -357,11 +368,18 @@ sudo nginx -t
 sudo systemctl restart nginx
 ```
 
+Install prerequisites and create tables with composer, and set-up Laravel with:
+```sh
+make
+```
+
 At this point you should be able to access the UI at: https://testsdi.example.com/sdi/rpc/dashboard
 
 Dynamic routing makes sure that the RPC endpoints for the actors will be reachable at:
 - `/sdi` - the Exchange System (there's only one)
 - `/tdxxxxxxx`, `/tdyyyyyyy`, ... - where td stands for trasmittente/destinatario (T/D), Italian for issuer/receiver (I/R) and `xxxxxxx`, `yyyyyyy` are the 7-characters I/R identification codes.
+
+### Channels and actors
 
 The number of simulated I/R (T/D) actors are autoconfigured based on the actors that appear in the `channels` table.
 

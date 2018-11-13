@@ -1,0 +1,27 @@
+version: '3'
+services:
+  php:
+    container_name: sdi_php
+    build: .docker/php
+    volumes:
+    - .:/app/
+
+  db:
+    container_name: sdi_db
+    build: .docker/db
+    restart: always
+
+  adminer:
+    container_name: sdi_adminer
+    image: adminer
+    restart: always
+    ports:
+    - 8082:8080
+
+  sdi:
+    container_name: sdi_ui
+    build: .docker/sdi
+    volumes:
+    - .:/app/
+    ports:
+    - 8081:80

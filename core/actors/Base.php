@@ -118,9 +118,14 @@ class Base
             $actor = $urlData[1];
         }
 
-        $actors = self::getActors();
-        if (!in_array($actor, $actors)) {
-            abort(404);
+        try {
+            $issuers = self::getActors();
+
+            if (!in_array($actor, $issuers)) {
+                return $issuers[0];
+            }
+        } catch (\Exception $e) {
+            return null;
         }
                 
         return $actor;
