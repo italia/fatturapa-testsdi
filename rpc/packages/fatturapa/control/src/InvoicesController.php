@@ -29,6 +29,21 @@ class InvoicesController extends Controller
         return response()->json(array(
             'invoices' => $invoices->get()->toArray()));
     }
+	public function actorsGroup(Request $request)
+    {
+        $fields = ['id', 'posizione', 'cedente', 'anno', 'status', 'actor', 'nomefile', 'ctime', 'issuer'];
+        $status = $request->input('status');
+        if ($status) {
+            $invoices = Invoice::select($fields)
+                ->where('status', $status)
+                ->where('actor', Base::getActor());
+        } else {
+            $invoices = Invoice::select($fields)
+            ->where('actor', Base::getActor());
+        }
+        return response()->json(array(
+            'invoices' => $invoices->get()->toArray()));
+    }
     public function checkValidity()
     {
         Exchange::checkValidity();
@@ -37,22 +52,24 @@ class InvoicesController extends Controller
     }
     public function upload(Request $request)
     {
-                
         $validator = Validator::make($request->all(), [
             'File' =>  'required|mimes:xml|max:5000',
         ]);
                 
         if ($validator->fails()) {
             $errors = $validator->errors();
-            foreach ($errors->all() as $message) {
-                echo $message;
-            }
-            abort(400);
+            abort(400, join(" | ", $errors->all()));
             exit;
         }
-                
+
         $file = $request->file('File');
         $NomeFile = $file->getClientOriginalName();
+        if (1 != preg_match('/^.*\.(xml|XML)$/', $NomeFile))
+        {
+            abort(400, 'file extension should be xml or XML');
+            exit;
+        }
+
         $XML = base64_encode(file_get_contents($file->getRealPath()));
         Issuer::upload($NomeFile, $XML);
         echo "Upload";

@@ -7,25 +7,50 @@ require dirname(__FILE__) . '/rispostaRiceviFatture_Type.php';
 require dirname(__FILE__) . '/esitoRicezione_Type.php';
 
 use FatturaPa\Core\Actors\Recipient;
+use FatturaPa\Core\Actors\Issuer;
+use FatturaPa\Core\Actors\Base;
 
 class RicezioneFattureHandler
 {
     public function RiceviFatture($parametersIn)
     {
-        // TODO get the remote_id from metadata ?
-        $Invoice = Recipient::receive(
-            $parametersIn->File,
-            $parametersIn->NomeFile,
-            1,
-            $parametersIn->IdentificativoSdI
-        );
+        error_log('RicezioneFattureHandler::RiceviFile start -------------------------------------');
+        error_log('parametersIn: '.json_encode($parametersIn));
+        error_log('-------------------------------------------------------------------------------');
+        $xmlString = base64_decode($parametersIn->Metadati);
+        $xml = Base::unpack($xmlString);
+        error_log("metadati = $xml");
+        $invoice_remote_id = $xml->IdentificativoSdI;
+        // make this endpoint testable: if the IdentificativoSdI is missing, skip
+        if (!empty($invoice_remote_id)) {
+            error_log("remote_id = " . print_r($invoice_remote_id, true));
+            $invoice_filename = $xml->NomeFile;
+            // $recipient = $xml->CodiceDestinatario;
+            // TODO check that we are the right recipient
+            // TODO check that we are in charge of receiving invoices for the Destinatario in the invoice
+            $Invoice = Recipient::receive(
+                $parametersIn->File, // $invoice_blob
+                $invoice_filename,   // $filename
+                1,                   // $position is always 1 until we implement multi-invoices (#22)
+                $invoice_remote_id   // $remote_id
+            );    
+        }
         $rispostaRiceviFatture = new rispostaRiceviFatture_Type(\esitoRicezione_Type::ER01);
+        error_log('RicezioneFattureHandler::RiceviFile end ---------------------------------------');
         return $rispostaRiceviFatture;
     }
 
     public function NotificaDecorrenzaTermini($parametersIn)
     {
-        // TODO
-        Recipient::expire($parametersIn->IdentificativoSdI);
+        error_log('RicezioneFattureHandler::NotificaDecorrenzaTermini start-----------------------');
+        error_log('parametersIn: '.json_encode($parametersIn));
+        error_log('-------------------------------------------------------------------------------');
+        Issuer::receive(
+            $notification_blob = $parametersIn->File,
+            $filename = $parametersIn->NomeFile,
+            $type = 'NotificaDecorrenzaTermini',
+            $status = 'R_EXPIRED'
+        );
+        error_log("==== RicezioneFattureHandler::NotificaDecorrenzaTermini end -------------------");
     }
 }

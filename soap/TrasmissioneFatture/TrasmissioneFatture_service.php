@@ -74,6 +74,7 @@ class TrasmissioneFatture_service extends \SoapClient
      */
     public function NotificaDecorrenzaTermini(fileSdI_Type $decorrenzaTermini)
     {
+        print_r($this->__getFunctions());
         return $this->__soapCall('NotificaDecorrenzaTermini', array($decorrenzaTermini));
     }
 

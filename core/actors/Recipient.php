@@ -90,17 +90,14 @@ XML;
             $invoice_id = $id
         );
     }
-    public static function expire($invoice_id)
-    {
-        Invoice::find($invoice_id)->update(['status' => 'R_EXPIRED' ]);
-    }
     public static function dispatchi()
     {
         $notifications = Notification::all()
             ->where('status', 'N_PENDING')
             ->where('actor', Base::getActor());
         $notifications = $notifications->toArray();
-
+		
+		
         $service = new \SdIRiceviNotifica_service(array('trace' => 1));
 
         foreach ($notifications as $notification) {

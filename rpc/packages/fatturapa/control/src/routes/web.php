@@ -14,7 +14,6 @@ if (Base::getActor() == 'sdi') {
     Route::post('checkExpiration', 'fatturapa\control\InvoicesController@checkExpiration');
     Route::get('actors', 'fatturapa\control\BaseController@getActors');
     Route::get('issuers', 'fatturapa\control\BaseController@getIssuers');
-    // TODO: checkExpiration
 } else {
     // issuer-specific
     Route::post('upload', 'fatturapa\control\InvoicesController@upload');
@@ -22,7 +21,6 @@ if (Base::getActor() == 'sdi') {
     // recipient-specific
     Route::post('accept/{udid}', 'fatturapa\control\InvoicesController@accept');
     Route::post('refuse/{udid}', 'fatturapa\control\InvoicesController@refuse');
-    // TODO: refuse
 }
 // common routes
 
@@ -40,5 +38,9 @@ Route::post('dispatch', 'fatturapa\control\NotificationsController@dispatchi');
 
 // invoices-related
 Route::get('invoices', 'fatturapa\control\InvoicesController@index');
+Route::get('actorsgroup', 'fatturapa\control\BaseController@actorsGroup');
 
-Route::get('channels', 'fatturapa\control\BaseController@getChannels');
+// channels-related
+Route::resource('channels', 'fatturapa\control\ChannelsController');
+// actors-related
+Route::resource('actors', 'fatturapa\control\ActorsController');

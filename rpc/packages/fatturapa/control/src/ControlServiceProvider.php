@@ -27,5 +27,7 @@ class ControlServiceProvider extends ServiceProvider
         $this->app->make('FatturaPa\Control\NotificationsController');
         $this->app->make('FatturaPa\Control\InvoicesController');
         $this->app->make('FatturaPa\Control\BaseController');
+        $this->app->make('FatturaPa\Control\ChannelsController');
+        $this->app->make('FatturaPa\Control\ActorsController');
     }
 }

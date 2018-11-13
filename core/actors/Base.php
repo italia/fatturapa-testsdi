@@ -8,6 +8,7 @@ use FatturaPa\Core\Models\Invoice;
 use FatturaPa\Core\Models\Notification;
 use FatturaPa\Core\Models\Channel;
 use Illuminate\Support\Facades\URL;
+use FatturaPa\Core\Models\Actor;
 
 define('TIME_TRAVEL_DB', $_SERVER['DOCUMENT_ROOT'] . '/core/storage/time_travel.json');
 
@@ -91,7 +92,7 @@ class Base
     }
     public static function dispatchNotification($service, $addressee, $endpoint, $operation, $fileSdI)
     {
-        echo 'dispatchNotification to: ' . $addressee  . '<br/>';
+        echo 'dispatchNotification to: ' . $addressee  . '<br/>' . PHP_EOL;
         $service->__setLocation(HOSTMAIN.$addressee."/soap/$endpoint/");
         $sent = false;
         try {
@@ -116,9 +117,9 @@ class Base
             $urlData = explode("/", $url);
             $actor = $urlData[1];
         }
-        
-        $issuers=self::getActors();
-        if (!in_array($actor, $issuers)) {
+
+        $actors = self::getActors();
+        if (!in_array($actor, $actors)) {
             abort(404);
         }
                 
@@ -144,11 +145,12 @@ class Base
     }
     public static function getChannels()
     {
-        $Channelslist = Channel::all();
-                
+    	$Actorslist = Actor::select(['id'])->distinct()->get();        		               
         $channels = array();
-        foreach ($Channelslist as $k => $channel) {
-            $channels[$channel['cedente']]=$channel['issuer'];
+        foreach ($Actorslist->toArray() as $k => $channel) {
+        	$cedente = Channel::where('issuer', '=', $channel['id'])->pluck('cedente');			
+			$channels[$k]['id']=$channel['id'];			    	
+            $channels[$k]['cedenti']=$cedente->toArray();
         }
         return $channels;
     }

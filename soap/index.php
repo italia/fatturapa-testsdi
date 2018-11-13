@@ -1,6 +1,5 @@
 <?php
 require_once("config.php");
-require_once("SoapServerDebug.php");
 
 # echo $_SERVER['REQUEST_URI'] . '<br/>' . PHP_EOL;
 $request_uri = explode('/', $_SERVER['REQUEST_URI']);
@@ -9,10 +8,12 @@ if (sizeof($request_uri) < 4) {
     echo "404 too short path to soap endpoint";
     die;
 }
+# var_dump($request_uri);
 
 $actor = $request_uri[1];
 $soap = $request_uri[2];
-$endpoint = $request_uri[3];
+$endpoint = explode('?', $request_uri[3])[0];
+// echo 'endpoint = ' . $endpoint . '<br/>' . PHP_EOL;
 
 if ($soap != 'soap') {
     echo "404 wrong path to soap endpoint";

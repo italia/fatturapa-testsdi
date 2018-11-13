@@ -14,20 +14,22 @@ The test environment can be used to:
 
 4. develop higher-level applications that interact with a SDICoop compliant service, i.e. user interfaces, invoice/notification archiving ...
 
-At this stage the testsdi in **WIP** and not fully implemented.
+At this stage the testsdi is **WIP** and not fully implemented, most importantly these features are missing:
+- message signing and signature verification (see [issue#21](https://github.com/italia/fatturapa-testsdi/issues/21))
+- MTOM SOAP (see [issue #43](https://github.com/italia/fatturapa-testsdi/issues/43))
 
 Some functionalities are also **excluded** from the initial design:
 - receiving / transmitting ZIP archives (see [issue #25](https://github.com/italia/fatturapa-testsdi/issues/25))
-- receiving / transmitting invoices with multiple `FatturaElettronicaBody` elements ("multi-invoices") (see [issue 22](https://github.com/italia/fatturapa-testsdi/issues/22))
+- receiving / transmitting invoices with multiple `FatturaElettronicaBody` elements ("multi-invoices") (see [issue #22](https://github.com/italia/fatturapa-testsdi/issues/22))
 
 **Index**:
 
 * [Introduction](#introduction)
 * [Architecture](#architecture)
 * [Implementation](#implementation)
-  + [State machines](#state-machines)
+  + [State diagrams](#state-diagrams)
   + [Database schema](#database-schema)
-  + [APIs](#apis)
+  + [SOAP adaptor](#soap-adaptor)
 * [Getting Started](#getting-started)
   + [Prerequisites](#prerequisites)
   + [Configuring and Installing](#configuring-and-installing)
@@ -36,6 +38,7 @@ Some functionalities are also **excluded** from the initial design:
   + [Manual testing](#manual-testing)
   + [Unit tests](#unit-tests)
   + [Linting](#linting)
+* [Troubleshooting](#troubleshooting)  
 * [Contributing](#contributing)
 * [Authors](#authors)
 * [License](#license)
@@ -101,9 +104,15 @@ A distinctive design choice has been to use the same database schema, API and st
 3. The **control** component ([fatturapa-control](/rpc/packages/fatturapa/control/README.md)), 
 also uses _fatturapa-core_, and exposes a Remote Procedure Calls (RPC) API over the HTTP protocol. This API can be used to control the simulation / tests or to show status information in user interfaces.
 
-4. The _fatturapa-control_ is used by the basic **User Interface** [fatturapa-testui](https://github.com/simevo/fatturapa-testui).
+4. The **ui** component [fatturapa-ui](/rpc/packages/fatturapa/ui/README.md) provides a basic **User Interface** to interact with the test environment.
+
+This picture shows how the 4 layers stack up:
 
 ![Architecture](/images/architecture.png)
+
+This screencast demonstrates the complete workflow (see [Demo](#demo) section below) as seen through the UI, i.e. how you can send an invoice from I/R 0000001 to I/R 0000002, and make sure that the various notifications are sent back and forth between the three involved actors until the invoice acceptance is confirmed for all the parties:
+
+![img](images/screencast.gif)
 
 ## Implementation
 
@@ -151,7 +160,7 @@ Legend for all state diagrams:
 
 ![exchange system finite state machine](/images/exchange.png)
 
-#### Recipent, Italian: destinatario
+#### Recipient, Italian: destinatario
 
 | Status | Description |
 | ------------- | ------------- |
@@ -299,15 +308,17 @@ sudo chown -R www-data storage/framework
 sudo chown -R www-data bootstrap/cache
 cp .env.example .env
 php artisan key:generate
-sudo su -s /bin/bash www-data
-php artisan migrate
 ^d
 ```
 
 Configure nginx:
-```
+```sh
 sudo rm /etc/nginx/sites-enabled/*
 sudo vi /etc/nginx/sites-enabled/fatturapa
+```
+
+Set the contents of the `/etc/nginx/sites-enabled/fatturapa` file to something like:
+```
 server {
   listen 80 default_server;
   listen [::]:80 default_server;
@@ -319,6 +330,18 @@ server {
     fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
     fastcgi_read_timeout 300;
   }
+  location ^~ /sdi/rpc/js/ {
+    alias /var/www/html/rpc/packages/fatturapa/ui/src/public/js/;
+  }
+  location ^~ /sdi/rpc/css/ {
+    alias /var/www/html/rpc/packages/fatturapa/ui/src/public/css/;
+  }
+  location ^~ /sdi/rpc/webfonts/ {
+    alias /var/www/html/rpc/packages/fatturapa/ui/src/public/webfonts/;
+  }
+  location ^~ /sdi/rpc/font/ {
+    alias /var/www/html/rpc/packages/fatturapa/ui/src/public/font/;
+  }
   location ~ /.*/rpc {
     try_files $uri $uri/ /rpc/index.php?$query_string;
   }
@@ -326,13 +349,21 @@ server {
     try_files $uri $uri/ /soap/index.php;
   }
 }
+```
+
+Finally check the configuration and restart nginx:
+```sh
 sudo nginx -t
 sudo systemctl restart nginx
 ```
 
-Dynamic routing makes sure that the actors will be reachable at `/sdi` (there's only one exchange system), `/tdxxxxxxx`, `/tdyyyyyyy`  ... (td stands for trasmittente/destinatario, Italian for issuer/receiver).
+At this point you should be able to access the UI at: https://testsdi.example.com/sdi/rpc/dashboard
 
-The number of simulated issuer/receiver (TD = trasmittente / destinatario) actors are autoconfigured based on the actors that appear in the `channels` table.
+Dynamic routing makes sure that the RPC endpoints for the actors will be reachable at:
+- `/sdi` - the Exchange System (there's only one)
+- `/tdxxxxxxx`, `/tdyyyyyyy`, ... - where td stands for trasmittente/destinatario (T/D), Italian for issuer/receiver (I/R) and `xxxxxxx`, `yyyyyyy` are the 7-characters I/R identification codes.
+
+The number of simulated I/R (T/D) actors are autoconfigured based on the actors that appear in the `channels` table.
 
 For example if you set the channels table like this so that invoices can be sent (needed for the tests):
 ```sql
@@ -504,13 +535,73 @@ Lint the code with:
 ./vendor/bin/phpcs --standard=PSR2 xxx.php
 ```
 
+## Troubleshooting
+
+SOAP client/server interactions can be tricky to debug.
+
+The issue is even more complicated when you perform a RPC calls (such as `POST /sdi/rpc/transmit`) which has to perform internally a SOAP call.
+
+You'll then have: client -> 1st level server (RPC) | SOAP client -> SOAP server | 2nd level server.
+
+It is easy to trace and debug the 1st level server:
+- PHP `echo` is sent back to client
+- PHP `error_log` statements get written to `/var/log/nginx/error.log`.
+
+For the 2nd level server it's more complicated:
+- you cannot use PHP `echo` because the body is used to return XML payloads
+- PHP `error_log` statements get lost.
+
+To make sure you get to see all messages written to log at the 2nd level server (SOAP server) edit `/etc/php/7.0/fpm/pool.d/www.conf` adding these lines at the end:
+```
+catch_workers_output = yes
+php_flag[display_errors] = on
+php_admin_value[error_log] = /var/log/fpm-php.www.log
+php_admin_flag[log_errors] = on
+```
+then create the new log file and make sure it can be written by the webserver:
+```sh
+sudo touch /var/log/fpm-php.www.log
+sudo chown www-data:www-data /var/log/fpm-php.www.log
+```
+and finally restart the servers:
+```sh
+systemctl restart nginx && systemctl restart php7.0-fpm
+```
+
+Another option you have is to use instrumented versions of the PHP `SoapClient` and `SoapServer` builtins.
+
+To instrument a SOAP client, use `SoapClientDebug` instead of `SoapClient`, for example for `TrasmissioneFatture` add this to `soap/TrasmissioneFatture/autoload.php`:
+```php
+'SoapClientDebug' => __DIR__ .'/../SoapClientDebug.php',
+```
+then modify `TrasmissioneFatture/TrasmissioneFatture_service.php` like this:
+```diff
+- class TrasmissioneFatture_service extends \SoapClient
++ class TrasmissioneFatture_service extends \SoapClientDebug
+```
+
+To instrument a SOAP server, use `SoapServerDebug` instead of `SoapServer`, for example for `TrasmissioneFatture` make sure `soap/index.php` has:
+```php
+require_once("SoapServerDebug.php");
+```
+then modify `TrasmissioneFatture/index.php` like this:
+```diff
+-$srv = new \SoapServer(dirname(__FILE__) . '/TrasmissioneFatture_v1.1.wsdl');
++$srv = new SoapServerDebug(dirname(__FILE__) . '/TrasmissioneFatture_v1.1.wsdl');
+ $srv->setClass("TrasmissioneFattureHandler");
+ $srv->handle();
++foreach ($srv->getAllDebugValues() as $value) {
++    error_log('==== '. print_r($value, true));
++}
+```
+
 ## Contributing
 
 For your contributions please use the [git-flow workflow](https://danielkummer.github.io/git-flow-cheatsheet/).
 
 ## Authors
 
-Emanuele Aina, Marco Peca and Paolo Greppi.
+Emanuele Aina, Riccardo Mariani, Marco Peca and Paolo Greppi.
 
 ## License
 

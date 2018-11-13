@@ -11,7 +11,8 @@ function autoload_62addf545eac710997eead623a64a5ce($class)
        'rispostaRiceviFatture_Type' => __DIR__ .'/rispostaRiceviFatture_Type.php',
        'rispostaSdINotificaEsito_Type' => __DIR__ .'/rispostaSdINotificaEsito_Type.php',
        'esitoRicezione_Type' => __DIR__ .'/esitoRicezione_Type.php',
-       'esitoNotifica_Type' => __DIR__ .'/esitoNotifica_Type.php'
+       'esitoNotifica_Type' => __DIR__ .'/esitoNotifica_Type.php',
+       'SoapClientDebug' => __DIR__ .'/../SoapClientDebug.php'
     );
     if (!empty($classes[$class])) {
         include $classes[$class];

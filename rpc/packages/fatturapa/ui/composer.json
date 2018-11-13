@@ -1,0 +1,20 @@
+{
+    "name": "fatturapa/ui",
+    "description": "Control HTML to interact with testsdi",
+    "minimum-stability": "dev",
+    "autoload": {       
+        "psr-4": {
+            "FatturaPa\\Ui\\": "src/"            
+        }
+    },
+    "require": {
+        "illuminate/support": "~5"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "FatturaPa\\Ui\\UiServiceProvider"
+            ]
+        }
+    }
+}

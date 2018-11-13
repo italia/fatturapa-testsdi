@@ -43,7 +43,6 @@ class TrasmissioneFattureHandler
     public function NotificaEsito($parametersIn)
     {
         error_log('======== NotificaEsito');
-        aaa;
         $xmlString = base64_decode($parametersIn->File);
         $xml = Base::unpack($xmlString);
         error_log('======== ' . $xml);
@@ -66,6 +65,7 @@ class TrasmissioneFattureHandler
 
     public function NotificaDecorrenzaTermini($parametersIn)
     {
+        error_log("==== TrasmissioneFattureHandler::NotificaDecorrenzaTermini");
         Issuer::receive(
             $notification_blob = $parametersIn->File,
             $filename = $parametersIn->NomeFile,
