@@ -1,0 +1,9 @@
+RewriteEngine on
+
+RewriteRule ^js/(.*)$ packages/fatturapa/ui/src/public/js/$1 [L]
+RewriteRule ^css/(.*)$ packages/fatturapa/ui/src/public/css/$1 [L]
+RewriteRule ^webfonts/(.*)$ packages/fatturapa/ui/src/public/webfonts/$1 [L]
+RewriteRule ^font/(.*)$ packages/fatturapa/ui/src/public/font/$1 [L]
+
+RewriteCond %{REQUEST_URI} !public/
+RewriteRule (.*) public/$1 [L]
