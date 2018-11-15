@@ -292,7 +292,7 @@ You'll be able to access the database with:
 PGPASSWORD="www-data" psql -U www-data testsdi
 ```
 
-Configure database credentials in `core/config.php` and in `rpc/config/database.php`.
+Configure database credentials in `core/config.php`.
 
 Configure `HOSTNAME` in `soap/config.php` and in `core/config.php`.
 
@@ -310,6 +310,8 @@ cp .env.example .env
 php artisan key:generate
 ^d
 ```
+
+Configure database credentials in `rpc/.env`.
 
 Configure nginx:
 ```sh
