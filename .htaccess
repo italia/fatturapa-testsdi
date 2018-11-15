@@ -10,4 +10,11 @@ RewriteRule ^sdi/rpc/font/(.*)$ rpc/packages/fatturapa/ui/src/public/font/$1 [L]
 RewriteCond %{REQUEST_URI} !rpc/public/
 RewriteRule sdi/rpc/(.*) /rpc/public/$1 [L]
 #RewriteRule ^sdi/rpc/(.*) /rpc/public [L]
+#RewriteCond %{REQUEST_URI}  ^/sdi/rpc/     [NC]
+#RewriteRule ^sdi/rpc/(.+) /rpc/$1	[R,NC,L]
+
+
+#RewriteCond %{REQUEST_URI} !rpc/public/
+#RewriteRule rpc/(.*) /rpc/public/$1 [R,L]
+
 # http://fe.localhost/sdi/rpc/dashboard
