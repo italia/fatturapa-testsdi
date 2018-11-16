@@ -15,7 +15,7 @@ class CreateChannelsTable extends MigrationManager
             $this->schema->create('channels', function (Illuminate\Database\Schema\Blueprint $table) {
                 $table->text('cedente');
                 $table->text('issuer');
-                $table->primary([DB::raw('cedente(191)')]);
+                $table->primary('cedente');
             });
         }
     }
