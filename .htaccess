@@ -1,1 +1,11 @@
 AddHandler application/x-httpd-php70 .php .php5 .php4 .php3
+
+RewriteEngine on
+
+RewriteRule ^sdi/rpc/js/(.*)$ rpc/packages/fatturapa/ui/src/public/js/$1 [L]
+RewriteRule ^sdi/rpc/css/(.*)$ rpc/packages/fatturapa/ui/src/public/css/$1 [L]
+RewriteRule ^sdi/rpc/webfonts/(.*)$ rpc/packages/fatturapa/ui/src/public/webfonts/$1 [L]
+RewriteRule ^sdi/rpc/font/(.*)$ rpc/packages/fatturapa/ui/src/public/font/$1 [L]
+
+RewriteCond %{REQUEST_URI} !sdi/rpc/public/
+RewriteRule sdi/rpc/(.*) /rpc/public/$1 [L]

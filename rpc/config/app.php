@@ -56,6 +56,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Application URL subpath
+    |--------------------------------------------------------------------------
+    |
+    | This parameter can be used to allow laravel to work in a subpath.
+    | Using null it will work normally.
+    |
+    */
+    'url_suffix' => env('APP_URL_SUFFIX', null),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |

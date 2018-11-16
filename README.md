@@ -292,7 +292,7 @@ You'll be able to access the database with:
 PGPASSWORD="www-data" psql -U www-data testsdi
 ```
 
-Configure database credentials in `core/config.php` and in `rpc/config/database.php`.
+Configure database credentials in `core/config.php`.
 
 Configure `HOSTNAME` in `soap/config.php` and in `core/config.php`.
 
@@ -310,6 +310,8 @@ cp .env.example .env
 php artisan key:generate
 ^d
 ```
+
+Configure database credentials in `rpc/.env`.
 
 Configure nginx:
 ```sh
@@ -355,6 +357,16 @@ Finally check the configuration and restart nginx:
 ```sh
 sudo nginx -t
 sudo systemctl restart nginx
+```
+
+Configure vhosts on apache (if you don't use nginx):
+```
+<VirtualHost *:80>
+    ServerName testsdi.simevo.com
+    DocumentRoot "/var/www/html"
+    ErrorLog "/var/log/apache/testsdi.simevo.com.error.log"
+    CustomLog "/var/log/apache/testsdi.simevo.com.access.log" common
+</VirtualHost>
 ```
 
 At this point you should be able to access the UI at: https://testsdi.example.com/sdi/rpc/dashboard
