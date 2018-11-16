@@ -14,7 +14,7 @@ class CreateNotificationsTable extends MigrationManager
         if (!$this->schema->hasTable('notifications')) {
             $this->schema->create('notifications', function (Illuminate\Database\Schema\Blueprint $table) {
                 $table->increments('id');
-                $table->integer('invoice_id')->unsigned();
+                $table->integer('invoice_id');
                 $table->foreign('invoice_id')->references('id')->on('invoices')->change();
                 $table->text('type');
                 $table->text('status');
