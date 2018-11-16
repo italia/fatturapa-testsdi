@@ -120,7 +120,7 @@ class Base
 
         $actors = self::getActors();
         if (!in_array($actor, $actors)) {
-            abort(404);
+            abort(404, "Invalid actor: $actor");
         }
                 
         return $actor;
