@@ -110,8 +110,12 @@ class Base
         if (class_exists('\URL')) {
             // we're inside Laravel: URL is defined in rpc/config/app.php
             $url = \URL::current();
-            $urlData = explode("/", $url);
-            $actor = @$urlData[3];
+            if (PHP_SAPI == 'cli') {
+                $actor = "sdi"; // Quick hotfix, should be configurable
+            } else {
+                $urlData = explode("/", $url);
+                $actor = @$urlData[3];
+            }
         } else {
             $url = $_SERVER['REQUEST_URI'];
             $urlData = explode("/", $url);
@@ -120,7 +124,7 @@ class Base
 
         $actors = self::getActors();
         if (!in_array($actor, $actors)) {
-            abort(404);
+            abort(404, "Invalid actor: $actor");
         }
                 
         return $actor;
