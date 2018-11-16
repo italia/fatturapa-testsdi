@@ -359,6 +359,16 @@ sudo nginx -t
 sudo systemctl restart nginx
 ```
 
+Configure vhosts on apache (alternative to nginx):
+```
+<VirtualHost *:80>
+    ServerName testsdi.simevo.com
+    DocumentRoot "/var/www/html"
+    ErrorLog "/var/log/apache/testsdi.simevo.com.error.log"
+    CustomLog "/var/log/apache/testsdi.simevo.com.access.log" common
+</VirtualHost>
+```
+
 At this point you should be able to access the UI at: https://testsdi.example.com/sdi/rpc/dashboard
 
 Dynamic routing makes sure that the RPC endpoints for the actors will be reachable at:
