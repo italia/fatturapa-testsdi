@@ -359,7 +359,7 @@ sudo nginx -t
 sudo systemctl restart nginx
 ```
 
-Configure vhosts on apache (alternative to nginx):
+Configure vhosts on apache (if you don't use nginx):
 ```
 <VirtualHost *:80>
     ServerName testsdi.simevo.com
