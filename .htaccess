@@ -8,4 +8,5 @@ RewriteRule ^sdi/rpc/webfonts/(.*)$ rpc/packages/fatturapa/ui/src/public/webfont
 RewriteRule ^sdi/rpc/font/(.*)$ rpc/packages/fatturapa/ui/src/public/font/$1 [L]
 
 RewriteCond %{REQUEST_URI} !sdi/rpc/public/
+RewriteRule sdi/rpc/(.*)/ /rpc/public/$1 [L]
 RewriteRule sdi/rpc/(.*) /rpc/public/$1 [L]
