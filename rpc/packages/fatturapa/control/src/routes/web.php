@@ -5,8 +5,9 @@ if (!class_exists('\FatturaPa\Core\Actors\Base')) {
 }
         
 use FatturaPa\Core\Actors\Base;
+$urlPrefix = Base::getActor()."/".config('app.url_suffix');
 
-Route::group(array('prefix' => config('app.url_suffix')), function() { 
+Route::group(array('prefix' => $urlPrefix), function() { 
     // actor-specific routes
     if (Base::getActor() == 'sdi') {
         // exchange-specific

@@ -11,7 +11,7 @@
 function route($name, $parameters = [], $absolute = true)
 {
     $appUrl = config('app.url');
-    $appUrlSuffix = config('app.url_suffix');
+    $appUrlSuffix = config('app.url_suffix');   // TODO: Must be changed to include the prefix actor as parameter (check Base::getActor()) 
 
     if ($appUrlSuffix && $absolute) {
         $relativePath = app('url')->route($name, $parameters, false);
