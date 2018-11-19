@@ -108,7 +108,7 @@ XML;
         foreach ($notifications as $notification) {
             echo 'looking at notification  ' . json_encode($notification) . '<br/>' . PHP_EOL;
 
-            $fileSdI = new \fileSdI_Type($notification['id'], $notification['nomefile'], $notification['blob']);
+            $fileSdI = new \fileSdI_Type($notification['invoice_id'], $notification['nomefile'], $notification['blob']);
             $invoice = Invoice::find($notification['invoice_id']);
             $issuer = $invoice->issuer;
             $sent = Base::dispatchNotification(
