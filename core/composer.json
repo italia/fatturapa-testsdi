@@ -3,7 +3,7 @@
     "description": "Core classes required to interact with the Italian B2B invoice system",
     "type": "project",
     "require": {
-        "illuminate/database": "5.2.*",
+        "illuminate/database": "6.20.*",
         "robmorgan/phinx": "^0.10.6"
     },
     "autoload": {
